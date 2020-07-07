@@ -1,8 +1,11 @@
 import 'package:Not3s/UnderTheHood/Colors.dart';
+import 'package:Not3s/UnderTheHood/Provider.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Not3s/UnderTheHood/text_field.dart' as customTextField;
 
@@ -17,6 +20,30 @@ class _AddNewNoteState extends State<AddNewNote> {
   FocusNode _focusNode1;
   FocusNode _focusNode2;
   bool canTap;
+  bool showing = false;
+  String notesFromUser;
+  String titleOfNotesFromUser;
+
+  _updateNotesFromUser(List<String> notesFromUseR) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setStringList('notesFromUser', notesFromUseR);
+  }
+
+  _updatetitleOfNotesFromUser(List<String> titleOfNotesFromUseR) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setStringList('titleOfNotesFromUser', titleOfNotesFromUseR);
+  }
+
+  _updateNumberOfNotes(int numberOfNotes) async {
+    SharedPreferences prefences = await SharedPreferences.getInstance();
+    prefences.setInt('numberOfNotes', numberOfNotes);
+  }
+
+  submit() async {}
+  removeFlushbar(Flushbar flushbar) {
+    flushbar.dismiss();
+  }
+
   @override
   void initState() {
     viewing = false;
@@ -64,25 +91,79 @@ class _AddNewNoteState extends State<AddNewNote> {
               ),
               onPressed: () {},
             ),
-            AnimatedSwitcher(
-              duration: Duration(milliseconds: 800),
-              child: viewing == false
-                  ? CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      child: Icon(
-                        EvaIcons.doneAllOutline,
-                        color: secondaryColor,
-                      ),
-                      onPressed: () async {},
-                    )
-                  : CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      child: Icon(
-                        EvaIcons.doneAllOutline,
-                        color: CupertinoColors.white,
-                      ),
-                      onPressed: () => null,
-                    ),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              child: Icon(
+                EvaIcons.doneAllOutline,
+                color: secondaryColor,
+              ),
+              onPressed: () async {
+                setState(() {
+                  canTap = true;
+                });
+                if (canTap == true) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                }
+                if (notesFromUser != null && titleOfNotesFromUser != null) {
+                  Provider.of<UserData>(context, listen: false).notesFromUser.add(notesFromUser);
+                  Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.add(titleOfNotesFromUser);
+                  await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
+                  await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                  await _updateNumberOfNotes(Provider.of<UserData>(context, listen: false).notesFromUser.length);
+                } else {
+                  Flushbar _flushBar = Flushbar(
+                    backgroundColor: darkAppBarColor,
+                    margin: EdgeInsets.all(5),
+                    borderRadius: 5,
+                    isDismissible: true,
+                    onTap: (flushbar) {
+                      removeFlushbar(flushbar);
+                    },
+                    flushbarStyle: FlushbarStyle.FLOATING,
+                    flushbarPosition: FlushbarPosition.BOTTOM,
+                    message: "The body can't be empty.",
+                    duration: Duration(seconds: 4),
+                  );
+                  _flushBar
+                    ..onStatusChanged = (FlushbarStatus status) {
+                      switch (status) {
+                        case FlushbarStatus.SHOWING:
+                          {
+                            setState(() {
+                              showing = true;
+                            });
+
+                            break;
+                          }
+                        case FlushbarStatus.IS_APPEARING:
+                          {
+                            setState(() {
+                              showing = true;
+                            });
+
+                            break;
+                          }
+                        case FlushbarStatus.IS_HIDING:
+                          {
+                            setState(() {
+                              showing = false;
+                            });
+                            break;
+                          }
+                        case FlushbarStatus.DISMISSED:
+                          {
+                            setState(() {
+                              showing = false;
+                            });
+                            break;
+                          }
+                      }
+                    };
+                  if (showing == false) {
+                    _flushBar..show(context);
+                  }
+                }
+              },
             )
           ],
           title: Hero(
@@ -120,11 +201,19 @@ class _AddNewNoteState extends State<AddNewNote> {
                     FocusScope.of(context).requestFocus(_focusNode2);
                   },
                   autocorrect: true,
-                  autofocus: true,
+                  autofocus: false,
+                  onChanged: (value) {
+                    setState(
+                      () {
+                        titleOfNotesFromUser = value;
+                      },
+                    );
+                  },
                   enableInteractiveSelection: true,
                   enableSuggestions: true,
                   focusNode: _focusNode1,
-                  style: TextStyle(fontSize: 16, color: liltextColor),
+                  textCapitalization: customTextField.TextCapitalization.sentences,
+                  style: TextStyle(fontSize: 16, color: textColor),
                   textInputAction: customTextField.TextInputAction.next,
                   decoration: InputDecoration(
                     labelText: 'Title',
@@ -145,25 +234,42 @@ class _AddNewNoteState extends State<AddNewNote> {
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              SizedBox(
+                height: 70,
+                child: Divider(
+                  indent: 50,
+                  endIndent: 50,
+                  color: secondaryColor,
+                  thickness: 0.2,
+                  height: 0.0,
+                ),
+              ),
               customTextField.TextField(
+                onChanged: (String value) {
+                  setState(
+                    () {
+                      notesFromUser = value;
+                    },
+                  );
+                },
                 onTap: () {
                   setState(() {
                     canTap = false;
                   });
                 },
-                autocorrect: true,
+                autocorrect: false,
                 autofocus: true,
                 maxLength: 300,
                 maxLines: 5,
                 enableInteractiveSelection: true,
                 enableSuggestions: true,
+                textCapitalization: customTextField.TextCapitalization.sentences,
                 focusNode: _focusNode2,
-                style: TextStyle(fontSize: 16, color: textColor),
-                textInputAction: customTextField.TextInputAction.done,
+                style: TextStyle(fontSize: 16, color: liltextColor),
+                textInputAction: customTextField.TextInputAction.newline,
                 decoration: InputDecoration(
                   labelText: '',
-                  labelStyle: TextStyle(fontSize: 13, color: textColor),
+                  labelStyle: TextStyle(fontSize: 13, color: liltextColor),
                   contentPadding: EdgeInsets.only(left: 30, top: 1, right: 30),
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white, width: 0.3),

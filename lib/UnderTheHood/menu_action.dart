@@ -105,22 +105,43 @@ class _CupertinoContextMenuActionState extends State<CupertinoContextMenuAction>
       onTapCancel: onTapCancel,
       onTap: widget.onPressed,
       behavior: HitTestBehavior.opaque,
-      child: Semantics(
-        button: true,
-        child: Container(
-            height: 1000,
-            width: 1,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(),
+        child: Semantics(
+          button: true,
+          child: Container(
+            width: 300,
             decoration: BoxDecoration(
               color: _isPressed ? _kBackgroundColorPressed : _kBackgroundColor,
               border: const Border(
-                bottom: BorderSide(width: 1.0, color: _kBackgroundColorPressed),
+                bottom: BorderSide(width: 0.0, color: _kBackgroundColorPressed),
               ),
             ),
             padding: const EdgeInsets.symmetric(
-              vertical: 1.0,
-              horizontal: 1.0,
+              vertical: 16.0,
+              horizontal: 10.0,
             ),
-            child: Text('s')),
+            child: DefaultTextStyle(
+              style: _textStyle,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Flexible(
+                    child: widget.child,
+                  ),
+                  Container(
+                    width: 10,
+                  ),
+                  if (widget.trailingIcon != null)
+                    Icon(
+                      widget.trailingIcon,
+                      color: _textStyle.color,
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

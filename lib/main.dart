@@ -9,21 +9,31 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> warmUp() async {
-  cachedActor(
-    AssetFlare(bundle: rootBundle, name: 'assets/flare/empty2.flr'),
-  );
-}
-
-_numberOfNotes() async {
-  SharedPreferences prefences = await SharedPreferences.getInstance();
-  int numberOfNotes = prefences.getInt('numberOfNotes') ?? 0;
-  return numberOfNotes;
+  List _fileNames = [
+    'assets/flare/errorR.flr',
+    'assets/flare/successR.flr',
+    'assets/flare/empty2.flr',
+  ];
+  for (int i = 0; i < _fileNames.length; i++) {
+    cachedActor(
+      AssetFlare(
+        bundle: rootBundle,
+        name: _fileNames[i],
+      ),
+    );
+  }
 }
 
 _notesFromUser() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
-  List<List<String>> notesFromUser = preferences.getStringList('notesFromUser') ?? [[]];
+  List<String> notesFromUser = preferences.getStringList('notesFromUser') ?? [];
   return notesFromUser;
+}
+
+_titleOfNotesFromUser() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  List<String> titleOfNotesFromUser = preferences.getStringList('titleOfNotesFromUser') ?? [];
+  return titleOfNotesFromUser;
 }
 
 _emptyAfter30Days() async {
@@ -34,15 +44,17 @@ _emptyAfter30Days() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FlareCache.doesPrune = false;
-  int numberOfNotes = await _numberOfNotes();
-  final List<List<String>> notesFromUser = await _notesFromUser();
+
+  final List<String> notesFromUser = await _notesFromUser();
+  final List<String> titleOfNotesFromUser = await _titleOfNotesFromUser();
   bool emptyAfter30Days = await _emptyAfter30Days();
+  FlareCache.doesPrune = false;
+  warmUp();
   warmUp().then(
     (value) => runApp(
       MyApp(
-        numberOfNotes: numberOfNotes,
         notesFromUser: notesFromUser,
+        titleOfNotesFromUser: titleOfNotesFromUser,
         emptyAfter30Days: emptyAfter30Days,
       ),
     ),
@@ -50,10 +62,11 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final List<List<String>> notesFromUser;
+  final List<String> notesFromUser;
+  final List<String> titleOfNotesFromUser;
   final int numberOfNotes;
   final bool emptyAfter30Days;
-  const MyApp({Key key, this.notesFromUser, this.numberOfNotes, this.emptyAfter30Days}) : super(key: key);
+  const MyApp({Key key, this.notesFromUser, this.numberOfNotes, this.emptyAfter30Days, this.titleOfNotesFromUser}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -69,8 +82,8 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
             builder: (BuildContext context) {
-              Provider.of<UserData>(context).numberOfNotes = numberOfNotes;
               Provider.of<UserData>(context).notesFromUser = notesFromUser;
+              Provider.of<UserData>(context).titleOfNotesFromUser = titleOfNotesFromUser;
               Provider.of<UserData>(context).emptyAfter30Days = emptyAfter30Days;
               return MyHomePage();
             },
