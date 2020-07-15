@@ -166,21 +166,18 @@ class _AddNewNoteState extends State<AddNewNote> {
               },
             )
           ],
-          title: Hero(
-            tag: 'her0',
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Not',
-                    style: TextStyle(color: liltextColor, fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
-                  TextSpan(
-                    text: '3s',
-                    style: TextStyle(color: liltextColor, fontSize: 20, fontWeight: FontWeight.w500),
-                  )
-                ],
-              ),
+          title: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Not',
+                  style: TextStyle(color: liltextColor, fontSize: 20, fontWeight: FontWeight.w500),
+                ),
+                TextSpan(
+                  text: '3s',
+                  style: TextStyle(color: liltextColor, fontSize: 20, fontWeight: FontWeight.w500),
+                )
+              ],
             ),
           ),
         ),
@@ -237,9 +234,9 @@ class _AddNewNoteState extends State<AddNewNote> {
               SizedBox(
                 height: 70,
                 child: Divider(
-                  indent: 50,
-                  endIndent: 50,
-                  color: secondaryColor,
+                  indent: 70,
+                  endIndent: 70,
+                  color: primaryColor,
                   thickness: 0.2,
                   height: 0.0,
                 ),
@@ -257,7 +254,7 @@ class _AddNewNoteState extends State<AddNewNote> {
                     canTap = false;
                   });
                 },
-                autocorrect: false,
+                autocorrect: true,
                 autofocus: true,
                 maxLength: 300,
                 maxLines: 5,
