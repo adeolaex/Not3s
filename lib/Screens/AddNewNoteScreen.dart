@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:Not3s/UnderTheHood/Colors.dart';
 import 'package:Not3s/UnderTheHood/Provider.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -6,9 +8,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:image_picker_saver/image_picker_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Not3s/UnderTheHood/text_field.dart' as customTextField;
+import 'package:uuid/uuid.dart';
 
 class AddNewNote extends StatefulWidget {
   @override
@@ -25,6 +30,7 @@ class _AddNewNoteState extends State<AddNewNote> {
   String notesFromUser;
   String titleOfNotesFromUser;
   String dateOfNoteCreated;
+  String imagePath;
   _updateNotesFromUser(List<String> notesFromUseR) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setStringList('notesFromUser', notesFromUseR);
@@ -38,6 +44,11 @@ class _AddNewNoteState extends State<AddNewNote> {
   _updatedateOfNoteCreation(List<String> dateOfNoteCreation) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setStringList('dateOfNoteCreation', dateOfNoteCreation);
+  }
+
+  _updateimagePathOfEachNote(List<String> imagePathOfEachNote) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);
   }
 
   submit() async {}
@@ -64,13 +75,14 @@ class _AddNewNoteState extends State<AddNewNote> {
       initializationSettings,
     );
     var time = DateTime.now().add(
-      Duration(seconds: 7),
+      Duration(seconds: 2),
     );
     var androidPlatformChannelSpecifics =
         AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    flutterLocalNotificationsPlugin.schedule(0, 'test', 'Also test', time, notificationDetails);
+    flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails);
+
     super.initState();
   }
 
@@ -95,7 +107,7 @@ class _AddNewNoteState extends State<AddNewNote> {
           leading: CupertinoButton(
             padding: EdgeInsets.zero,
             child: Icon(
-              EvaIcons.arrowIosBackOutline,
+              EvaIcons.arrowIosDownwardOutline,
               color: secondaryColor,
             ),
             onPressed: () {
@@ -107,9 +119,20 @@ class _AddNewNoteState extends State<AddNewNote> {
               padding: EdgeInsets.zero,
               child: Icon(
                 EvaIcons.attachOutline,
-                //  color: secondaryColor,
+                color: secondaryColor,
               ),
-              onPressed: () {},
+              onPressed: () async {
+                final File image = await ImagePickerSaver.pickImage(source: ImageSource.gallery);
+                if (image == null) {
+                  imagePath = null;
+                } else {
+                  Directory path = await getApplicationDocumentsDirectory();
+                  final String pathToDeviceFolder = path.path;
+                  String uid = Uuid().v4();
+                  final File imageToCopy = await image.copy('$pathToDeviceFolder/$uid.png');
+                  imagePath = imageToCopy.path;
+                }
+              },
             ),
             CupertinoButton(
               padding: EdgeInsets.zero,
@@ -130,20 +153,20 @@ class _AddNewNoteState extends State<AddNewNote> {
                   Provider.of<UserData>(context, listen: false).dateOfNoteCreation.add(
                         DateTime.now().toString().substring(0, 10).replaceAll('-', '. '),
                       );
+                  // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.add(imagePath);
                   await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
                   await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
                   await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                  // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
                   Navigator.pop(context);
                 } else {
                   Flushbar _flushBar = Flushbar(
-                    //         backgroundColor: darkAppBarColor,
                     margin: EdgeInsets.all(1),
                     borderRadius: 4,
                     isDismissible: true,
                     onTap: (flushbar) {
                       removeFlushbar(flushbar);
                     },
-
                     flushbarPosition: FlushbarPosition.TOP,
                     message: "A title and to-do is required.",
                     maxWidth: 250.0,
@@ -191,18 +214,21 @@ class _AddNewNoteState extends State<AddNewNote> {
               },
             )
           ],
-          title: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Not',
-                  style: TextStyle(color: liltextColor, fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                TextSpan(
-                  text: '3s',
-                  style: TextStyle(color: liltextColor, fontSize: 20, fontWeight: FontWeight.w500),
-                )
-              ],
+          title: Hero(
+            tag: 'title',
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Not',
+                    style: TextStyle(color: liltextColor, fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  TextSpan(
+                    text: '3s',
+                    style: TextStyle(color: liltextColor, fontSize: 20, fontWeight: FontWeight.w500),
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -290,7 +316,7 @@ class _AddNewNoteState extends State<AddNewNote> {
                 style: TextStyle(fontSize: 16, color: liltextColor),
                 textInputAction: customTextField.TextInputAction.newline,
                 decoration: InputDecoration(
-                  labelText: 'To-Do',
+                  labelText: 'To-do',
                   labelStyle: TextStyle(fontSize: 13, color: liltextColor),
                   contentPadding: EdgeInsets.only(left: 30, top: 1, right: 30),
                   border: UnderlineInputBorder(

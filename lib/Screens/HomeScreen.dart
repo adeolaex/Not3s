@@ -1,3 +1,11 @@
+//The first page rendered to the phone. The main.dart runs functions that returns
+//values needed for the Home screen.
+//The values are then sent to the Provider classes so that other screens can get the returned values.
+
+//
+
+import 'dart:io';
+
 import 'package:Not3s/Screens/AddNewNoteScreen.dart';
 import 'package:Not3s/UnderTheHood/Colors.dart';
 import 'package:Not3s/UnderTheHood/Provider.dart';
@@ -25,6 +33,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTickerProviderStateMixin {
+  //Various keys are used in order for the animation switcher widget to transitions without errors.
   final GlobalKey<ScaffoldState> key1 = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> _globalKey = GlobalKey<AnimatedListState>();
   final GlobalKey<AnimatedListState> _globalKey2 = GlobalKey<AnimatedListState>();
@@ -40,6 +49,8 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
   bool dummyBool;
   bool isSwitched;
 
+//This are functions that carry out the task of updating and deleting to-do's in the system(phone's)
+//storage
   _updateNotesFromUser(List<String> notesFromUseR) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setStringList('notesFromUser', notesFromUseR);
@@ -55,6 +66,11 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
     preferences.setStringList('dateOfNoteCreation', dateOfNoteCreation);
   }
 
+  _updateimagePathOfEachNote(List<String> imagePathOfEachNote) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);
+  }
+
   @override
   void initState() {
     _controller = ScrollController();
@@ -66,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
   @override
   void didChangeDependencies() {
     precacheImage(myImage.image, context);
-    isSwitched = Provider.of<UserData>(context).emptyAfter30Days;
+    isSwitched = Provider.of<UserData>(context).emptyAfter30Days; //Note to self..... init the state of bool value with after layout
     super.didChangeDependencies();
   }
 
@@ -131,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                 color: liltextColor,
                               ),
                               title: Text(
-                                'Recently Deleted',
+                                'Bin',
                                 style: TextStyle(fontSize: 14, color: textColor),
                               ),
                               onTap: () {},
@@ -172,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                               ),
                               child: ListTile(
                                 title: Text(
-                                  'Empty Deleted notes after 30 days.',
+                                  'Empty Bin after 30 days.',
                                   style: TextStyle(fontSize: 14, color: liltextColor),
                                 ),
                                 //  dense: true,
@@ -202,7 +218,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
             ),
           ],
           title: Hero(
-            tag: 'her0',
+            tag: 'title',
             child: RichText(
               text: TextSpan(
                 children: [
@@ -244,11 +260,13 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                         Provider.of<UserData>(context, listen: false).notesFromUser.removeAt(index);
                                         Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.removeAt(index);
                                         Provider.of<UserData>(context, listen: false).dateOfNoteCreation.removeAt(index);
+                                        Provider.of<UserData>(context, listen: false).imagePathOfEachNote.removeAt(index);
                                       },
                                     );
                                     await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
                                     await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
                                     await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                                    await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
                                   }
                                 },
                                 background: Container(
@@ -299,23 +317,30 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                 ),
                                 child: Column(
                                   children: [
-                                    SizedBox(
-                                      height: 8,
-                                    ),
                                     ListTile(
+                                      shape: RoundedRectangleBorder(),
                                       onTap: () {},
-                                      leading: Padding(
-                                        padding: const EdgeInsets.only(right: 4.0),
-                                        child: Transform.scale(
-                                          scale: 0.8,
-                                          child: ClipOval(
-                                            child: Image.asset('assets/images/appIcon1.png'),
+                                      title: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            height: 15,
                                           ),
-                                        ),
-                                      ),
-                                      title: Text(
-                                        Provider.of<UserData>(context).titleOfNotesFromUser[index],
-                                        style: TextStyle(color: liltextColor, fontSize: 16),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                Provider.of<UserData>(context).titleOfNotesFromUser[index],
+                                                style: TextStyle(color: liltextColor, fontSize: 16),
+                                              ),
+                                              Text(
+                                                Provider.of<UserData>(context).dateOfNoteCreation[index],
+                                                style: TextStyle(color: liltextColor, fontSize: 14),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                       subtitle: Padding(
                                         padding: const EdgeInsets.only(top: 8.0),
@@ -324,34 +349,38 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                             shape: BoxShape.rectangle,
                                             borderRadius: BorderRadius.circular(2),
                                           ),
-                                          child: Text(
-                                            Provider.of<UserData>(context).notesFromUser[index],
-                                            style: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 15),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                Provider.of<UserData>(context).notesFromUser[index],
+                                                style: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 15),
+                                              ),
+                                              SizedBox(
+                                                height: 15,
+                                              )
+                                            ],
                                           ),
                                         ),
                                       ),
-                                      trailing: Padding(
-                                        padding: const EdgeInsets.only(bottom: 22.0, right: 10),
-                                        child: Text(
-                                          Provider.of<UserData>(context).dateOfNoteCreation[index],
-                                          style: TextStyle(color: liltextColor, fontSize: 14),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 8,
+                                      // trailing: Padding(
+                                      //   padding: const EdgeInsets.only(bottom: 22.0, right: 10),
+                                      //   child: Text(
+                                      //     Provider.of<UserData>(context).dateOfNoteCreation[index],
+                                      //     style: TextStyle(color: liltextColor, fontSize: 14),
+                                      //   ),
+                                      // ),
                                     ),
                                   ],
                                 ),
                               ),
-                              index != Provider.of<UserData>(context).notesFromUser.length - 1
-                                  ? Divider(
-                                      indent: 90,
-                                      color: liltextColor,
-                                      thickness: 0.2,
-                                      height: 0.0,
-                                    )
-                                  : SizedBox(),
+                              Divider(
+                                indent: 80,
+                                color: liltextColor,
+                                thickness: 0.2,
+                                height: 0.0,
+                              )
                             ],
                           );
                         },

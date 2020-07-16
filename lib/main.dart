@@ -8,6 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Used to warm up the flare asset files so as to speed up animation play times.
+//Another method would be to run  the same function with after layout. A flutter package that runs
+// code when the first frame of a screen is shown (rendered)
+// Although this would be practical, it might result it a slow user experience.
+// This method makes sure the warm up is executed during the splash screen resulting the little to know startup time :)
 Future<void> warmUp() async {
   cachedActor(
     AssetFlare(
@@ -17,6 +22,9 @@ Future<void> warmUp() async {
   );
 }
 
+// Gets the User Data from the internal sotrage using https://pub.dev/packages/shared_preferences
+// and stores said data values into the Provider classes.
+//
 _notesFromUser() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   List<String> notesFromUser = preferences.getStringList('notesFromUser') ?? [];
@@ -41,21 +49,32 @@ _dateOfNoteCreation() async {
   return dateOfNoteCreation;
 }
 
+_imagePathOfEachNote() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  List<String> imagePathOfEachNote = preferences.getStringList('imagePathOfEachNote') ?? [];
+  return imagePathOfEachNote;
+}
+
+//The main function that contains the runApp() used in rendering screens.
+
+// The functions above return values that are passed down to the MyApp() widget which then passes it
+// to the Provider classes.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final List<String> notesFromUser = await _notesFromUser();
   final List<String> titleOfNotesFromUser = await _titleOfNotesFromUser();
+  final List<String> imagePathOfEachNote = await _imagePathOfEachNote();
   bool emptyAfter30Days = await _emptyAfter30Days();
   final List<String> dateOfNoteCreation = await _dateOfNoteCreation();
-  FlareCache.doesPrune = false;
+  FlareCache.doesPrune = false; //This makes sure the wamr up function caches the flare asset files.
   warmUp();
   runApp(
     MyApp(
-      notesFromUser: notesFromUser,
-      titleOfNotesFromUser: titleOfNotesFromUser,
-      emptyAfter30Days: emptyAfter30Days,
-      dateOfNoteCreation: dateOfNoteCreation,
-    ),
+        notesFromUser: notesFromUser,
+        titleOfNotesFromUser: titleOfNotesFromUser,
+        emptyAfter30Days: emptyAfter30Days,
+        dateOfNoteCreation: dateOfNoteCreation,
+        imagePathOfEachNote: imagePathOfEachNote),
   );
 }
 
@@ -63,9 +82,17 @@ class MyApp extends StatelessWidget {
   final List<String> notesFromUser;
   final List<String> titleOfNotesFromUser;
   final List<String> dateOfNoteCreation;
+  final List<String> imagePathOfEachNote;
   final int numberOfNotes;
   final bool emptyAfter30Days;
-  const MyApp({Key key, this.notesFromUser, this.numberOfNotes, this.emptyAfter30Days, this.titleOfNotesFromUser, this.dateOfNoteCreation})
+  const MyApp(
+      {Key key,
+      this.notesFromUser,
+      this.numberOfNotes,
+      this.emptyAfter30Days,
+      this.titleOfNotesFromUser,
+      this.dateOfNoteCreation,
+      this.imagePathOfEachNote})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -74,11 +101,6 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Not3s',
-        theme: ThemeData(
-          accentColor: Colors.grey[400].withOpacity(0.4),
-          brightness: Brightness.light,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
             builder: (BuildContext context) {
@@ -86,6 +108,7 @@ class MyApp extends StatelessWidget {
               Provider.of<UserData>(context).titleOfNotesFromUser = titleOfNotesFromUser;
               Provider.of<UserData>(context).emptyAfter30Days = emptyAfter30Days;
               Provider.of<UserData>(context).dateOfNoteCreation = dateOfNoteCreation;
+              Provider.of<UserData>(context).imagePathOfEachNote = imagePathOfEachNote;
               return MyHomePage();
             },
           );
