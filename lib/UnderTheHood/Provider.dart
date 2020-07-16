@@ -4,5 +4,6 @@ import 'package:flutter/material.dart';
 class UserData with ChangeNotifier {
   List<String> notesFromUser;
   List<String> titleOfNotesFromUser;
+  List<String> dateOfNoteCreation;
   bool emptyAfter30Days;
 }

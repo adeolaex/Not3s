@@ -4,8 +4,6 @@ import 'package:Not3s/UnderTheHood/Provider.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flare_flutter/flare_cache.dart';
-import 'package:flare_flutter/provider/asset_flare.dart';
 import 'package:flui/flui.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:animations/animations.dart';
-import 'package:Not3s/UnderTheHood/menu_action.dart' as customMenuAction;
 
 class MyHomePage extends StatefulWidget {
   final String title;
@@ -43,6 +39,21 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
   Image myImage;
   bool dummyBool;
   bool isSwitched;
+
+  _updateNotesFromUser(List<String> notesFromUseR) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setStringList('notesFromUser', notesFromUseR);
+  }
+
+  _updatetitleOfNotesFromUser(List<String> titleOfNotesFromUseR) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setStringList('titleOfNotesFromUser', titleOfNotesFromUseR);
+  }
+
+  _updatedateOfNoteCreation(List<String> dateOfNoteCreation) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setStringList('dateOfNoteCreation', dateOfNoteCreation);
+  }
 
   @override
   void initState() {
@@ -75,7 +86,12 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
           onPressed: () {
             Navigator.push(
               context,
-              PageTransition(child: AddNewNote(), type: PageTransitionType.fade),
+              MaterialPageRoute(
+                builder: (_) {
+                  return AddNewNote();
+                },
+                fullscreenDialog: true,
+              ),
             );
           },
         ),
@@ -86,7 +102,15 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
           elevation: 0.0,
           actions: [
             CupertinoButton(
-              //  padding: EdgeInsets.zero,
+              padding: EdgeInsets.zero,
+              child: Icon(
+                EvaIcons.attachOutline,
+                color: Colors.white,
+              ),
+              onPressed: () {},
+            ),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
               child: Icon(
                 EvaIcons.menu2,
                 color: secondaryColor,
@@ -207,240 +231,128 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                         itemCount: Provider.of<UserData>(context).notesFromUser.length,
                         controller: _controller2,
                         itemBuilder: (BuildContext context, int index) {
-                          return Dismissible(
-                            key: UniqueKey(),
-                            onDismissed: (DismissDirection direction) {
-                              if (direction == DismissDirection.endToStart) {
-                                print('Done');
-                              } else if (direction == DismissDirection.startToEnd) {
-                                setState(() {
-                                  Provider.of<UserData>(context, listen: false).notesFromUser.removeAt(index);
-                                });
-                              }
-                            },
-                            background: Container(
-                              color: Colors.red[500],
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(0, 0, 250, 0),
-                                child: FlareActor(
-                                  "assets/flare/errorR.flr",
-                                  alignment: Alignment.center,
-                                  animation: "Error",
-                                  //    color: darkAppBarColor,
+                          return Column(
+                            children: [
+                              Dismissible(
+                                key: UniqueKey(),
+                                onDismissed: (DismissDirection direction) async {
+                                  if (direction == DismissDirection.startToEnd) {
+                                    print('Done');
+                                  } else if (direction == DismissDirection.endToStart) {
+                                    setState(
+                                      () {
+                                        Provider.of<UserData>(context, listen: false).notesFromUser.removeAt(index);
+                                        Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.removeAt(index);
+                                        Provider.of<UserData>(context, listen: false).dateOfNoteCreation.removeAt(index);
+                                      },
+                                    );
+                                    await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
+                                    await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                                    await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                                  }
+                                },
+                                background: Container(
+                                  color: buttonColor,
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 250, 0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          EvaIcons.flag,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                        Text(
+                                          'Flag',
+                                          style: TextStyle(color: CupertinoColors.white, fontSize: 13),
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            secondaryBackground: Container(
-                              color: buttonColor,
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(250, 0, 0, 0),
-                                child: Icon(EvaIcons.doneAllOutline, color: Colors.white),
-                              ),
-                            ),
-                            child: InkWell(
-                              onTap: () {},
-                              child: CupertinoContextMenu(
-                                actions: <Widget>[
-                                  customMenuAction.CupertinoContextMenuAction(
-                                    child: Text(
-                                      'text',
-                                      style: TextStyle(color: textColor),
+                                secondaryBackground: Container(
+                                  color: Colors.red[500],
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(250, 0, 0, 0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          EvaIcons.trash2,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                        Text(
+                                          'Delete',
+                                          style: TextStyle(color: CupertinoColors.white, fontSize: 13),
+                                        )
+                                      ],
                                     ),
-                                    trailingIcon: EvaIcons.diagonalArrowLeftDown,
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
                                   ),
-                                  customMenuAction.CupertinoContextMenuAction(
-                                    child: Text(
-                                      'textsd',
-                                      style: TextStyle(color: textColor),
+                                ),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 8,
                                     ),
-                                    trailingIcon: EvaIcons.diagonalArrowLeftDown,
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ],
-                                child: Stack(
-                                  children: <Widget>[
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Color(0xFFE8E8E8),
-                                      ),
-                                      child: Image.asset('assets/images/appIcon1.png'),
-                                      margin: EdgeInsets.only(top: 10, left: 10),
-                                      width: 40,
-                                      height: 30,
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.rectangle,
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                      margin: EdgeInsets.only(left: 60, top: 10, right: 10),
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                        child: Material(
-                                          color: Colors.transparent,
-                                          child: Text(
-                                            Provider.of<UserData>(context).titleOfNotesFromUser[index],
-                                            style: TextStyle(color: liltextColor, fontSize: 17),
+                                    ListTile(
+                                      onTap: () {},
+                                      leading: Padding(
+                                        padding: const EdgeInsets.only(right: 4.0),
+                                        child: Transform.scale(
+                                          scale: 0.8,
+                                          child: ClipOval(
+                                            child: Image.asset('assets/images/appIcon1.png'),
                                           ),
                                         ),
                                       ),
-                                      width: MediaQuery.of(context).size.width,
-                                      height: 30,
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.rectangle,
-                                        borderRadius: BorderRadius.circular(2),
+                                      title: Text(
+                                        Provider.of<UserData>(context).titleOfNotesFromUser[index],
+                                        style: TextStyle(color: liltextColor, fontSize: 16),
                                       ),
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                        child: Material(
-                                          color: Colors.transparent,
+                                      subtitle: Padding(
+                                        padding: const EdgeInsets.only(top: 8.0),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.circular(2),
+                                          ),
                                           child: Text(
                                             Provider.of<UserData>(context).notesFromUser[index],
-                                            style: TextStyle(color: liltextColor, fontSize: 15),
+                                            style: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 15),
                                           ),
                                         ),
                                       ),
-                                      margin: EdgeInsets.only(left: 60, top: 40, bottom: 10),
-                                      width: MediaQuery.of(context).size.width,
-                                      height: 30,
+                                      trailing: Padding(
+                                        padding: const EdgeInsets.only(bottom: 22.0, right: 10),
+                                        child: Text(
+                                          Provider.of<UserData>(context).dateOfNoteCreation[index],
+                                          style: TextStyle(color: liltextColor, fontSize: 14),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 8,
                                     ),
                                   ],
                                 ),
-                                // child: Material(
-                                //   color: Colors.white,
-                                //   child: Padding(
-                                //     padding: const EdgeInsets.all(2.0),
-                                //     child: Container(
-                                //       color: Colors.white,
-                                //       padding: EdgeInsets.all(3),
-                                //       child: Stack(
-                                //         children: <Widget>[
-                                //           Container(
-                                //             decoration: BoxDecoration(
-                                //               shape: BoxShape.circle,
-                                //               color: Color(0xFFE8E8E8),
-                                //             ),
-                                //             child: Image.asset('assets/images/appIcon1.png'),
-                                //             margin: EdgeInsets.only(top: 10, left: 10),
-                                //             width: 40,
-                                //             height: 30,
-                                //           ),
-                                //           Container(
-                                //             decoration: BoxDecoration(
-                                //               shape: BoxShape.rectangle,
-                                //               borderRadius: BorderRadius.circular(2),
-                                //             ),
-                                //             margin: EdgeInsets.only(left: 60, top: 10, right: 10),
-                                //             child: Padding(
-                                //               padding: EdgeInsets.only(left: 10),
-                                //               child: Material(
-                                //                 color: Colors.transparent,
-                                //                 child: Text(
-                                //                   Provider.of<UserData>(context).titleOfNotesFromUser[index],
-                                //                   style: TextStyle(color: liltextColor, fontSize: 17),
-                                //                 ),
-                                //               ),
-                                //             ),
-                                //             width: 500,
-                                //             height: 17,
-                                //           ),
-                                //           Container(
-                                //             decoration: BoxDecoration(
-                                //               shape: BoxShape.rectangle,
-                                //               borderRadius: BorderRadius.circular(2),
-                                //             ),
-                                //             child: Padding(
-                                //               padding: EdgeInsets.only(left: 10),
-                                //               child: Material(
-                                //                 color: Colors.transparent,
-                                //                 child: Text(
-                                //                   Provider.of<UserData>(context).notesFromUser[index],
-                                //                   style: TextStyle(color: liltextColor, fontSize: 15),
-                                //                 ),
-                                //               ),
-                                //             ),
-                                //             margin: EdgeInsets.only(left: 60, top: 40, bottom: 10),
-                                //             width: 100,
-                                //             height: 17,
-                                //           ),
-                                //         ],
-                                //       ),
-                                //     ),
-                                //   ),
-                                // ),
-                                previewBuilder: (BuildContext context, Animation<double> animation, Widget child) {
-                                  return ClipRRect(
-                                    borderRadius: BorderRadius.circular(13.0 * animation.value),
-                                    child: Material(
-                                      color: Color(0xFFEEEEEE),
-                                      child: Stack(
-                                        children: <Widget>[
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Color(0xFFEEEEEE),
-                                            ),
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(10),
-                                              child: Image.asset('assets/images/appIcon1.png'),
-                                            ),
-                                            margin: EdgeInsets.only(top: 10, left: 10),
-                                            width: 40,
-                                            height: 30,
-                                          ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.rectangle,
-                                              borderRadius: BorderRadius.circular(2),
-                                            ),
-                                            margin: EdgeInsets.only(left: 60, top: 10, right: 10),
-                                            child: Padding(
-                                              padding: EdgeInsets.only(left: 10),
-                                              child: Material(
-                                                color: Colors.transparent,
-                                                child: Text(
-                                                  Provider.of<UserData>(context).titleOfNotesFromUser[index],
-                                                  style: TextStyle(color: liltextColor, fontSize: 17),
-                                                ),
-                                              ),
-                                            ),
-                                            width: 500,
-                                            height: 17,
-                                          ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.rectangle,
-                                              borderRadius: BorderRadius.circular(2),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.only(left: 10),
-                                              child: Material(
-                                                color: Colors.transparent,
-                                                child: Text(
-                                                  Provider.of<UserData>(context).notesFromUser[index],
-                                                  style: TextStyle(color: liltextColor, fontSize: 15),
-                                                ),
-                                              ),
-                                            ),
-                                            margin: EdgeInsets.only(left: 60, top: 40, bottom: 10),
-                                            width: 100,
-                                            height: 17,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
                               ),
-                            ),
+                              index != Provider.of<UserData>(context).notesFromUser.length - 1
+                                  ? Divider(
+                                      indent: 90,
+                                      color: liltextColor,
+                                      thickness: 0.2,
+                                      height: 0.0,
+                                    )
+                                  : SizedBox(),
+                            ],
                           );
                         },
                       ),
@@ -517,15 +429,23 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
 
   @override
   void afterFirstLayout(BuildContext context) {
-    Future.delayed(
-      Duration(seconds: 2),
-      () {
-        setState(
-          () {
-            animationComplete = true;
-          },
-        );
-      },
-    );
+    if (Provider.of<UserData>(context, listen: false).notesFromUser.length == 0) {
+      setState(
+        () {
+          animationComplete = true;
+        },
+      );
+    } else {
+      Future.delayed(
+        Duration(seconds: 1),
+        () {
+          setState(
+            () {
+              animationComplete = true;
+            },
+          );
+        },
+      );
+    }
   }
 }

@@ -9,19 +9,12 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> warmUp() async {
-  List _fileNames = [
-    'assets/flare/errorR.flr',
-    'assets/flare/successR.flr',
-    'assets/flare/empty2.flr',
-  ];
-  for (int i = 0; i < _fileNames.length; i++) {
-    cachedActor(
-      AssetFlare(
-        bundle: rootBundle,
-        name: _fileNames[i],
-      ),
-    );
-  }
+  cachedActor(
+    AssetFlare(
+      bundle: rootBundle,
+      name: 'assets/flare/empty2.flr',
+    ),
+  );
 }
 
 _notesFromUser() async {
@@ -42,21 +35,26 @@ _emptyAfter30Days() async {
   return emptyAfter30Days;
 }
 
+_dateOfNoteCreation() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  List<String> dateOfNoteCreation = preferences.getStringList('dateOfNoteCreation') ?? [];
+  return dateOfNoteCreation;
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   final List<String> notesFromUser = await _notesFromUser();
   final List<String> titleOfNotesFromUser = await _titleOfNotesFromUser();
   bool emptyAfter30Days = await _emptyAfter30Days();
+  final List<String> dateOfNoteCreation = await _dateOfNoteCreation();
   FlareCache.doesPrune = false;
   warmUp();
-  warmUp().then(
-    (value) => runApp(
-      MyApp(
-        notesFromUser: notesFromUser,
-        titleOfNotesFromUser: titleOfNotesFromUser,
-        emptyAfter30Days: emptyAfter30Days,
-      ),
+  runApp(
+    MyApp(
+      notesFromUser: notesFromUser,
+      titleOfNotesFromUser: titleOfNotesFromUser,
+      emptyAfter30Days: emptyAfter30Days,
+      dateOfNoteCreation: dateOfNoteCreation,
     ),
   );
 }
@@ -64,9 +62,11 @@ void main() async {
 class MyApp extends StatelessWidget {
   final List<String> notesFromUser;
   final List<String> titleOfNotesFromUser;
+  final List<String> dateOfNoteCreation;
   final int numberOfNotes;
   final bool emptyAfter30Days;
-  const MyApp({Key key, this.notesFromUser, this.numberOfNotes, this.emptyAfter30Days, this.titleOfNotesFromUser}) : super(key: key);
+  const MyApp({Key key, this.notesFromUser, this.numberOfNotes, this.emptyAfter30Days, this.titleOfNotesFromUser, this.dateOfNoteCreation})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -85,6 +85,7 @@ class MyApp extends StatelessWidget {
               Provider.of<UserData>(context).notesFromUser = notesFromUser;
               Provider.of<UserData>(context).titleOfNotesFromUser = titleOfNotesFromUser;
               Provider.of<UserData>(context).emptyAfter30Days = emptyAfter30Days;
+              Provider.of<UserData>(context).dateOfNoteCreation = dateOfNoteCreation;
               return MyHomePage();
             },
           );

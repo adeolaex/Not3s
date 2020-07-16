@@ -5,6 +5,7 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Not3s/UnderTheHood/text_field.dart' as customTextField;
@@ -23,7 +24,7 @@ class _AddNewNoteState extends State<AddNewNote> {
   bool showing = false;
   String notesFromUser;
   String titleOfNotesFromUser;
-
+  String dateOfNoteCreated;
   _updateNotesFromUser(List<String> notesFromUseR) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setStringList('notesFromUser', notesFromUseR);
@@ -34,9 +35,9 @@ class _AddNewNoteState extends State<AddNewNote> {
     preferences.setStringList('titleOfNotesFromUser', titleOfNotesFromUseR);
   }
 
-  _updateNumberOfNotes(int numberOfNotes) async {
-    SharedPreferences prefences = await SharedPreferences.getInstance();
-    prefences.setInt('numberOfNotes', numberOfNotes);
+  _updatedateOfNoteCreation(List<String> dateOfNoteCreation) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setStringList('dateOfNoteCreation', dateOfNoteCreation);
   }
 
   submit() async {}
@@ -51,6 +52,25 @@ class _AddNewNoteState extends State<AddNewNote> {
     _focusNode1 = new FocusNode();
     _focusNode2 = new FocusNode();
     canTap = true;
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var andriod = AndroidInitializationSettings('app_icon');
+    var ios = IOSInitializationSettings(
+      requestSoundPermission: true,
+      requestBadgePermission: true,
+      requestAlertPermission: true,
+    );
+    InitializationSettings initializationSettings = InitializationSettings(andriod, ios);
+    flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+    );
+    var time = DateTime.now().add(
+      Duration(seconds: 7),
+    );
+    var androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    flutterLocalNotificationsPlugin.schedule(0, 'test', 'Also test', time, notificationDetails);
     super.initState();
   }
 
@@ -107,22 +127,27 @@ class _AddNewNoteState extends State<AddNewNote> {
                 if (notesFromUser != null && titleOfNotesFromUser != null) {
                   Provider.of<UserData>(context, listen: false).notesFromUser.add(notesFromUser);
                   Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.add(titleOfNotesFromUser);
+                  Provider.of<UserData>(context, listen: false).dateOfNoteCreation.add(
+                        DateTime.now().toString().substring(0, 10).replaceAll('-', '. '),
+                      );
                   await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
                   await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                  await _updateNumberOfNotes(Provider.of<UserData>(context, listen: false).notesFromUser.length);
+                  await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                  Navigator.pop(context);
                 } else {
                   Flushbar _flushBar = Flushbar(
-                    backgroundColor: darkAppBarColor,
-                    margin: EdgeInsets.all(5),
-                    borderRadius: 5,
+                    //         backgroundColor: darkAppBarColor,
+                    margin: EdgeInsets.all(1),
+                    borderRadius: 4,
                     isDismissible: true,
                     onTap: (flushbar) {
                       removeFlushbar(flushbar);
                     },
-                    flushbarStyle: FlushbarStyle.FLOATING,
-                    flushbarPosition: FlushbarPosition.BOTTOM,
-                    message: "The body can't be empty.",
-                    duration: Duration(seconds: 4),
+
+                    flushbarPosition: FlushbarPosition.TOP,
+                    message: "A title and to-do is required.",
+                    maxWidth: 250.0,
+                    duration: Duration(seconds: 3),
                   );
                   _flushBar
                     ..onStatusChanged = (FlushbarStatus status) {
@@ -214,7 +239,7 @@ class _AddNewNoteState extends State<AddNewNote> {
                   textInputAction: customTextField.TextInputAction.next,
                   decoration: InputDecoration(
                     labelText: 'Title',
-                    labelStyle: TextStyle(fontSize: 16, color: liltextColor),
+                    labelStyle: TextStyle(fontSize: 13, color: liltextColor),
                     contentPadding: EdgeInsets.only(left: 1, top: 1),
                     border: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.white, width: 0.4),
@@ -236,7 +261,7 @@ class _AddNewNoteState extends State<AddNewNote> {
                 child: Divider(
                   indent: 70,
                   endIndent: 70,
-                  color: primaryColor,
+                  color: liltextColor,
                   thickness: 0.2,
                   height: 0.0,
                 ),
@@ -255,7 +280,7 @@ class _AddNewNoteState extends State<AddNewNote> {
                   });
                 },
                 autocorrect: true,
-                autofocus: true,
+                //autofocus: true,
                 maxLength: 300,
                 maxLines: 5,
                 enableInteractiveSelection: true,
@@ -265,7 +290,7 @@ class _AddNewNoteState extends State<AddNewNote> {
                 style: TextStyle(fontSize: 16, color: liltextColor),
                 textInputAction: customTextField.TextInputAction.newline,
                 decoration: InputDecoration(
-                  labelText: '',
+                  labelText: 'To-Do',
                   labelStyle: TextStyle(fontSize: 13, color: liltextColor),
                   contentPadding: EdgeInsets.only(left: 30, top: 1, right: 30),
                   border: UnderlineInputBorder(
