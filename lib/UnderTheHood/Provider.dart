@@ -10,4 +10,7 @@ class UserData with ChangeNotifier {
   List<String> dateOfNoteCreation;
   List<String> imagePathOfEachNote;
   bool emptyAfter30Days;
+  List<String> notesInBin;
+  List<String> flaggedNotes;
+  List<String> hiddenNotes;
 }

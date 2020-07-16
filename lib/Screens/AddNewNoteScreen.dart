@@ -81,7 +81,7 @@ class _AddNewNoteState extends State<AddNewNote> {
         AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails);
+    // flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails);
 
     super.initState();
   }
@@ -153,6 +153,8 @@ class _AddNewNoteState extends State<AddNewNote> {
                   Provider.of<UserData>(context, listen: false).dateOfNoteCreation.add(
                         DateTime.now().toString().substring(0, 10).replaceAll('-', '. '),
                       );
+                  print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                  print(Provider.of<UserData>(context, listen: false).notesFromUser);
                   // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.add(imagePath);
                   await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
                   await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);

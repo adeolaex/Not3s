@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class FlaggedNotes extends StatefulWidget {
   @override
@@ -8,6 +9,6 @@ class FlaggedNotes extends StatefulWidget {
 class _FlaggedNotesState extends State<FlaggedNotes> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold();
   }
 }
