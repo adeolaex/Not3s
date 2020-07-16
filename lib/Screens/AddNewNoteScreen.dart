@@ -107,7 +107,7 @@ class _AddNewNoteState extends State<AddNewNote> {
               padding: EdgeInsets.zero,
               child: Icon(
                 EvaIcons.attachOutline,
-                color: secondaryColor,
+                //  color: secondaryColor,
               ),
               onPressed: () {},
             ),
