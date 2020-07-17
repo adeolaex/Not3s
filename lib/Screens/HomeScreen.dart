@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'package:Not3s/Screens/AddNewNoteScreen.dart';
 import 'package:Not3s/Screens/Bin.dart';
+import 'package:Not3s/Screens/EditAndViewNotes.dart';
 import 'package:Not3s/Screens/FlaggedNotes.dart';
 import 'package:Not3s/Screens/HiddenNotes.dart';
 import 'package:Not3s/UnderTheHood/Colors.dart';
@@ -23,6 +24,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
+import 'package:vibrate/vibrate.dart';
 
 // ignore: must_be_immutable
 class MyHomePage extends StatefulWidget {
@@ -137,8 +139,8 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                 color: secondaryColor,
               ),
               onPressed: () async {
-                // HapticFeedback.selectionClick();
-
+                var _type = FeedbackType.impact;
+                Vibrate.feedback(_type);
                 showModalBottomSheet(
                   context: context,
                   isDismissible: true,
@@ -357,10 +359,17 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                   children: [
                                     ListTile(
                                       onTap: () {
-                                        HapticFeedback.vibrate();
-                                      },
-                                      onLongPress: () {
-                                        print('object');
+                                        Navigator.push(
+                                          context,
+                                          CupertinoPageRoute(
+                                            fullscreenDialog: true,
+                                            builder: (_) {
+                                              return EditAndViewNotes(
+                                                index: index,
+                                              );
+                                            },
+                                          ),
+                                        );
                                       },
                                       title: Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
@@ -399,9 +408,9 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                                 Provider.of<UserData>(context).notesFromUser[index],
                                                 style: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 15),
                                               ),
-                                              SizedBox(
-                                                height: 15,
-                                              )
+                                              // SizedBox(
+                                              //   height: 15,
+                                              // )
                                             ],
                                           ),
                                         ),
@@ -417,12 +426,14 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                   ],
                                 ),
                               ),
-                              Divider(
-                                indent: 80,
-                                color: liltextColor,
-                                thickness: 0.2,
-                                height: 0.0,
-                              )
+                              // index != Provider.of<UserData>(context).notesFromUser.length - 1
+                              //     ? Divider(
+                              //         indent: 80,
+                              //         color: liltextColor,
+                              //         thickness: 0.2,
+                              //         height: 0.0,
+                              //       )
+                              //     : SizedBox()
                             ],
                           );
                         },
@@ -465,12 +476,6 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                           Column(
                             children: [
                               ListTile(
-                                onTap: () {
-                                  HapticFeedback.vibrate();
-                                },
-                                onLongPress: () {
-                                  print('object');
-                                },
                                 title: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -514,9 +519,9 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                           width: 200,
                                           height: 21,
                                         ),
-                                        SizedBox(
-                                          height: 15,
-                                        )
+                                        // SizedBox(
+                                        //   height: 15,
+                                        // )
                                       ],
                                     ),
                                   ),
@@ -531,12 +536,14 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                               ),
                             ],
                           ),
-                          Divider(
-                            indent: 80,
-                            color: liltextColor,
-                            thickness: 0.2,
-                            height: 0.0,
-                          )
+                          // index != Provider.of<UserData>(context).notesFromUser.length - 1
+                          //     ? Divider(
+                          //         indent: 80,
+                          //         color: liltextColor,
+                          //         thickness: 0.2,
+                          //         height: 0.0,
+                          //       )
+                          //     : SizedBox()
                         ],
                       );
                     },
@@ -557,7 +564,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
       );
     } else {
       Future.delayed(
-        Duration(milliseconds: 500),
+        Duration(milliseconds: 1000),
         () {
           setState(
             () {

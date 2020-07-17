@@ -22,6 +22,15 @@ Future<void> warmUp() async {
   );
 }
 
+Future<void> warmUp2() async {
+  cachedActor(
+    AssetFlare(
+      bundle: rootBundle,
+      name: 'assets/flare/successR.flr',
+    ),
+  );
+}
+
 // Gets the User Data from the internal sotrage using https://pub.dev/packages/shared_preferences
 // and stores said data values into the Provider classes.
 //
@@ -79,6 +88,9 @@ void main() async {
   final List<String> dateOfNoteCreation = await _dateOfNoteCreation();
   FlareCache.doesPrune = false; //This makes sure the wamr up function caches the flare asset files.
   warmUp();
+  FlareCache.doesPrune = false;
+  warmUp2();
+  FlareCache.doesPrune = false;
   runApp(
     MyApp(
         notesFromUser: notesFromUser,

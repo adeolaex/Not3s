@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:Not3s/UnderTheHood/Colors.dart';
 import 'package:Not3s/UnderTheHood/Provider.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class _AddNewNoteState extends State<AddNewNote> {
   String titleOfNotesFromUser;
   String dateOfNoteCreated;
   String imagePath;
+  bool isEditing;
   _updateNotesFromUser(List<String> notesFromUseR) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setStringList('notesFromUser', notesFromUseR);
@@ -58,7 +60,7 @@ class _AddNewNoteState extends State<AddNewNote> {
 
   @override
   void initState() {
-    viewing = false;
+    isEditing = true;
     _scrollController = ScrollController();
     _focusNode1 = new FocusNode();
     _focusNode2 = new FocusNode();
@@ -81,7 +83,7 @@ class _AddNewNoteState extends State<AddNewNote> {
         AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    // flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails);
+    //flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails);
 
     super.initState();
   }
@@ -134,86 +136,104 @@ class _AddNewNoteState extends State<AddNewNote> {
                 }
               },
             ),
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: Icon(
-                EvaIcons.doneAllOutline,
-                color: secondaryColor,
-              ),
-              onPressed: () async {
-                setState(() {
-                  canTap = true;
-                });
-                if (canTap == true) {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                }
-                if (notesFromUser != null && titleOfNotesFromUser != null) {
-                  Provider.of<UserData>(context, listen: false).notesFromUser.add(notesFromUser);
-                  Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.add(titleOfNotesFromUser);
-                  Provider.of<UserData>(context, listen: false).dateOfNoteCreation.add(
-                        DateTime.now().toString().substring(0, 10).replaceAll('-', '. '),
-                      );
-                  print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                  print(Provider.of<UserData>(context, listen: false).notesFromUser);
-                  // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.add(imagePath);
-                  await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
-                  await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                  await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
-                  // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
-                  Navigator.pop(context);
-                } else {
-                  Flushbar _flushBar = Flushbar(
-                    margin: EdgeInsets.all(1),
-                    borderRadius: 4,
-                    isDismissible: true,
-                    onTap: (flushbar) {
-                      removeFlushbar(flushbar);
-                    },
-                    flushbarPosition: FlushbarPosition.TOP,
-                    message: "A title and to-do is required.",
-                    maxWidth: 250.0,
-                    duration: Duration(seconds: 3),
-                  );
-                  _flushBar
-                    ..onStatusChanged = (FlushbarStatus status) {
-                      switch (status) {
-                        case FlushbarStatus.SHOWING:
-                          {
+            AnimatedSwitcher(
+              duration: Duration(milliseconds: 500),
+              child: isEditing
+                  ? Row(
+                      children: [
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          child: Icon(
+                            EvaIcons.doneAllOutline,
+                            color: secondaryColor,
+                          ),
+                          onPressed: () async {
                             setState(() {
-                              showing = true;
+                              canTap = true;
                             });
+                            if (canTap == true) {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                            }
+                            if (notesFromUser != null && titleOfNotesFromUser != null) {
+                              Provider.of<UserData>(context, listen: false).notesFromUser.add(notesFromUser);
+                              Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.add(titleOfNotesFromUser);
+                              Provider.of<UserData>(context, listen: false).dateOfNoteCreation.add(
+                                    DateTime.now().toString().substring(0, 10).replaceAll('-', '. '),
+                                  );
+                              print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                              print(Provider.of<UserData>(context, listen: false).notesFromUser);
+                              // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.add(imagePath);
+                              await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
+                              await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                              await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                              // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
+                              setState(() {
+                                isEditing = false;
+                              });
+                            } else {
+                              Flushbar _flushBar = Flushbar(
+                                margin: EdgeInsets.all(1),
+                                borderRadius: 4,
+                                isDismissible: true,
+                                onTap: (flushbar) {
+                                  removeFlushbar(flushbar);
+                                },
+                                flushbarPosition: FlushbarPosition.TOP,
+                                message: "A title and to-do is required.",
+                                maxWidth: 250.0,
+                                duration: Duration(seconds: 3),
+                              );
+                              _flushBar
+                                ..onStatusChanged = (FlushbarStatus status) {
+                                  switch (status) {
+                                    case FlushbarStatus.SHOWING:
+                                      {
+                                        setState(() {
+                                          showing = true;
+                                        });
 
-                            break;
-                          }
-                        case FlushbarStatus.IS_APPEARING:
-                          {
-                            setState(() {
-                              showing = true;
-                            });
+                                        break;
+                                      }
+                                    case FlushbarStatus.IS_APPEARING:
+                                      {
+                                        setState(() {
+                                          showing = true;
+                                        });
 
-                            break;
-                          }
-                        case FlushbarStatus.IS_HIDING:
-                          {
-                            setState(() {
-                              showing = false;
-                            });
-                            break;
-                          }
-                        case FlushbarStatus.DISMISSED:
-                          {
-                            setState(() {
-                              showing = false;
-                            });
-                            break;
-                          }
-                      }
-                    };
-                  if (showing == false) {
-                    _flushBar..show(context);
-                  }
-                }
-              },
+                                        break;
+                                      }
+                                    case FlushbarStatus.IS_HIDING:
+                                      {
+                                        setState(() {
+                                          showing = false;
+                                        });
+                                        break;
+                                      }
+                                    case FlushbarStatus.DISMISSED:
+                                      {
+                                        setState(() {
+                                          showing = false;
+                                        });
+                                        break;
+                                      }
+                                  }
+                                };
+                              if (showing == false) {
+                                _flushBar..show(context);
+                              }
+                            }
+                          },
+                        ),
+                      ],
+                    )
+                  : Container(
+                      height: 50,
+                      width: 44,
+                      child: FlareActor(
+                        'assets/flare/successR.flr',
+                        animation: 'Untitled',
+                      ),
+                    ),
             )
           ],
           title: Hero(
@@ -245,6 +265,7 @@ class _AddNewNoteState extends State<AddNewNote> {
                   onTap: () {
                     setState(() {
                       canTap = false;
+                      isEditing = true;
                     });
                   },
                   onSubmitted: (value) {
@@ -305,6 +326,7 @@ class _AddNewNoteState extends State<AddNewNote> {
                 onTap: () {
                   setState(() {
                     canTap = false;
+                    isEditing = true;
                   });
                 },
                 autocorrect: true,
