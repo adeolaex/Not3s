@@ -9,6 +9,6 @@ class Bin extends StatefulWidget {
 class _BinState extends State<Bin> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Container();
   }
 }
