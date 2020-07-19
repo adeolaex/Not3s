@@ -44,8 +44,8 @@ flutter:
 
   assets:
     - assets/flare/empty2.flr
-    - assets/flare/errorR.flr
-    - assets/flare/successR.flr
+    - assets/flare/error.flr
+    - assets/flare/success.flr
     - assets/images/icons8-notes-app.svg
     - assets/images/icons8-notes-app-2.svg
     - assets/images/icons8-notes-app-3.svg

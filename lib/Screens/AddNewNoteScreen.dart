@@ -230,7 +230,7 @@ class _AddNewNoteState extends State<AddNewNote> {
                       height: 50,
                       width: 44,
                       child: FlareActor(
-                        'assets/flare/successR.flr',
+                        'assets/flare/success.flr',
                         animation: 'Untitled',
                       ),
                     ),

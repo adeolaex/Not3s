@@ -239,7 +239,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                       height: 50,
                       width: 44,
                       child: FlareActor(
-                        'assets/flare/successR.flr',
+                        'assets/flare/success.flr',
                         animation: 'Untitled',
                       ),
                     ),

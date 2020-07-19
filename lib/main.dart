@@ -26,7 +26,7 @@ Future<void> warmUp2() async {
   cachedActor(
     AssetFlare(
       bundle: rootBundle,
-      name: 'assets/flare/successR.flr',
+      name: 'assets/flare/success.flr',
     ),
   );
 }
