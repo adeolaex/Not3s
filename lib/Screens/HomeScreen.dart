@@ -24,7 +24,6 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
-import 'package:vibrate/vibrate.dart';
 
 // ignore: must_be_immutable
 class MyHomePage extends StatefulWidget {
@@ -55,7 +54,8 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
   Image myImage;
   bool dummyBool;
   bool isSwitched;
-
+  Color testColor = CupertinoColors.extraLightBackgroundGray;
+  Color testColor2 = liltextColor;
 //This are functions that carry out the task of updating and deleting to-do's in the system(phone's)
 //storage
   _updateNotesFromUser(List<String> notesFromUseR) async {
@@ -97,13 +97,13 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
   Widget build(BuildContext context) {
     return Material(
       child: Scaffold(
-        backgroundColor: CupertinoColors.white,
+        backgroundColor: testColor,
         resizeToAvoidBottomPadding: false,
         floatingActionButton: CupertinoButton(
           padding: EdgeInsets.zero,
           child: Icon(
             EvaIcons.externalLinkOutline,
-            color: liltextColor,
+            color: testColor2,
             size: 27,
           ),
           onPressed: () {
@@ -122,13 +122,14 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
         appBar: AppBar(
           brightness: Brightness.light,
           backgroundColor: Colors.transparent,
+          //  backgroundColor: Color(0x44000000),
           elevation: 0.0,
           actions: [
             CupertinoButton(
               padding: EdgeInsets.zero,
               child: Icon(
                 EvaIcons.attachOutline,
-                color: Colors.white,
+                color: testColor,
               ),
               onPressed: () {},
             ),
@@ -136,11 +137,9 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
               padding: EdgeInsets.zero,
               child: Icon(
                 EvaIcons.menu2,
-                color: secondaryColor,
+                color: testColor2,
               ),
               onPressed: () async {
-                var _type = FeedbackType.impact;
-                Vibrate.feedback(_type);
                 showModalBottomSheet(
                   context: context,
                   isDismissible: true,
@@ -283,158 +282,180 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                       key: ValueKey<int>(1),
                       controller: _controller2,
                       child: ListView.builder(
+                        padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
                         key: _globalKey,
                         itemCount: Provider.of<UserData>(context).notesFromUser.length,
                         controller: _controller2,
                         itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            children: [
-                              Dismissible(
-                                key: UniqueKey(),
-                                onDismissed: (DismissDirection direction) async {
-                                  if (direction == DismissDirection.startToEnd) {
-                                    print('Done');
-                                  } else if (direction == DismissDirection.endToStart) {
-                                    setState(
-                                      () {
-                                        Provider.of<UserData>(context, listen: false).notesFromUser.removeAt(index);
-                                        Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.removeAt(index);
-                                        Provider.of<UserData>(context, listen: false).dateOfNoteCreation.removeAt(index);
-                                        // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.removeAt(index);
-                                      },
-                                    );
-                                    await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
-                                    await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                                    await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
-                                    // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
-                                  }
-                                },
-                                background: Container(
-                                  color: buttonColor,
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 250, 0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          EvaIcons.flag,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                        SizedBox(
-                                          height: 15,
-                                        ),
-                                        Text(
-                                          'Flag',
-                                          style: TextStyle(color: CupertinoColors.white, fontSize: 13),
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: CupertinoColors.white,
+                              borderRadius: index == Provider.of<UserData>(context).notesFromUser.length - 1
+                                  ? BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10))
+                                  : index == 0 ? BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)) : BorderRadius.zero,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: index == 0
+                                      ? BorderRadius.only(
+                                          topRight: Radius.circular(10),
+                                          topLeft: Radius.circular(10),
                                         )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                secondaryBackground: Container(
-                                  color: Colors.red[500],
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(250, 0, 0, 0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          EvaIcons.trash2,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                        SizedBox(
-                                          height: 15,
-                                        ),
-                                        Text(
-                                          'Delete',
-                                          style: TextStyle(color: CupertinoColors.white, fontSize: 13),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    ListTile(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          CupertinoPageRoute(
-                                            fullscreenDialog: true,
-                                            builder: (_) {
-                                              return EditAndViewNotes(
-                                                index: index,
-                                              );
-                                            },
-                                          ),
+                                      : index == Provider.of<UserData>(context).notesFromUser.length - 1
+                                          ? BorderRadius.only(
+                                              bottomRight: Radius.circular(10),
+                                              bottomLeft: Radius.circular(10),
+                                            )
+                                          : BorderRadius.zero,
+                                  child: Dismissible(
+                                    key: UniqueKey(),
+                                    onDismissed: (DismissDirection direction) async {
+                                      if (direction == DismissDirection.startToEnd) {
+                                        print('Done');
+                                      } else if (direction == DismissDirection.endToStart) {
+                                        setState(
+                                          () {
+                                            Provider.of<UserData>(context, listen: false).notesFromUser.removeAt(index);
+                                            Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.removeAt(index);
+                                            Provider.of<UserData>(context, listen: false).dateOfNoteCreation.removeAt(index);
+                                            // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.removeAt(index);
+                                          },
                                         );
-                                      },
-                                      title: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                Provider.of<UserData>(context).titleOfNotesFromUser[index],
-                                                style: TextStyle(color: liltextColor, fontSize: 16),
-                                              ),
-                                              Text(
-                                                Provider.of<UserData>(context).dateOfNoteCreation[index],
-                                                style: TextStyle(color: liltextColor, fontSize: 14),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      subtitle: Padding(
-                                        padding: const EdgeInsets.only(top: 8.0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.rectangle,
-                                            borderRadius: BorderRadius.circular(2),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                Provider.of<UserData>(context).notesFromUser[index],
-                                                style: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 15),
-                                              ),
-                                              // SizedBox(
-                                              //   height: 15,
-                                              // )
-                                            ],
-                                          ),
+                                        await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
+                                        await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                                        await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                                        // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
+                                      }
+                                    },
+                                    background: Container(
+                                      color: buttonColor,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(0, 0, 250, 0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              EvaIcons.flag,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            Text(
+                                              'Flag',
+                                              style: TextStyle(color: CupertinoColors.white, fontSize: 13),
+                                            )
+                                          ],
                                         ),
                                       ),
-                                      // trailing: Padding(
-                                      //   padding: const EdgeInsets.only(bottom: 22.0, right: 10),
-                                      //   child: Text(
-                                      //     Provider.of<UserData>(context).dateOfNoteCreation[index],
-                                      //     style: TextStyle(color: liltextColor, fontSize: 14),
-                                      //   ),
-                                      // ),
                                     ),
-                                  ],
+                                    secondaryBackground: Container(
+                                      color: Colors.red[500],
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(250, 0, 0, 0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              EvaIcons.trash2,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            Text(
+                                              'Delete',
+                                              style: TextStyle(color: CupertinoColors.white, fontSize: 13),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    child: Card(
+                                      shape: ContinuousRectangleBorder(
+                                        borderRadius: BorderRadius.zero,
+                                      ),
+                                      borderOnForeground: true,
+                                      elevation: 0,
+                                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      child: ListTile(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            CupertinoPageRoute(
+                                              fullscreenDialog: true,
+                                              builder: (_) {
+                                                return EditAndViewNotes(
+                                                  index: index,
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
+                                        title: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(
+                                                  Provider.of<UserData>(context).titleOfNotesFromUser[index],
+                                                  style: TextStyle(color: liltextColor, fontSize: 16),
+                                                ),
+                                                Text(
+                                                  Provider.of<UserData>(context).dateOfNoteCreation[index],
+                                                  style: TextStyle(color: liltextColor, fontSize: 14),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        subtitle: Padding(
+                                          padding: const EdgeInsets.only(top: 8.0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.rectangle,
+                                              borderRadius: BorderRadius.circular(2),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  Provider.of<UserData>(context).notesFromUser[index],
+                                                  style: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 15),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        // trailing: Padding(
+                                        //   padding: const EdgeInsets.only(bottom: 22.0, right: 10),
+                                        //   child: Text(
+                                        //     Provider.of<UserData>(context).dateOfNoteCreation[index],
+                                        //     style: TextStyle(color: liltextColor, fontSize: 14),
+                                        //   ),
+                                        // ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              // index != Provider.of<UserData>(context).notesFromUser.length - 1
-                              //     ? Divider(
-                              //         indent: 80,
-                              //         color: liltextColor,
-                              //         thickness: 0.2,
-                              //         height: 0.0,
-                              //       )
-                              //     : SizedBox()
-                            ],
+                                // index != Provider.of<UserData>(context).notesFromUser.length - 1
+                                //     ? Divider(
+                                //         indent: 80,
+                                //         color: liltextColor,
+                                //         thickness: 0.2,
+                                //         height: 0.0,
+                                //       )
+                                //     : SizedBox()
+                              ],
+                            ),
                           );
                         },
                       ),
@@ -467,84 +488,93 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                   key: ValueKey<int>(2),
                   controller: _controller2,
                   child: ListView.builder(
+                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
                     key: _globalKey2,
                     itemCount: Provider.of<UserData>(context).notesFromUser.length,
                     controller: _controller2,
                     itemBuilder: (BuildContext context, int index) {
-                      return Column(
-                        children: [
-                          Column(
-                            children: [
-                              ListTile(
-                                title: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: 15,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        FLSkeleton(
-                                          shape: BoxShape.rectangle,
-                                          borderRadius: BorderRadius.circular(2),
-                                          width: 60,
-                                          height: 21,
-                                        ),
-                                        FLSkeleton(
-                                          shape: BoxShape.rectangle,
-                                          borderRadius: BorderRadius.circular(2),
-                                          width: 60,
-                                          height: 21,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.circular(2),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        FLSkeleton(
-                                          shape: BoxShape.rectangle,
-                                          borderRadius: BorderRadius.circular(2),
-                                          width: 200,
-                                          height: 21,
-                                        ),
-                                        // SizedBox(
-                                        //   height: 15,
-                                        // )
-                                      ],
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: index == Provider.of<UserData>(context).notesFromUser.length - 1
+                              ? BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10))
+                              : index == 0 ? BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)) : BorderRadius.zero,
+                        ),
+                        child: Column(
+                          children: [
+                            Column(
+                              children: [
+                                ListTile(
+                                  title: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height: 13,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          FLSkeleton(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.circular(2),
+                                            width: 60,
+                                            height: 21,
+                                          ),
+                                          FLSkeleton(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.circular(2),
+                                            width: 60,
+                                            height: 21,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  subtitle: Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.rectangle,
+                                        borderRadius: BorderRadius.circular(2),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          FLSkeleton(
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.circular(2),
+                                            width: 200,
+                                            height: 21,
+                                          ),
+                                          // SizedBox(
+                                          //   height: 15,
+                                          // )
+                                        ],
+                                      ),
                                     ),
                                   ),
+                                  // trailing: Padding(
+                                  //   padding: const EdgeInsets.only(bottom: 22.0, right: 10),
+                                  //   child: Text(
+                                  //     Provider.of<UserData>(context).dateOfNoteCreation[index],
+                                  //     style: TextStyle(color: liltextColor, fontSize: 14),
+                                  //   ),
+                                  // ),
                                 ),
-                                // trailing: Padding(
-                                //   padding: const EdgeInsets.only(bottom: 22.0, right: 10),
-                                //   child: Text(
-                                //     Provider.of<UserData>(context).dateOfNoteCreation[index],
-                                //     style: TextStyle(color: liltextColor, fontSize: 14),
-                                //   ),
-                                // ),
-                              ),
-                            ],
-                          ),
-                          // index != Provider.of<UserData>(context).notesFromUser.length - 1
-                          //     ? Divider(
-                          //         indent: 80,
-                          //         color: liltextColor,
-                          //         thickness: 0.2,
-                          //         height: 0.0,
-                          //       )
-                          //     : SizedBox()
-                        ],
+                              ],
+                            ),
+                            // index != Provider.of<UserData>(context).notesFromUser.length - 1
+                            //     ? Divider(
+                            //         indent: 80,
+                            //         color: liltextColor,
+                            //         thickness: 0.2,
+                            //         height: 0.0,
+                            //       )
+                            //     : SizedBox()
+                          ],
+                        ),
                       );
                     },
                   ),

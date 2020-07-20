@@ -31,6 +31,15 @@ Future<void> warmUp2() async {
   );
 }
 
+Future<void> warmUp3() async {
+  cachedActor(
+    AssetFlare(
+      bundle: rootBundle,
+      name: 'assets/flare/error.flr', //...pre cache in the later future
+    ),
+  );
+}
+
 // Gets the User Data from the internal sotrage using https://pub.dev/packages/shared_preferences
 // and stores said data values into the Provider classes.
 //
