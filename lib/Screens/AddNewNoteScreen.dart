@@ -48,7 +48,7 @@ class _AddNewNoteState extends State<AddNewNote> {
     preferences.setStringList('dateOfNoteCreation', dateOfNoteCreation);
   }
 
-  _updateimagePathOfEachNote(List<String> imagePathOfEachNote) async {
+  updateimagePathOfEachNote(List<String> imagePathOfEachNote) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);
   }
@@ -65,25 +65,31 @@ class _AddNewNoteState extends State<AddNewNote> {
     _focusNode1 = new FocusNode();
     _focusNode2 = new FocusNode();
     canTap = true;
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
     var andriod = AndroidInitializationSettings('app_icon');
     var ios = IOSInitializationSettings(
       requestSoundPermission: true,
       requestBadgePermission: true,
       requestAlertPermission: true,
     );
-    InitializationSettings initializationSettings = InitializationSettings(andriod, ios);
+    InitializationSettings initializationSettings =
+        InitializationSettings(andriod, ios);
     flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
     var time = DateTime.now().add(
       Duration(seconds: 2),
     );
-    var androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your other channel id',
+        'your other channel name',
+        'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    //flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails);
+    NotificationDetails notificationDetails = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    // flutterLocalNotificationsPlugin.schedule(
+    //     0, 'To-do', 'Also test', time, notificationDetails);
 
     super.initState();
   }
@@ -124,14 +130,16 @@ class _AddNewNoteState extends State<AddNewNote> {
                 color: secondaryColor,
               ),
               onPressed: () async {
-                final File image = await ImagePickerSaver.pickImage(source: ImageSource.gallery);
+                final File image = await ImagePickerSaver.pickImage(
+                    source: ImageSource.gallery);
                 if (image == null) {
                   imagePath = null;
                 } else {
                   Directory path = await getApplicationDocumentsDirectory();
                   final String pathToDeviceFolder = path.path;
                   String uid = Uuid().v4();
-                  final File imageToCopy = await image.copy('$pathToDeviceFolder/$uid.png');
+                  final File imageToCopy =
+                      await image.copy('$pathToDeviceFolder/$uid.png');
                   imagePath = imageToCopy.path;
                 }
               },
@@ -154,18 +162,38 @@ class _AddNewNoteState extends State<AddNewNote> {
                             if (canTap == true) {
                               FocusScope.of(context).requestFocus(FocusNode());
                             }
-                            if (notesFromUser != null && titleOfNotesFromUser != null) {
-                              Provider.of<UserData>(context, listen: false).notesFromUser.add(notesFromUser);
-                              Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.add(titleOfNotesFromUser);
-                              Provider.of<UserData>(context, listen: false).dateOfNoteCreation.add(
-                                    DateTime.now().toString().substring(0, 10).replaceAll('-', '. '),
+                            if (notesFromUser != null &&
+                                titleOfNotesFromUser != null) {
+                              Provider.of<UserData>(context, listen: false)
+                                  .notesFromUser
+                                  .add(notesFromUser);
+                              Provider.of<UserData>(context, listen: false)
+                                  .titleOfNotesFromUser
+                                  .add(titleOfNotesFromUser);
+                              Provider.of<UserData>(context, listen: false)
+                                  .dateOfNoteCreation
+                                  .add(
+                                    DateTime.now()
+                                        .toString()
+                                        .substring(0, 10)
+                                        .replaceAll('-', '. '),
                                   );
-                              print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                              print(Provider.of<UserData>(context, listen: false).notesFromUser);
+                              print(
+                                  Provider.of<UserData>(context, listen: false)
+                                      .titleOfNotesFromUser);
+                              print(
+                                  Provider.of<UserData>(context, listen: false)
+                                      .notesFromUser);
                               // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.add(imagePath);
-                              await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
-                              await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                              await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                              await _updateNotesFromUser(
+                                  Provider.of<UserData>(context, listen: false)
+                                      .notesFromUser);
+                              await _updatetitleOfNotesFromUser(
+                                  Provider.of<UserData>(context, listen: false)
+                                      .titleOfNotesFromUser);
+                              await _updatedateOfNoteCreation(
+                                  Provider.of<UserData>(context, listen: false)
+                                      .dateOfNoteCreation);
                               // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
                               setState(() {
                                 isEditing = false;
@@ -242,13 +270,12 @@ class _AddNewNoteState extends State<AddNewNote> {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: 'Not',
-                    style: TextStyle(color: liltextColor, fontSize: 20, fontWeight: FontWeight.w500),
+                    text: 'Not3s ',
+                    style: TextStyle(
+                        color: liltextColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
                   ),
-                  TextSpan(
-                    text: '3s',
-                    style: TextStyle(color: liltextColor, fontSize: 20, fontWeight: FontWeight.w500),
-                  )
                 ],
               ),
             ),
@@ -283,7 +310,8 @@ class _AddNewNoteState extends State<AddNewNote> {
                   enableInteractiveSelection: true,
                   enableSuggestions: true,
                   focusNode: _focusNode1,
-                  textCapitalization: customTextField.TextCapitalization.sentences,
+                  textCapitalization:
+                      customTextField.TextCapitalization.sentences,
                   style: TextStyle(fontSize: 16, color: textColor),
                   textInputAction: customTextField.TextInputAction.next,
                   decoration: InputDecoration(
@@ -335,7 +363,8 @@ class _AddNewNoteState extends State<AddNewNote> {
                 maxLines: 5,
                 enableInteractiveSelection: true,
                 enableSuggestions: true,
-                textCapitalization: customTextField.TextCapitalization.sentences,
+                textCapitalization:
+                    customTextField.TextCapitalization.sentences,
                 focusNode: _focusNode2,
                 style: TextStyle(fontSize: 16, color: liltextColor),
                 textInputAction: customTextField.TextInputAction.newline,

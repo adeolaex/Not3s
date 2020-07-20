@@ -55,7 +55,8 @@ _titleOfNotesFromUser() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   // preferences.setStringList('titleOfNotesFromUser', []);
   // This are used to reset the data stored within the storage of a device during production.
-  List<String> titleOfNotesFromUser = preferences.getStringList('titleOfNotesFromUser') ?? [];
+  List<String> titleOfNotesFromUser =
+      preferences.getStringList('titleOfNotesFromUser') ?? [];
 
   return titleOfNotesFromUser;
 }
@@ -72,7 +73,8 @@ _dateOfNoteCreation() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   // preferences.setStringList('dateOfNoteCreation', []);
   // This are used to reset the data stored within the storage of a device during production.
-  List<String> dateOfNoteCreation = preferences.getStringList('dateOfNoteCreation') ?? [];
+  List<String> dateOfNoteCreation =
+      preferences.getStringList('dateOfNoteCreation') ?? [];
   return dateOfNoteCreation;
 }
 
@@ -80,7 +82,8 @@ _imagePathOfEachNote() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   // preferences.setStringList('imagePathOfEachNote', []);
   //  This are used to reset the data stored within the storage of a device during production.
-  List<String> imagePathOfEachNote = preferences.getStringList('imagePathOfEachNote') ?? [];
+  List<String> imagePathOfEachNote =
+      preferences.getStringList('imagePathOfEachNote') ?? [];
   return imagePathOfEachNote;
 }
 
@@ -95,7 +98,8 @@ void main() async {
   final List<String> imagePathOfEachNote = await _imagePathOfEachNote();
   bool emptyAfter30Days = await _emptyAfter30Days();
   final List<String> dateOfNoteCreation = await _dateOfNoteCreation();
-  FlareCache.doesPrune = false; //This makes sure the wamr up function caches the flare asset files.
+  FlareCache.doesPrune =
+      false; //This makes sure the wamr up function caches the flare asset files.
   warmUp();
   FlareCache.doesPrune = false;
   warmUp2();
@@ -133,14 +137,19 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Not3s',
+        theme: ThemeData(brightness: Brightness.light),
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
             builder: (BuildContext context) {
               Provider.of<UserData>(context).notesFromUser = notesFromUser;
-              Provider.of<UserData>(context).titleOfNotesFromUser = titleOfNotesFromUser;
-              Provider.of<UserData>(context).emptyAfter30Days = emptyAfter30Days;
-              Provider.of<UserData>(context).dateOfNoteCreation = dateOfNoteCreation;
-              Provider.of<UserData>(context).imagePathOfEachNote = imagePathOfEachNote;
+              Provider.of<UserData>(context).titleOfNotesFromUser =
+                  titleOfNotesFromUser;
+              Provider.of<UserData>(context).emptyAfter30Days =
+                  emptyAfter30Days;
+              Provider.of<UserData>(context).dateOfNoteCreation =
+                  dateOfNoteCreation;
+              Provider.of<UserData>(context).imagePathOfEachNote =
+                  imagePathOfEachNote;
               return MyHomePage();
             },
           );
