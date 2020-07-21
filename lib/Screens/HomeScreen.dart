@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage>
     _scrollController = ScrollController();
     _focusNode1 = new FocusNode();
     _focusNode2 = new FocusNode();
-    canTap = true;
+    // canTap = true;
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
     var andriod = AndroidInitializationSettings('app_icon');
