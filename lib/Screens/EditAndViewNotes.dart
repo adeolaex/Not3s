@@ -135,10 +135,8 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
           elevation: 0.0,
           leading: CupertinoButton(
             padding: EdgeInsets.zero,
-            child: Icon(
-              EvaIcons.arrowIosDownwardOutline,
-              color: secondaryColor,
-            ),
+            child: Icon(EvaIcons.arrowCircleDownOutline,
+                color: CupertinoColors.systemBlue),
             onPressed: () async {
               await Navigator.maybePop(context);
             },
@@ -148,7 +146,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
               padding: EdgeInsets.zero,
               child: Icon(
                 EvaIcons.attachOutline,
-                color: secondaryColor,
+                color: CupertinoColors.systemBlue,
               ),
               onPressed: () async {
                 final File image = await ImagePickerSaver.pickImage(
@@ -172,7 +170,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
                       padding: EdgeInsets.zero,
                       child: Icon(
                         EvaIcons.doneAllOutline,
-                        color: secondaryColor,
+                        color: CupertinoColors.systemBlue,
                       ),
                       onPressed: () async {
                         setState(() {
@@ -274,27 +272,19 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
                     ),
             )
           ],
-          title: Hero(
-            tag: 'title',
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Not',
-                    style: TextStyle(
-                        color: liltextColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  TextSpan(
-                    text: '3s',
-                    style: TextStyle(
-                        color: liltextColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500),
-                  )
-                ],
-              ),
+          title: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: Provider.of<UserData>(context, listen: false)
+                      .titleOfNotesFromUser[widget.index],
+                  style: TextStyle(
+                      letterSpacing: -0.5,
+                      color: liltextColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500),
+                ),
+              ],
             ),
           ),
         ),
@@ -327,10 +317,11 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
                   },
                   enableInteractiveSelection: true,
                   enableSuggestions: true,
+                  cursorColor: CupertinoColors.systemBlue,
                   focusNode: _focusNode1,
                   textCapitalization:
                       customTextField.TextCapitalization.sentences,
-                  style: TextStyle(fontSize: 16, color: textColor),
+                  style: TextStyle(fontSize: 16, color: liltextColor),
                   textInputAction: customTextField.TextInputAction.next,
                   decoration: InputDecoration(
                     labelText: 'Title',
@@ -353,13 +344,6 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
               ),
               SizedBox(
                 height: 70,
-                child: Divider(
-                  indent: 70,
-                  endIndent: 70,
-                  color: liltextColor,
-                  thickness: 0.2,
-                  height: 0.0,
-                ),
               ),
               customTextField.TextField(
                 controller: _textEditingController2,
@@ -382,6 +366,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
                 maxLines: 5,
                 enableInteractiveSelection: true,
                 enableSuggestions: true,
+                cursorColor: CupertinoColors.systemBlue,
                 textCapitalization:
                     customTextField.TextCapitalization.sentences,
                 focusNode: _focusNode2,

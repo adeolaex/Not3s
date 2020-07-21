@@ -33,6 +33,7 @@ class _AddNewNoteState extends State<AddNewNote> {
   String dateOfNoteCreated;
   String imagePath;
   bool isEditing;
+  Color testColor2 = liltextColor;
   _updateNotesFromUser(List<String> notesFromUseR) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setStringList('notesFromUser', notesFromUseR);
@@ -106,6 +107,25 @@ class _AddNewNoteState extends State<AddNewNote> {
         }
       },
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.white,
+          child: Icon(
+            EvaIcons.plus,
+            color: testColor2,
+            size: 27,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) {
+                  return AddNewNote();
+                },
+                fullscreenDialog: true,
+              ),
+            );
+          },
+        ),
         backgroundColor: CupertinoColors.white,
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
