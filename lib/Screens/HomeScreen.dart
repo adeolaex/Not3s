@@ -3,7 +3,7 @@
 //The values are then sent to the Provider classes so that other screens can get the returned values.
 
 //
-import 'dart:io';
+
 import 'package:Not3s/Screens/AddNewNoteScreen.dart';
 import 'package:Not3s/Screens/Bin.dart';
 import 'package:Not3s/Screens/EditAndViewNotes.dart';
@@ -182,21 +182,7 @@ class _MyHomePageState extends State<MyHomePage>
                           EvaIcons.attachOutline,
                           color: secondaryColor,
                         ),
-                        onPressed: () async {
-                          final File image = await ImagePickerSaver.pickImage(
-                              source: ImageSource.gallery);
-                          if (image == null) {
-                            imagePath = null;
-                          } else {
-                            Directory path =
-                                await getApplicationDocumentsDirectory();
-                            final String pathToDeviceFolder = path.path;
-                            String uid = Uuid().v4();
-                            final File imageToCopy = await image
-                                .copy('$pathToDeviceFolder/$uid.png');
-                            imagePath = imageToCopy.path;
-                          }
-                        },
+                        onPressed: () async {},
                       ),
                       AnimatedSwitcher(
                         duration: Duration(milliseconds: 500),
