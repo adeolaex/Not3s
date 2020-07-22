@@ -135,8 +135,10 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
           elevation: 0.0,
           leading: CupertinoButton(
             padding: EdgeInsets.zero,
-            child: Icon(EvaIcons.arrowCircleDownOutline,
-                color: CupertinoColors.systemBlue),
+            child: Icon(
+              EvaIcons.close,
+              color: CupertinoColors.activeBlue,
+            ),
             onPressed: () async {
               await Navigator.maybePop(context);
             },
@@ -146,7 +148,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
               padding: EdgeInsets.zero,
               child: Icon(
                 EvaIcons.attachOutline,
-                color: CupertinoColors.systemBlue,
+                color: CupertinoColors.activeBlue,
               ),
               onPressed: () async {
                 final File image = await ImagePickerSaver.pickImage(

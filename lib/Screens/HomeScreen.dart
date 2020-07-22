@@ -20,7 +20,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -465,15 +464,36 @@ class _MyHomePageState extends State<MyHomePage>
                   backgroundColor: CupertinoColors.systemBackground,
                   resizeToAvoidBottomPadding: false,
                   floatingActionButton: Transform.scale(
-                    scale: 0.9,
+                    scale: 1.0,
                     child: FloatingActionButton(
-                      mini: true,
+                      // mini: true,
                       elevation: 2.0,
                       backgroundColor: CupertinoColors.systemBlue,
-                      child: Icon(
-                        EvaIcons.fileText,
-                        color: Colors.white,
-                        size: 27,
+                      child: Stack(
+                        // alignment: Alignment.center,
+                        children: [
+                          Positioned(
+                            left: 20,
+                            top: 20,
+                            child: Icon(
+                              EvaIcons.fileText,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                          Positioned(
+                            right: 24,
+                            top: 7,
+                            child: Transform.scale(
+                              scale: 0.7,
+                              child: Icon(
+                                EvaIcons.plusOutline,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       onPressed: () {
                         setState(() {
@@ -495,28 +515,29 @@ class _MyHomePageState extends State<MyHomePage>
                     child: AnnotatedRegion<SystemUiOverlayStyle>(
                       value: SystemUiOverlayStyle.light,
                       child: CustomScrollView(
+                        physics: NoImplicitScrollPhysics(
+                          parent: ScrollPhysics(),
+                        ),
                         controller: _controller2,
                         slivers: [
                           SliverAppBar(
                             floating: true,
                             collapsedHeight: 70,
-                            // expandedHeight: 100,
+                            // expandedHeight: 10,
                             flexibleSpace: FlexibleSpaceBar(
-                              title: Transform.scale(
-                                scale: 1,
-                                child: Form(
-                                  // key: _formKey,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: Stack(
-                                      alignment: Alignment.centerRight,
-                                      children: [
-                                        Container(
+                              title: Form(
+                                // key: _formKey,
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 40.0),
+                                        child: Container(
                                           child: Card(
-                                            elevation: 1.4,
-                                            shadowColor: CupertinoColors
-                                                .darkBackgroundGray,
+                                            // shadowColor: CupertinoColors
+                                            //     .darkBackgroundGray,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(6),
@@ -614,179 +635,187 @@ class _MyHomePageState extends State<MyHomePage>
                                             ),
                                           ),
                                         ),
-                                        CupertinoButton(
-                                          padding: EdgeInsets.zero,
-                                          child: Stack(
-                                            alignment: Alignment.center,
-                                            children: [
-                                              Icon(
-                                                EvaIcons.radioButtonOff,
-                                                color:
-                                                    CupertinoColors.activeBlue,
-                                              ),
-                                              Transform.scale(
+                                      ),
+                                      Transform.translate(
+                                        offset: Offset(210, 0),
+                                        child: SizedBox(
+                                          height: 900,
+                                          width: 80,
+                                          child: FlatButton(
+                                            highlightColor: Colors.transparent,
+                                            splashColor: Colors.transparent,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10.0),
+                                              child: Transform.scale(
                                                 scale: 0.8,
                                                 child: Icon(
-                                                  EvaIcons.moreHorizotnal,
+                                                  EvaIcons.moreVertical,
                                                   color: CupertinoColors
                                                       .activeBlue,
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                          onPressed: () async {
-                                            showModalBottomSheet(
-                                              context: context,
-                                              isDismissible: true,
-                                              builder: (BuildContext context) {
-                                                return StatefulBuilder(
-                                                  builder: (BuildContext
-                                                          context,
-                                                      StateSetter setState) {
-                                                    return Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: <Widget>[
-                                                        ListTile(
-                                                          leading: Icon(
-                                                            EvaIcons
-                                                                .trash2Outline,
-                                                            color: liltextColor,
-                                                          ),
-                                                          title: Text(
-                                                            'Bin',
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color:
-                                                                    textColor),
-                                                          ),
-                                                          onTap: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder: (_) {
-                                                                  return Bin();
-                                                                },
-                                                                fullscreenDialog:
-                                                                    true,
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                        ListTile(
-                                                          leading: Icon(
-                                                            EvaIcons
-                                                                .flagOutline,
-                                                            color: liltextColor,
-                                                          ),
-                                                          title: Text(
-                                                            'Flagged',
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color:
-                                                                    textColor),
-                                                          ),
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder: (_) {
-                                                                  return FlaggedNotes();
-                                                                },
-                                                                fullscreenDialog:
-                                                                    true,
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                        ListTile(
-                                                          leading: Icon(
-                                                            EvaIcons
-                                                                .eyeOff2Outline,
-                                                            color: liltextColor,
-                                                          ),
-                                                          title: Text(
-                                                            'Hidden Notes',
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color:
-                                                                    textColor),
-                                                          ),
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder: (_) {
-                                                                  return HiddenNotes();
-                                                                },
-                                                                fullscreenDialog:
-                                                                    true,
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                        Divider(
-                                                          indent: 70,
-                                                          endIndent: 70,
-                                                          color: liltextColor,
-                                                          thickness: 0.2,
-                                                          height: 0.0,
-                                                        ),
-                                                        Theme(
-                                                          data: ThemeData(
-                                                            splashColor: Colors
-                                                                .transparent,
-                                                            highlightColor:
-                                                                Colors
-                                                                    .transparent,
-                                                          ),
-                                                          child: ListTile(
+                                            ),
+                                            onPressed: () async {
+                                              showModalBottomSheet(
+                                                context: context,
+                                                isDismissible: true,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return StatefulBuilder(
+                                                    builder: (BuildContext
+                                                            context,
+                                                        StateSetter setState) {
+                                                      return Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: <Widget>[
+                                                          ListTile(
+                                                            leading: Icon(
+                                                              EvaIcons
+                                                                  .trash2Outline,
+                                                              color:
+                                                                  liltextColor,
+                                                            ),
                                                             title: Text(
-                                                              'Empty Bin after 30 days.',
+                                                              'Bin',
                                                               style: TextStyle(
                                                                   fontSize: 14,
                                                                   color:
-                                                                      liltextColor),
+                                                                      textColor),
                                                             ),
-                                                            //  dense: true,
-                                                            trailing:
-                                                                Switch.adaptive(
-                                                              activeTrackColor:
-                                                                  buttonColor,
-                                                              activeColor:
-                                                                  buttonColor,
-                                                              value: isSwitched,
-                                                              onChanged:
-                                                                  (value) {
-                                                                setState(() {
-                                                                  isSwitched =
-                                                                      value;
-                                                                  updateDeletePreference(
-                                                                      value);
-                                                                });
-                                                              },
+                                                            onTap: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (_) {
+                                                                    return Bin();
+                                                                  },
+                                                                  fullscreenDialog:
+                                                                      true,
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                          ListTile(
+                                                            leading: Icon(
+                                                              EvaIcons
+                                                                  .flagOutline,
+                                                              color:
+                                                                  liltextColor,
+                                                            ),
+                                                            title: Text(
+                                                              'Flagged',
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color:
+                                                                      textColor),
+                                                            ),
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (_) {
+                                                                    return FlaggedNotes();
+                                                                  },
+                                                                  fullscreenDialog:
+                                                                      true,
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                          ListTile(
+                                                            leading: Icon(
+                                                              EvaIcons
+                                                                  .eyeOff2Outline,
+                                                              color:
+                                                                  liltextColor,
+                                                            ),
+                                                            title: Text(
+                                                              'Hidden Notes',
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color:
+                                                                      textColor),
+                                                            ),
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (_) {
+                                                                    return HiddenNotes();
+                                                                  },
+                                                                  fullscreenDialog:
+                                                                      true,
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                          Divider(
+                                                            indent: 70,
+                                                            endIndent: 70,
+                                                            color: liltextColor,
+                                                            thickness: 0.2,
+                                                            height: 0.0,
+                                                          ),
+                                                          Theme(
+                                                            data: ThemeData(
+                                                              splashColor: Colors
+                                                                  .transparent,
+                                                              highlightColor:
+                                                                  Colors
+                                                                      .transparent,
+                                                            ),
+                                                            child: ListTile(
+                                                              title: Text(
+                                                                'Empty Bin after 30 days.',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    color:
+                                                                        liltextColor),
+                                                              ),
+                                                              //  dense: true,
+                                                              trailing: Switch
+                                                                  .adaptive(
+                                                                activeTrackColor:
+                                                                    buttonColor,
+                                                                activeColor:
+                                                                    buttonColor,
+                                                                value:
+                                                                    isSwitched,
+                                                                onChanged:
+                                                                    (value) {
+                                                                  setState(() {
+                                                                    isSwitched =
+                                                                        value;
+                                                                    updateDeletePreference(
+                                                                        value);
+                                                                  });
+                                                                },
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 5,
-                                                        )
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                            ).whenComplete(() {
-                                              setState(() {
-                                                canTap = true;
+                                                          SizedBox(
+                                                            height: 5,
+                                                          )
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              ).whenComplete(() {
+                                                setState(() {
+                                                  canTap = true;
+                                                });
                                               });
-                                            });
-                                          },
+                                            },
+                                          ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -834,122 +863,174 @@ class _MyHomePageState extends State<MyHomePage>
                                                       .notesFromUser
                                                       .length !=
                                                   0
-                                              ? Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Card(
-                                                      color: CupertinoColors
-                                                          .systemBackground,
-                                                      shape:
-                                                          ContinuousRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.zero,
-                                                      ),
-                                                      borderOnForeground: true,
-                                                      elevation: 0,
-                                                      margin:
-                                                          EdgeInsets.fromLTRB(
-                                                              0, 0, 0, 0),
-                                                      child: ListTile(
-                                                        contentPadding:
-                                                            EdgeInsets.only(
-                                                                left: 30.0,
-                                                                right: 30.0),
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            CupertinoPageRoute(
-                                                              fullscreenDialog:
-                                                                  true,
-                                                              builder: (_) {
-                                                                return EditAndViewNotes(
-                                                                  index: index,
-                                                                );
-                                                              },
-                                                            ),
-                                                          );
+                                              ? Dismissible(
+                                                  key: ValueKey<int>(index),
+                                                  onDismissed: (DismissDirection
+                                                      direction) async {
+                                                    if (direction ==
+                                                        DismissDirection
+                                                            .endToStart) {
+                                                      setState(
+                                                        () {
+                                                          Provider.of<UserData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .notesFromUser
+                                                              .removeAt(index);
+                                                          Provider.of<UserData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .titleOfNotesFromUser
+                                                              .removeAt(index);
+                                                          Provider.of<UserData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .dateOfNoteCreation
+                                                              .removeAt(index);
+                                                          // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.removeAt(index);
                                                         },
-                                                        title: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  Provider.of<UserData>(
-                                                                          context)
-                                                                      .titleOfNotesFromUser[index],
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          liltextColor,
-                                                                      fontSize:
-                                                                          16),
-                                                                ),
-                                                                Text(
-                                                                  Provider.of<UserData>(
-                                                                          context)
-                                                                      .dateOfNoteCreation[index],
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                          liltextColor,
-                                                                      fontSize:
-                                                                          14),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
+                                                      );
+                                                      await _updateNotesFromUser(
+                                                          Provider.of<UserData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .notesFromUser);
+                                                      await _updatetitleOfNotesFromUser(
+                                                          Provider.of<UserData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .titleOfNotesFromUser);
+                                                      await _updatedateOfNoteCreation(
+                                                          Provider.of<UserData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .dateOfNoteCreation);
+                                                      // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
+
+                                                    }
+                                                  },
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Card(
+                                                        color: CupertinoColors
+                                                            .systemBackground,
+                                                        shape:
+                                                            ContinuousRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.zero,
                                                         ),
-                                                        subtitle: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 8.0),
-                                                          child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              shape: BoxShape
-                                                                  .rectangle,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          2),
-                                                            ),
-                                                            child: Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Text(
-                                                                  Provider.of<UserData>(
-                                                                          context)
-                                                                      .notesFromUser[index],
-                                                                  style: TextStyle(
-                                                                      color: liltextColor
-                                                                          .withOpacity(
-                                                                              0.7),
-                                                                      fontSize:
-                                                                          15),
-                                                                ),
-                                                              ],
+                                                        borderOnForeground:
+                                                            true,
+                                                        elevation: 0,
+                                                        margin:
+                                                            EdgeInsets.fromLTRB(
+                                                                0, 0, 0, 0),
+                                                        child: ListTile(
+                                                          contentPadding:
+                                                              EdgeInsets.only(
+                                                                  left: 30.0,
+                                                                  right: 30.0),
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                              context,
+                                                              CupertinoPageRoute(
+                                                                fullscreenDialog:
+                                                                    true,
+                                                                builder: (_) {
+                                                                  return EditAndViewNotes(
+                                                                    index:
+                                                                        index,
+                                                                  );
+                                                                },
+                                                              ),
+                                                            );
+                                                          },
+                                                          title: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Text(
+                                                                    Provider.of<UserData>(
+                                                                            context)
+                                                                        .titleOfNotesFromUser[index],
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                            liltextColor,
+                                                                        fontSize:
+                                                                            16),
+                                                                  ),
+                                                                  Text(
+                                                                      Provider.of<UserData>(context).dateOfNoteCreation[index] ==
+                                                                              DateTime.now().toString().substring(0, 10).replaceAll('-',
+                                                                                  '. ')
+                                                                          ? 'Today'
+                                                                          : Provider.of<UserData>(context).dateOfNoteCreation[
+                                                                              index],
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              liltextColor,
+                                                                          fontSize:
+                                                                              14)),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          subtitle: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 8.0),
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .rectangle,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            2),
+                                                              ),
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    Provider.of<UserData>(
+                                                                            context)
+                                                                        .notesFromUser[index],
+                                                                    style: TextStyle(
+                                                                        color: liltextColor.withOpacity(
+                                                                            0.7),
+                                                                        fontSize:
+                                                                            15),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 )
                                               : Column(
                                                   key: ValueKey<int>(2),
@@ -1206,5 +1287,17 @@ class _MyHomePageState extends State<MyHomePage>
         },
       );
     }
+  }
+}
+
+class NoImplicitScrollPhysics extends AlwaysScrollableScrollPhysics {
+  const NoImplicitScrollPhysics({ScrollPhysics parent}) : super(parent: parent);
+
+  @override
+  bool get allowImplicitScrolling => false;
+
+  @override
+  NoImplicitScrollPhysics applyTo(ScrollPhysics ancestor) {
+    return NoImplicitScrollPhysics(parent: buildParent(ancestor));
   }
 }

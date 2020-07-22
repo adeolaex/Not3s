@@ -24,9 +24,9 @@ dependencies:
   flutter_local_notifications: ^1.4.4+2
   path_provider: ^1.6.11
   uuid: ^2.2.0
-  flutter_slidable: ^0.5.4
-  animated_floatactionbuttons: ^0.1.0
-
+  zefyr:
+  flutter_keyboard_size: ^0.1.2+2
+  keyboard_utils: ^1.2.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -93,6 +93,10 @@ _imagePathOfEachNote() async {
 // to the Provider classes.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.portraitDown,
+  ]);
   final List<String> notesFromUser = await _notesFromUser();
   final List<String> titleOfNotesFromUser = await _titleOfNotesFromUser();
   final List<String> imagePathOfEachNote = await _imagePathOfEachNote();
