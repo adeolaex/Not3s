@@ -19,6 +19,7 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -40,8 +41,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
-    with AfterLayoutMixin, SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTickerProviderStateMixin {
   //Various keys are used in order for the animation switcher widget to transitions without errors.
   final GlobalKey<ScaffoldState> key1 = GlobalKey<ScaffoldState>();
   final GlobalKey<ScaffoldState> key2 = GlobalKey<ScaffoldState>();
@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage>
   String dateOfNoteCreated;
   String imagePath;
   bool isEditing;
-
+  int index;
 //This are functions that carry out the task of updating and deleting to-do's in the system(phone's)
 //storage
   _updateNotesFromUser(List<String> notesFromUseR) async {
@@ -104,29 +104,23 @@ class _MyHomePageState extends State<MyHomePage>
     _focusNode1 = new FocusNode();
     _focusNode2 = new FocusNode();
     // canTap = true;
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     var andriod = AndroidInitializationSettings('app_icon');
     var ios = IOSInitializationSettings(
       requestSoundPermission: true,
       requestBadgePermission: true,
       requestAlertPermission: true,
     );
-    InitializationSettings initializationSettings =
-        InitializationSettings(andriod, ios);
+    InitializationSettings initializationSettings = InitializationSettings(andriod, ios);
     flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
     var time = DateTime.now().add(
       Duration(seconds: 2),
     );
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your other channel id',
-        'your other channel name',
-        'your other channel description');
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    NotificationDetails notificationDetails = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     // flutterLocalNotificationsPlugin.schedule(
     //     0, 'To-do', 'Also test', time, notificationDetails);
     dummyBool = false;
@@ -139,8 +133,7 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void didChangeDependencies() {
     precacheImage(myImage.image, context);
-    isSwitched = Provider.of<UserData>(context)
-        .emptyAfter30Days; //Note to self..... init the state of bool value with after layout
+    isSwitched = Provider.of<UserData>(context).emptyAfter30Days; //Note to self..... init the state of bool value with after layout
     super.didChangeDependencies();
   }
 
@@ -182,8 +175,7 @@ class _MyHomePageState extends State<MyHomePage>
                           color: secondaryColor,
                         ),
                         onPressed: () async {
-                          final File image = await ImagePickerSaver.pickImage(
-                              source: ImageSource.gallery);
+                          final File image = await ImagePickerSaver.pickImage(source: ImageSource.gallery);
                           final path = await getApplicationDocumentsDirectory();
                           final id = Uuid().v4;
                           final File a = await image.copy('$path/$id');
@@ -206,47 +198,20 @@ class _MyHomePageState extends State<MyHomePage>
                                         canTap = true;
                                       });
                                       if (canTap == true) {
-                                        FocusScope.of(context)
-                                            .requestFocus(FocusNode());
+                                        FocusScope.of(context).requestFocus(FocusNode());
                                       }
-                                      if (notesFromUser != null &&
-                                          titleOfNotesFromUser != null) {
-                                        Provider.of<UserData>(context,
-                                                listen: false)
-                                            .notesFromUser
-                                            .add(notesFromUser);
-                                        Provider.of<UserData>(context,
-                                                listen: false)
-                                            .titleOfNotesFromUser
-                                            .add(titleOfNotesFromUser);
-                                        Provider.of<UserData>(context,
-                                                listen: false)
-                                            .dateOfNoteCreation
-                                            .add(
-                                              DateTime.now()
-                                                  .toString()
-                                                  .substring(0, 10)
-                                                  .replaceAll('-', '. '),
+                                      if (notesFromUser != null && titleOfNotesFromUser != null) {
+                                        Provider.of<UserData>(context, listen: false).notesFromUser.add(notesFromUser);
+                                        Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.add(titleOfNotesFromUser);
+                                        Provider.of<UserData>(context, listen: false).dateOfNoteCreation.add(
+                                              DateTime.now().toString().substring(0, 10).replaceAll('-', '. '),
                                             );
-                                        print(Provider.of<UserData>(context,
-                                                listen: false)
-                                            .titleOfNotesFromUser);
-                                        print(Provider.of<UserData>(context,
-                                                listen: false)
-                                            .notesFromUser);
+                                        print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                                        print(Provider.of<UserData>(context, listen: false).notesFromUser);
                                         // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.add(imagePath);
-                                        await _updateNotesFromUser(
-                                            Provider.of<UserData>(context,
-                                                    listen: false)
-                                                .notesFromUser);
-                                        await _updatetitleOfNotesFromUser(
-                                            Provider.of<UserData>(context,
-                                                    listen: false)
-                                                .titleOfNotesFromUser);
-                                        await _updatedateOfNoteCreation(
-                                            Provider.of<UserData>(context,
-                                                    listen: false)
-                                                .dateOfNoteCreation);
+                                        await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
+                                        await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                                        await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
                                         // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
                                         setState(() {
                                           isEditing = false;
@@ -259,16 +224,13 @@ class _MyHomePageState extends State<MyHomePage>
                                           onTap: (flushbar) {
                                             removeFlushbar(flushbar);
                                           },
-                                          flushbarPosition:
-                                              FlushbarPosition.TOP,
-                                          message:
-                                              "A title and to-do is required.",
+                                          flushbarPosition: FlushbarPosition.TOP,
+                                          message: "A title and to-do is required.",
                                           maxWidth: 250.0,
                                           duration: Duration(seconds: 3),
                                         );
                                         _flushBar
-                                          ..onStatusChanged =
-                                              (FlushbarStatus status) {
+                                          ..onStatusChanged = (FlushbarStatus status) {
                                             switch (status) {
                                               case FlushbarStatus.SHOWING:
                                                 {
@@ -327,10 +289,7 @@ class _MyHomePageState extends State<MyHomePage>
                           children: [
                             TextSpan(
                               text: 'Not3s ',
-                              style: TextStyle(
-                                  color: liltextColor,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500),
+                              style: TextStyle(color: liltextColor, fontSize: 20, fontWeight: FontWeight.w500),
                             ),
                           ],
                         ),
@@ -366,31 +325,24 @@ class _MyHomePageState extends State<MyHomePage>
                             enableInteractiveSelection: true,
                             enableSuggestions: true,
                             focusNode: _focusNode1,
-                            textCapitalization:
-                                customTextField.TextCapitalization.sentences,
+                            textCapitalization: customTextField.TextCapitalization.sentences,
                             style: TextStyle(fontSize: 16, color: textColor),
-                            textInputAction:
-                                customTextField.TextInputAction.next,
+                            textInputAction: customTextField.TextInputAction.next,
                             decoration: InputDecoration(
                               labelText: 'Title',
-                              labelStyle:
-                                  TextStyle(fontSize: 13, color: liltextColor),
+                              labelStyle: TextStyle(fontSize: 13, color: liltextColor),
                               contentPadding: EdgeInsets.only(left: 1, top: 1),
                               border: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.white, width: 0.4),
+                                borderSide: BorderSide(color: Colors.white, width: 0.4),
                               ),
                               disabledBorder: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.white, width: 0.4),
+                                borderSide: BorderSide(color: Colors.white, width: 0.4),
                               ),
                               enabledBorder: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.white, width: 0.4),
+                                borderSide: BorderSide(color: Colors.white, width: 0.4),
                               ),
                               focusedBorder: UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.white, width: 0.4),
+                                borderSide: BorderSide(color: Colors.white, width: 0.4),
                               ),
                             ),
                           ),
@@ -425,33 +377,25 @@ class _MyHomePageState extends State<MyHomePage>
                           maxLines: 5,
                           enableInteractiveSelection: true,
                           enableSuggestions: true,
-                          textCapitalization:
-                              customTextField.TextCapitalization.sentences,
+                          textCapitalization: customTextField.TextCapitalization.sentences,
                           focusNode: _focusNode2,
                           style: TextStyle(fontSize: 16, color: liltextColor),
-                          textInputAction:
-                              customTextField.TextInputAction.newline,
+                          textInputAction: customTextField.TextInputAction.newline,
                           decoration: InputDecoration(
                             labelText: 'To-do',
-                            labelStyle:
-                                TextStyle(fontSize: 13, color: liltextColor),
-                            contentPadding:
-                                EdgeInsets.only(left: 30, top: 1, right: 30),
+                            labelStyle: TextStyle(fontSize: 13, color: liltextColor),
+                            contentPadding: EdgeInsets.only(left: 30, top: 1, right: 30),
                             border: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.white, width: 0.3),
+                              borderSide: BorderSide(color: Colors.white, width: 0.3),
                             ),
                             disabledBorder: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.white, width: 0.3),
+                              borderSide: BorderSide(color: Colors.white, width: 0.3),
                             ),
                             enabledBorder: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.white, width: 0.3),
+                              borderSide: BorderSide(color: Colors.white, width: 0.3),
                             ),
                             focusedBorder: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.white, width: 0.3),
+                              borderSide: BorderSide(color: Colors.white, width: 0.3),
                             ),
                           ),
                         ),
@@ -532,15 +476,13 @@ class _MyHomePageState extends State<MyHomePage>
                                   child: Stack(
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 40.0),
+                                        padding: const EdgeInsets.symmetric(horizontal: 40.0),
                                         child: Container(
                                           child: Card(
                                             // shadowColor: CupertinoColors
                                             //     .darkBackgroundGray,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
+                                              borderRadius: BorderRadius.circular(6),
                                             ),
                                             child: TextFormField(
                                               onTap: () {
@@ -551,24 +493,12 @@ class _MyHomePageState extends State<MyHomePage>
                                               // autofocus: true,
                                               onSaved: (input) {},
 
-                                              validator: (input) => !input
-                                                          .contains('@') ||
-                                                      !input.contains('.') ||
-                                                      input.length < 5 ||
-                                                      input == null ||
-                                                      input.isEmpty ||
-                                                      input.endsWith('.')
-                                                  ? null
-                                                  : null,
+                                              validator: (input) =>
+                                                  !input.contains('@') || !input.contains('.') || input.length < 5 || input == null || input.isEmpty || input.endsWith('.') ? null : null,
                                               keyboardType: TextInputType.url,
                                               cursorColor: Colors.grey[500],
 
-                                              style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText2
-                                                      .color,
-                                                  fontSize: 15),
+                                              style: TextStyle(color: Theme.of(context).textTheme.bodyText2.color, fontSize: 15),
                                               autocorrect: false,
                                               enableInteractiveSelection: false,
                                               decoration: InputDecoration(
@@ -577,59 +507,30 @@ class _MyHomePageState extends State<MyHomePage>
                                                 isDense: true,
 
                                                 hintText: 'Email',
-                                                hintStyle: TextStyle(
-                                                    color: liltextColor),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  borderSide: BorderSide(
-                                                      color: CupertinoColors
-                                                          .systemBackground,
-                                                      width: 0.0),
+                                                hintStyle: TextStyle(color: liltextColor),
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderSide: BorderSide(color: CupertinoColors.systemBackground, width: 0.0),
                                                 ),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  borderSide: BorderSide(
-                                                      color: CupertinoColors
-                                                          .systemBackground,
-                                                      width: 0.0),
+                                                enabledBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderSide: BorderSide(color: CupertinoColors.systemBackground, width: 0.0),
                                                 ),
                                                 errorBorder: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  borderSide: BorderSide(
-                                                      color: CupertinoColors
-                                                          .systemBackground,
-                                                      width: 0.0),
+                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderSide: BorderSide(color: CupertinoColors.systemBackground, width: 0.0),
                                                 ),
                                                 border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  borderSide: BorderSide(
-                                                      color: CupertinoColors
-                                                          .systemBackground,
-                                                      width: 0.0),
+                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderSide: BorderSide(color: CupertinoColors.systemBackground, width: 0.0),
                                                 ),
-                                                focusedErrorBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  borderSide: BorderSide(
-                                                      color: CupertinoColors
-                                                          .systemBackground,
-                                                      width: 0.0),
+                                                focusedErrorBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderSide: BorderSide(color: CupertinoColors.systemBackground, width: 0.0),
                                                 ),
-                                                disabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  borderSide: BorderSide(
-                                                      color: CupertinoColors
-                                                          .systemBackground,
-                                                      width: 0.0),
+                                                disabledBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderSide: BorderSide(color: CupertinoColors.systemBackground, width: 0.0),
                                                 ),
                                               ),
                                             ),
@@ -645,73 +546,60 @@ class _MyHomePageState extends State<MyHomePage>
                                             highlightColor: Colors.transparent,
                                             splashColor: Colors.transparent,
                                             child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10.0),
+                                              padding: const EdgeInsets.only(left: 10.0),
                                               child: Transform.scale(
                                                 scale: 0.8,
                                                 child: Icon(
                                                   EvaIcons.moreVertical,
-                                                  color: CupertinoColors
-                                                      .activeBlue,
+                                                  color: CupertinoColors.activeBlue,
                                                 ),
                                               ),
                                             ),
                                             onPressed: () async {
+                                              FlutterAppBadger.updateBadgeCount(7);
+                                              print(Provider.of<UserData>(context, listen: false).notesFromUser);
+                                              print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                                              print(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+
                                               showModalBottomSheet(
                                                 context: context,
                                                 isDismissible: true,
-                                                builder:
-                                                    (BuildContext context) {
+                                                builder: (BuildContext context) {
                                                   return StatefulBuilder(
-                                                    builder: (BuildContext
-                                                            context,
-                                                        StateSetter setState) {
+                                                    builder: (BuildContext context, StateSetter setState) {
                                                       return Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
+                                                        mainAxisSize: MainAxisSize.min,
                                                         children: <Widget>[
                                                           ListTile(
                                                             leading: Icon(
-                                                              EvaIcons
-                                                                  .trash2Outline,
-                                                              color:
-                                                                  liltextColor,
+                                                              EvaIcons.trash2Outline,
+                                                              color: liltextColor,
                                                             ),
                                                             title: Text(
                                                               'Bin',
-                                                              style: TextStyle(
-                                                                  fontSize: 14,
-                                                                  color:
-                                                                      textColor),
+                                                              style: TextStyle(fontSize: 14, color: textColor),
                                                             ),
                                                             onTap: () {
-                                                              Navigator.pop(
-                                                                  context);
+                                                              Navigator.pop(context);
                                                               Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
                                                                   builder: (_) {
                                                                     return Bin();
                                                                   },
-                                                                  fullscreenDialog:
-                                                                      true,
+                                                                  fullscreenDialog: true,
                                                                 ),
                                                               );
                                                             },
                                                           ),
                                                           ListTile(
                                                             leading: Icon(
-                                                              EvaIcons
-                                                                  .flagOutline,
-                                                              color:
-                                                                  liltextColor,
+                                                              EvaIcons.flagOutline,
+                                                              color: liltextColor,
                                                             ),
                                                             title: Text(
                                                               'Flagged',
-                                                              style: TextStyle(
-                                                                  fontSize: 14,
-                                                                  color:
-                                                                      textColor),
+                                                              style: TextStyle(fontSize: 14, color: textColor),
                                                             ),
                                                             onTap: () {
                                                               Navigator.push(
@@ -720,25 +608,19 @@ class _MyHomePageState extends State<MyHomePage>
                                                                   builder: (_) {
                                                                     return FlaggedNotes();
                                                                   },
-                                                                  fullscreenDialog:
-                                                                      true,
+                                                                  fullscreenDialog: true,
                                                                 ),
                                                               );
                                                             },
                                                           ),
                                                           ListTile(
                                                             leading: Icon(
-                                                              EvaIcons
-                                                                  .eyeOff2Outline,
-                                                              color:
-                                                                  liltextColor,
+                                                              EvaIcons.eyeOff2Outline,
+                                                              color: liltextColor,
                                                             ),
                                                             title: Text(
                                                               'Hidden Notes',
-                                                              style: TextStyle(
-                                                                  fontSize: 14,
-                                                                  color:
-                                                                      textColor),
+                                                              style: TextStyle(fontSize: 14, color: textColor),
                                                             ),
                                                             onTap: () {
                                                               Navigator.push(
@@ -747,8 +629,7 @@ class _MyHomePageState extends State<MyHomePage>
                                                                   builder: (_) {
                                                                     return HiddenNotes();
                                                                   },
-                                                                  fullscreenDialog:
-                                                                      true,
+                                                                  fullscreenDialog: true,
                                                                 ),
                                                               );
                                                             },
@@ -762,37 +643,23 @@ class _MyHomePageState extends State<MyHomePage>
                                                           ),
                                                           Theme(
                                                             data: ThemeData(
-                                                              splashColor: Colors
-                                                                  .transparent,
-                                                              highlightColor:
-                                                                  Colors
-                                                                      .transparent,
+                                                              splashColor: Colors.transparent,
+                                                              highlightColor: Colors.transparent,
                                                             ),
                                                             child: ListTile(
                                                               title: Text(
                                                                 'Empty Bin after 30 days.',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color:
-                                                                        liltextColor),
+                                                                style: TextStyle(fontSize: 14, color: liltextColor),
                                                               ),
                                                               //  dense: true,
-                                                              trailing: Switch
-                                                                  .adaptive(
-                                                                activeTrackColor:
-                                                                    buttonColor,
-                                                                activeColor:
-                                                                    buttonColor,
-                                                                value:
-                                                                    isSwitched,
-                                                                onChanged:
-                                                                    (value) {
+                                                              trailing: Switch.adaptive(
+                                                                activeTrackColor: buttonColor,
+                                                                activeColor: buttonColor,
+                                                                value: isSwitched,
+                                                                onChanged: (value) {
                                                                   setState(() {
-                                                                    isSwitched =
-                                                                        value;
-                                                                    updateDeletePreference(
-                                                                        value);
+                                                                    isSwitched = value;
+                                                                    updateDeletePreference(value);
                                                                   });
                                                                 },
                                                               ),
@@ -859,169 +726,111 @@ class _MyHomePageState extends State<MyHomePage>
                                     AnimatedSwitcher(
                                       duration: Duration(milliseconds: 500),
                                       child: animationComplete
-                                          ? (Provider.of<UserData>(context)
-                                                      .notesFromUser
-                                                      .length !=
-                                                  0
+                                          ? (Provider.of<UserData>(context).notesFromUser.length != 0
                                               ? Dismissible(
-                                                  key: ValueKey<int>(index),
-                                                  onDismissed: (DismissDirection
-                                                      direction) async {
-                                                    if (direction ==
-                                                        DismissDirection
-                                                            .endToStart) {
-                                                      setState(
-                                                        () {
-                                                          Provider.of<UserData>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .notesFromUser
-                                                              .removeAt(index);
-                                                          Provider.of<UserData>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .titleOfNotesFromUser
-                                                              .removeAt(index);
-                                                          Provider.of<UserData>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .dateOfNoteCreation
-                                                              .removeAt(index);
-                                                          // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.removeAt(index);
-                                                        },
-                                                      );
-                                                      await _updateNotesFromUser(
-                                                          Provider.of<UserData>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .notesFromUser);
-                                                      await _updatetitleOfNotesFromUser(
-                                                          Provider.of<UserData>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .titleOfNotesFromUser);
-                                                      await _updatedateOfNoteCreation(
-                                                          Provider.of<UserData>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .dateOfNoteCreation);
-                                                      // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
-
+                                                  key: UniqueKey(),
+                                                  confirmDismiss: (direction) async {
+                                                    bool returnValue;
+                                                    if (direction == DismissDirection.endToStart) {
+                                                      Provider.of<UserData>(context, listen: false).notesFromUser.removeAt(index);
+                                                      Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.removeAt(index);
+                                                      Provider.of<UserData>(context, listen: false).dateOfNoteCreation.removeAt(index);
+                                                      await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
+                                                      await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                                                      await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                                                      returnValue = true;
+                                                    } else if (direction == DismissDirection.startToEnd) {
+                                                      returnValue = true;
                                                     }
+                                                    return returnValue;
                                                   },
+                                                  background: Container(
+                                                    color: CupertinoColors.activeBlue,
+                                                    child: Align(
+                                                      alignment: Alignment.centerLeft,
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(left: 28.0),
+                                                        child: Icon(
+                                                          EvaIcons.flag,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  secondaryBackground: Container(
+                                                    color: Colors.red,
+                                                    child: Align(
+                                                      alignment: Alignment.centerRight,
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(right: 28.0),
+                                                        child: Icon(
+                                                          EvaIcons.trash,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                                   child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
                                                     children: [
                                                       Card(
-                                                        color: CupertinoColors
-                                                            .systemBackground,
-                                                        shape:
-                                                            ContinuousRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.zero,
+                                                        color: CupertinoColors.systemBackground,
+                                                        shape: ContinuousRectangleBorder(
+                                                          borderRadius: BorderRadius.zero,
                                                         ),
-                                                        borderOnForeground:
-                                                            true,
+                                                        borderOnForeground: true,
                                                         elevation: 0,
-                                                        margin:
-                                                            EdgeInsets.fromLTRB(
-                                                                0, 0, 0, 0),
+                                                        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                                         child: ListTile(
-                                                          contentPadding:
-                                                              EdgeInsets.only(
-                                                                  left: 30.0,
-                                                                  right: 30.0),
+                                                          contentPadding: EdgeInsets.only(left: 30.0, right: 30.0),
                                                           onTap: () {
                                                             Navigator.push(
                                                               context,
                                                               CupertinoPageRoute(
-                                                                fullscreenDialog:
-                                                                    true,
+                                                                fullscreenDialog: true,
                                                                 builder: (_) {
                                                                   return EditAndViewNotes(
-                                                                    index:
-                                                                        index,
+                                                                    index: index,
                                                                   );
                                                                 },
                                                               ),
                                                             );
                                                           },
                                                           title: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
                                                               Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
+                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                 children: [
                                                                   Text(
-                                                                    Provider.of<UserData>(
-                                                                            context)
-                                                                        .titleOfNotesFromUser[index],
-                                                                    style: TextStyle(
-                                                                        color:
-                                                                            liltextColor,
-                                                                        fontSize:
-                                                                            16),
+                                                                    Provider.of<UserData>(context).titleOfNotesFromUser[index],
+                                                                    style: TextStyle(color: liltextColor, fontSize: 16),
                                                                   ),
                                                                   Text(
-                                                                      Provider.of<UserData>(context).dateOfNoteCreation[index] ==
-                                                                              DateTime.now().toString().substring(0, 10).replaceAll('-',
-                                                                                  '. ')
+                                                                      Provider.of<UserData>(context).dateOfNoteCreation[index] == DateTime.now().toString().substring(0, 10).replaceAll('-', '. ')
                                                                           ? 'Today'
-                                                                          : Provider.of<UserData>(context).dateOfNoteCreation[
-                                                                              index],
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              liltextColor,
-                                                                          fontSize:
-                                                                              14)),
+                                                                          : Provider.of<UserData>(context).dateOfNoteCreation[index],
+                                                                      style: TextStyle(color: liltextColor, fontSize: 14)),
                                                                 ],
                                                               ),
                                                             ],
                                                           ),
                                                           subtitle: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 8.0),
+                                                            padding: const EdgeInsets.only(top: 8.0),
                                                             child: Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .rectangle,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            2),
+                                                              decoration: BoxDecoration(
+                                                                shape: BoxShape.rectangle,
+                                                                borderRadius: BorderRadius.circular(2),
                                                               ),
                                                               child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                                 children: [
                                                                   Text(
-                                                                    Provider.of<UserData>(
-                                                                            context)
-                                                                        .notesFromUser[index],
-                                                                    style: TextStyle(
-                                                                        color: liltextColor.withOpacity(
-                                                                            0.7),
-                                                                        fontSize:
-                                                                            15),
+                                                                    Provider.of<UserData>(context).notesFromUser[index],
+                                                                    style: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 15),
                                                                   ),
                                                                 ],
                                                               ),
@@ -1036,11 +845,7 @@ class _MyHomePageState extends State<MyHomePage>
                                                   key: ValueKey<int>(2),
                                                   children: [
                                                     SizedBox(
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height /
-                                                              4,
+                                                      height: MediaQuery.of(context).size.height / 4,
                                                     ),
                                                     Center(
                                                       child: Container(
@@ -1055,120 +860,65 @@ class _MyHomePageState extends State<MyHomePage>
                                                     Center(
                                                       child: Text(
                                                         'Your notes are empty',
-                                                        style: TextStyle(
-                                                            color: textColor),
+                                                        style: TextStyle(color: textColor),
                                                       ),
                                                     )
                                                   ],
                                                 ))
                                           : Container(
                                               key: ValueKey<int>(3),
-                                              foregroundDecoration:
-                                                  Provider.of<UserData>(context)
-                                                              .notesFromUser
-                                                              .length ==
-                                                          0
-                                                      ? BoxDecoration(
-                                                          color: testColor)
-                                                      : BoxDecoration(),
+                                              foregroundDecoration: Provider.of<UserData>(context).notesFromUser.length == 0 ? BoxDecoration(color: Colors.white) : BoxDecoration(),
                                               child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 16.0, right: 16.0),
+                                                padding: EdgeInsets.only(left: 16.0, right: 16.0),
                                                 child: Column(
                                                   children: [
                                                     ClipRRect(
-                                                      borderRadius: index ==
-                                                                  0 &&
-                                                              index ==
-                                                                  Provider.of<UserData>(
-                                                                              context)
-                                                                          .notesFromUser
-                                                                          .length -
-                                                                      1
+                                                      borderRadius: index == 0 && index == Provider.of<UserData>(context).notesFromUser.length - 1
                                                           ? BorderRadius.only(
-                                                              topRight: Radius
-                                                                  .circular(11),
-                                                              topLeft: Radius
-                                                                  .circular(11),
-                                                              bottomRight:
-                                                                  Radius
-                                                                      .circular(
-                                                                          11),
-                                                              bottomLeft: Radius
-                                                                  .circular(11),
+                                                              topRight: Radius.circular(11),
+                                                              topLeft: Radius.circular(11),
+                                                              bottomRight: Radius.circular(11),
+                                                              bottomLeft: Radius.circular(11),
                                                             )
                                                           : index == 0
-                                                              ? BorderRadius
-                                                                  .only(
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          11),
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          11),
+                                                              ? BorderRadius.only(
+                                                                  topRight: Radius.circular(11),
+                                                                  topLeft: Radius.circular(11),
                                                                 )
-                                                              : index ==
-                                                                      Provider.of<UserData>(context)
-                                                                              .notesFromUser
-                                                                              .length -
-                                                                          1
-                                                                  ? BorderRadius
-                                                                      .only(
-                                                                      bottomRight:
-                                                                          Radius.circular(
-                                                                              11),
-                                                                      bottomLeft:
-                                                                          Radius.circular(
-                                                                              11),
+                                                              : index == Provider.of<UserData>(context).notesFromUser.length - 1
+                                                                  ? BorderRadius.only(
+                                                                      bottomRight: Radius.circular(11),
+                                                                      bottomLeft: Radius.circular(11),
                                                                     )
-                                                                  : BorderRadius
-                                                                      .zero,
+                                                                  : BorderRadius.zero,
                                                       child: Card(
-                                                        color: CupertinoColors
-                                                            .systemBackground,
-                                                        shape:
-                                                            ContinuousRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.zero,
+                                                        color: CupertinoColors.systemBackground,
+                                                        shape: ContinuousRectangleBorder(
+                                                          borderRadius: BorderRadius.zero,
                                                         ),
-                                                        borderOnForeground:
-                                                            true,
+                                                        borderOnForeground: true,
                                                         elevation: 0,
-                                                        margin:
-                                                            EdgeInsets.fromLTRB(
-                                                                0, 0, 0, 0),
+                                                        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                                         child: ListTile(
                                                           title: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
                                                               SizedBox(
                                                                 height: 14,
                                                               ),
                                                               Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
+                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                 children: [
                                                                   FLSkeleton(
-                                                                    shape: BoxShape
-                                                                        .rectangle,
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(2),
+                                                                    shape: BoxShape.rectangle,
+                                                                    borderRadius: BorderRadius.circular(2),
                                                                     width: 60,
                                                                     height: 21,
                                                                   ),
                                                                   FLSkeleton(
-                                                                    shape: BoxShape
-                                                                        .rectangle,
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(2),
+                                                                    shape: BoxShape.rectangle,
+                                                                    borderRadius: BorderRadius.circular(2),
                                                                     width: 60,
                                                                     height: 21,
                                                                   ),
@@ -1177,34 +927,19 @@ class _MyHomePageState extends State<MyHomePage>
                                                             ],
                                                           ),
                                                           subtitle: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    top: 8.0),
+                                                            padding: const EdgeInsets.only(top: 8.0),
                                                             child: Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .rectangle,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            2),
+                                                              decoration: BoxDecoration(
+                                                                shape: BoxShape.rectangle,
+                                                                borderRadius: BorderRadius.circular(2),
                                                               ),
                                                               child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                                 children: [
                                                                   FLSkeleton(
-                                                                    shape: BoxShape
-                                                                        .rectangle,
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(2),
+                                                                    shape: BoxShape.rectangle,
+                                                                    borderRadius: BorderRadius.circular(2),
                                                                     width: 200,
                                                                     height: 21,
                                                                   ),
@@ -1237,21 +972,14 @@ class _MyHomePageState extends State<MyHomePage>
                                   // Provider.of<UserData>(context)
                                   //     .notesFromUser
                                   //     .length
-                                  Provider.of<UserData>(context)
-                                              .notesFromUser
-                                              .length ==
-                                          0
-                                      ? 1
-                                      : Provider.of<UserData>(context)
-                                          .notesFromUser
-                                          .length,
+                                  Provider.of<UserData>(context).notesFromUser.length == 0 ? 1 : Provider.of<UserData>(context).notesFromUser.length,
                             ),
                           ),
                           SliverList(
                             delegate: SliverChildListDelegate(
                               [
                                 SizedBox(
-                                  height: 500,
+                                  height: 300,
                                 )
                               ],
                             ),
@@ -1268,8 +996,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void afterFirstLayout(BuildContext context) {
-    if (Provider.of<UserData>(context, listen: false).notesFromUser.length ==
-        0) {
+    if (Provider.of<UserData>(context, listen: false).notesFromUser.length == 0) {
       setState(
         () {
           animationComplete = true;

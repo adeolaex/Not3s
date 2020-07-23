@@ -24,8 +24,7 @@ class EditAndViewNotes extends StatefulWidget {
   _EditAndViewNotesState createState() => _EditAndViewNotesState();
 }
 
-class _EditAndViewNotesState extends State<EditAndViewNotes>
-    with AfterLayoutMixin {
+class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMixin {
   ScrollController _scrollController;
   bool isEditing;
   FocusNode _focusNode1;
@@ -71,29 +70,23 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
     _focusNode1 = new FocusNode();
     _focusNode2 = new FocusNode();
     canTap = true;
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     var andriod = AndroidInitializationSettings('app_icon');
     var ios = IOSInitializationSettings(
       requestSoundPermission: true,
       requestBadgePermission: true,
       requestAlertPermission: true,
     );
-    InitializationSettings initializationSettings =
-        InitializationSettings(andriod, ios);
+    InitializationSettings initializationSettings = InitializationSettings(andriod, ios);
     flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
     var time = DateTime.now().add(
       Duration(seconds: 2),
     );
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your other channel id',
-        'your other channel name',
-        'your other channel description');
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    NotificationDetails notificationDetails = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     // flutterLocalNotificationsPlugin.schedule(
     //     0, 'To-do', 'Also test', time, notificationDetails);
 
@@ -102,16 +95,10 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
 
   @override
   void didChangeDependencies() {
-    _textEditingController = TextEditingController(
-        text: Provider.of<UserData>(context, listen: false)
-            .titleOfNotesFromUser[widget.index]);
-    _textEditingController2 = TextEditingController(
-        text: Provider.of<UserData>(context, listen: false)
-            .notesFromUser[widget.index]);
-    titleOfNotesFromUser = Provider.of<UserData>(context, listen: false)
-        .titleOfNotesFromUser[widget.index];
-    notesFromUser = Provider.of<UserData>(context, listen: false)
-        .notesFromUser[widget.index];
+    _textEditingController = TextEditingController(text: Provider.of<UserData>(context, listen: false).titleOfNotesFromUser[widget.index]);
+    _textEditingController2 = TextEditingController(text: Provider.of<UserData>(context, listen: false).notesFromUser[widget.index]);
+    titleOfNotesFromUser = Provider.of<UserData>(context, listen: false).titleOfNotesFromUser[widget.index];
+    notesFromUser = Provider.of<UserData>(context, listen: false).notesFromUser[widget.index];
     super.didChangeDependencies();
   }
 
@@ -151,16 +138,14 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
                 color: CupertinoColors.activeBlue,
               ),
               onPressed: () async {
-                final File image = await ImagePickerSaver.pickImage(
-                    source: ImageSource.gallery);
+                final File image = await ImagePickerSaver.pickImage(source: ImageSource.gallery);
                 if (image == null) {
                   imagePath = null;
                 } else {
                   Directory path = await getApplicationDocumentsDirectory();
                   final String pathToDeviceFolder = path.path;
                   String uid = Uuid().v4();
-                  final File imageToCopy =
-                      await image.copy('$pathToDeviceFolder/$uid.png');
+                  final File imageToCopy = await image.copy('$pathToDeviceFolder/$uid.png');
                   imagePath = imageToCopy.path;
                 }
               },
@@ -181,29 +166,14 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
                         if (canTap == true) {
                           FocusScope.of(context).requestFocus(FocusNode());
                         }
-                        if (notesFromUser != null &&
-                            titleOfNotesFromUser != null) {
-                          Provider.of<UserData>(context, listen: false)
-                              .notesFromUser[widget.index] = notesFromUser;
-                          Provider.of<UserData>(context, listen: false)
-                                  .titleOfNotesFromUser[widget.index] =
-                              titleOfNotesFromUser;
-                          Provider.of<UserData>(context, listen: false)
-                                  .dateOfNoteCreation[widget.index] =
-                              DateTime.now()
-                                  .toString()
-                                  .substring(0, 10)
-                                  .replaceAll('-', '. ');
+                        if (notesFromUser != null && titleOfNotesFromUser != null) {
+                          Provider.of<UserData>(context, listen: false).notesFromUser[widget.index] = notesFromUser;
+                          Provider.of<UserData>(context, listen: false).titleOfNotesFromUser[widget.index] = titleOfNotesFromUser;
+                          Provider.of<UserData>(context, listen: false).dateOfNoteCreation[widget.index] = DateTime.now().toString().substring(0, 10).replaceAll('-', '. ');
                           // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.add(imagePath);
-                          await _updateNotesFromUser(
-                              Provider.of<UserData>(context, listen: false)
-                                  .notesFromUser);
-                          await _updatetitleOfNotesFromUser(
-                              Provider.of<UserData>(context, listen: false)
-                                  .titleOfNotesFromUser);
-                          await _updatedateOfNoteCreation(
-                              Provider.of<UserData>(context, listen: false)
-                                  .dateOfNoteCreation);
+                          await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
+                          await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                          await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
                           setState(
                             () {
                               isEditing = false;
@@ -278,13 +248,8 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: Provider.of<UserData>(context, listen: false)
-                      .titleOfNotesFromUser[widget.index],
-                  style: TextStyle(
-                      letterSpacing: -0.5,
-                      color: liltextColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500),
+                  text: Provider.of<UserData>(context, listen: false).titleOfNotesFromUser[widget.index],
+                  style: TextStyle(letterSpacing: -0.5, color: liltextColor, fontSize: 18, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -321,8 +286,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
                   enableSuggestions: true,
                   cursorColor: CupertinoColors.systemBlue,
                   focusNode: _focusNode1,
-                  textCapitalization:
-                      customTextField.TextCapitalization.sentences,
+                  textCapitalization: customTextField.TextCapitalization.sentences,
                   style: TextStyle(fontSize: 16, color: liltextColor),
                   textInputAction: customTextField.TextInputAction.next,
                   decoration: InputDecoration(
@@ -369,8 +333,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes>
                 enableInteractiveSelection: true,
                 enableSuggestions: true,
                 cursorColor: CupertinoColors.systemBlue,
-                textCapitalization:
-                    customTextField.TextCapitalization.sentences,
+                textCapitalization: customTextField.TextCapitalization.sentences,
                 focusNode: _focusNode2,
                 style: TextStyle(fontSize: 16, color: liltextColor),
                 textInputAction: customTextField.TextInputAction.newline,
