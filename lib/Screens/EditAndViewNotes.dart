@@ -9,13 +9,14 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker_saver/image_picker_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:Not3s/UnderTheHood/text_field.dart' as customTextField;
 import 'package:uuid/uuid.dart';
+import 'package:keyboard_attachable/keyboard_attachable.dart';
 
 class EditAndViewNotes extends StatefulWidget {
   final int index;
@@ -36,8 +37,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
   String titleOfNotesFromUser;
   String dateOfNoteCreated;
   String imagePath;
-  TextEditingController _textEditingController;
-  TextEditingController _textEditingController2;
+  bool whichTextField;
   _updateNotesFromUser(List<String> notesFromUseR) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setStringList('notesFromUser', notesFromUseR);
@@ -87,16 +87,18 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
     var androidPlatformChannelSpecifics = AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    // flutterLocalNotificationsPlugin.schedule(
-    //     0, 'To-do', 'Also test', time, notificationDetails);
+    flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails)
+      ..whenComplete(
+        () {
+          FlutterAppBadger.updateBadgeCount(2);
+        },
+      );
 
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    _textEditingController = TextEditingController(text: Provider.of<UserData>(context, listen: false).titleOfNotesFromUser[widget.index]);
-    _textEditingController2 = TextEditingController(text: Provider.of<UserData>(context, listen: false).notesFromUser[widget.index]);
     titleOfNotesFromUser = Provider.of<UserData>(context, listen: false).titleOfNotesFromUser[widget.index];
     notesFromUser = Provider.of<UserData>(context, listen: false).notesFromUser[widget.index];
     super.didChangeDependencies();
@@ -107,6 +109,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
     return GestureDetector(
       onTap: () {
         setState(() {
+          whichTextField = null;
           canTap = true;
         });
         if (canTap == true) {
@@ -115,49 +118,37 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
       },
       child: Scaffold(
         backgroundColor: CupertinoColors.white,
-        resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           brightness: Brightness.light,
           backgroundColor: CupertinoColors.white,
           elevation: 0.0,
           leading: CupertinoButton(
             padding: EdgeInsets.zero,
-            child: Icon(
-              EvaIcons.close,
-              color: CupertinoColors.activeBlue,
+            child: Text(
+              'Cancel',
+              style: TextStyle(fontSize: 17),
             ),
             onPressed: () async {
-              await Navigator.maybePop(context);
+              FocusScope.of(context).requestFocus(FocusNode());
+              if (whichTextField != null) {
+                // await Future.delayed(Duration(milliseconds: 100), () async {
+                await Navigator.maybePop(context);
+                // });
+              } else if (whichTextField == null) {
+                await Navigator.maybePop(context);
+              }
             },
           ),
           actions: [
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: Icon(
-                EvaIcons.attachOutline,
-                color: CupertinoColors.activeBlue,
-              ),
-              onPressed: () async {
-                final File image = await ImagePickerSaver.pickImage(source: ImageSource.gallery);
-                if (image == null) {
-                  imagePath = null;
-                } else {
-                  Directory path = await getApplicationDocumentsDirectory();
-                  final String pathToDeviceFolder = path.path;
-                  String uid = Uuid().v4();
-                  final File imageToCopy = await image.copy('$pathToDeviceFolder/$uid.png');
-                  imagePath = imageToCopy.path;
-                }
-              },
-            ),
             AnimatedSwitcher(
               duration: Duration(milliseconds: 500),
               child: isEditing
                   ? CupertinoButton(
                       padding: EdgeInsets.zero,
                       child: Icon(
-                        EvaIcons.doneAllOutline,
-                        color: CupertinoColors.systemBlue,
+                        EvaIcons.checkmark,
+                        color: Color.fromRGBO(29, 161, 242, 1.0),
                       ),
                       onPressed: () async {
                         setState(() {
@@ -244,118 +235,187 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                     ),
             )
           ],
-          title: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: Provider.of<UserData>(context, listen: false).titleOfNotesFromUser[widget.index],
-                  style: TextStyle(letterSpacing: -0.5, color: liltextColor, fontSize: 18, fontWeight: FontWeight.w500),
-                ),
-              ],
+          title: TextFormField(
+            initialValue: Provider.of<UserData>(context).titleOfNotesFromUser[widget.index],
+            onTap: () {
+              setState(() {
+                whichTextField = false;
+                canTap = false;
+                isEditing = true;
+              });
+            },
+            autocorrect: true,
+            autofocus: false,
+            onChanged: (value) {
+              setState(
+                () {
+                  titleOfNotesFromUser = value;
+                },
+              );
+            },
+            enableInteractiveSelection: true,
+            enableSuggestions: true,
+            cursorColor: CupertinoColors.systemBlue,
+            focusNode: _focusNode1,
+            textCapitalization: TextCapitalization.sentences,
+            style: TextStyle(fontSize: 17, color: liltextColor),
+            textInputAction: TextInputAction.next,
+            keyboardAppearance: Brightness.light,
+            decoration: InputDecoration(
+              hintText: 'Title',
+              hintStyle: TextStyle(fontSize: 17, color: liltextColor),
+              contentPadding: EdgeInsets.only(left: 1, top: 1),
+              border: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white, width: 0.4),
+              ),
+              disabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white, width: 0.4),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white, width: 0.4),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white, width: 0.4),
+              ),
             ),
           ),
         ),
-        body: Scrollbar(
-          controller: _scrollController,
-          child: ListView(
-            children: <Widget>[
-              SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.only(left: 100.0),
-                child: customTextField.TextField(
-                  controller: _textEditingController,
+        body: FooterLayout(
+          footer: KeyboardAttachable(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  top: BorderSide(
+                    color: liltextColor,
+                    width: 0.2,
+                  ),
+                ),
+              ),
+              height: 50,
+              width: MediaQuery.of(context).size.width,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(
+                      EvaIcons.eyeOff2Outline,
+                      color: Color.fromRGBO(170, 184, 194, 1.0),
+                    ),
+                    onPressed: () {},
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(
+                      EvaIcons.flagOutline,
+                      color: Color.fromRGBO(170, 184, 194, 1.0),
+                    ),
+                    onPressed: () {},
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(
+                      EvaIcons.micOutline,
+                      color: Color.fromRGBO(29, 161, 242, 1.0),
+                    ),
+                    onPressed: () {},
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(
+                      EvaIcons.clockOutline,
+                      color: Color.fromRGBO(29, 161, 242, 1.0),
+                    ),
+                    onPressed: () {},
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(
+                      EvaIcons.imageOutline,
+                      color: Color.fromRGBO(29, 161, 242, 1.0),
+                    ),
+                    onPressed: () async {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      final File image = await ImagePickerSaver.pickImage(source: ImageSource.gallery);
+                      if (image == null) {
+                        imagePath = null;
+                      } else {
+                        Directory path = await getApplicationDocumentsDirectory();
+                        final String pathToDeviceFolder = path.path;
+                        String uid = Uuid().v4();
+                        final File imageToCopy = await image.copy('$pathToDeviceFolder/$uid.png');
+                        imagePath = imageToCopy.path;
+                      }
+                      if (whichTextField == null) {
+                      } else if (whichTextField == false) {
+                        FocusScope.of(context).requestFocus(_focusNode1);
+                      } else if (whichTextField == true) {
+                        FocusScope.of(context).requestFocus(_focusNode2);
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          child: Scrollbar(
+            controller: _scrollController,
+            child: ListView(
+              controller: _scrollController,
+              children: <Widget>[
+                SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  initialValue: Provider.of<UserData>(context).notesFromUser[widget.index],
+                  onChanged: (String value) {
+                    setState(
+                      () {
+                        notesFromUser = value;
+                      },
+                    );
+                  },
                   onTap: () {
                     setState(() {
+                      whichTextField = true;
                       canTap = false;
                       isEditing = true;
                     });
                   },
-                  onSubmitted: (value) {
-                    FocusScope.of(context).requestFocus(_focusNode2);
-                  },
                   autocorrect: true,
-                  autofocus: false,
-                  onChanged: (value) {
-                    setState(
-                      () {
-                        titleOfNotesFromUser = value;
-                      },
-                    );
-                  },
+                  //autofocus: true,
+                  maxLength: 600,
+                  maxLines: 10,
                   enableInteractiveSelection: true,
                   enableSuggestions: true,
                   cursorColor: CupertinoColors.systemBlue,
-                  focusNode: _focusNode1,
-                  textCapitalization: customTextField.TextCapitalization.sentences,
-                  style: TextStyle(fontSize: 16, color: liltextColor),
-                  textInputAction: customTextField.TextInputAction.next,
+                  textCapitalization: TextCapitalization.sentences,
+                  focusNode: _focusNode2,
+                  style: TextStyle(fontSize: 17, color: liltextColor),
+                  textInputAction: TextInputAction.newline,
+                  keyboardAppearance: Brightness.light,
                   decoration: InputDecoration(
-                    labelText: 'Title',
-                    labelStyle: TextStyle(fontSize: 13, color: liltextColor),
-                    contentPadding: EdgeInsets.only(left: 1, top: 1),
+                    hintText: 'To-do',
+                    hintStyle: TextStyle(fontSize: 17, color: liltextColor),
+                    contentPadding: EdgeInsets.only(left: 30, top: 1, right: 30),
                     border: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 0.4),
+                      borderSide: BorderSide(color: Colors.white, width: 0.3),
                     ),
                     disabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 0.4),
+                      borderSide: BorderSide(color: Colors.white, width: 0.3),
                     ),
                     enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 0.4),
+                      borderSide: BorderSide(color: Colors.white, width: 0.3),
                     ),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 0.4),
+                      borderSide: BorderSide(color: Colors.white, width: 0.3),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 70,
-              ),
-              customTextField.TextField(
-                controller: _textEditingController2,
-                onChanged: (String value) {
-                  setState(
-                    () {
-                      notesFromUser = value;
-                    },
-                  );
-                },
-                onTap: () {
-                  setState(() {
-                    canTap = false;
-                    isEditing = true;
-                  });
-                },
-                autocorrect: true,
-                //autofocus: true,
-                maxLength: 300,
-                maxLines: 5,
-                enableInteractiveSelection: true,
-                enableSuggestions: true,
-                cursorColor: CupertinoColors.systemBlue,
-                textCapitalization: customTextField.TextCapitalization.sentences,
-                focusNode: _focusNode2,
-                style: TextStyle(fontSize: 16, color: liltextColor),
-                textInputAction: customTextField.TextInputAction.newline,
-                decoration: InputDecoration(
-                  labelText: 'To-do',
-                  labelStyle: TextStyle(fontSize: 13, color: liltextColor),
-                  contentPadding: EdgeInsets.only(left: 30, top: 1, right: 30),
-                  border: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white, width: 0.3),
-                  ),
-                  disabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white, width: 0.3),
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white, width: 0.3),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white, width: 0.3),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

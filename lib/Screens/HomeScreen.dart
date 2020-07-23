@@ -4,7 +4,6 @@
 
 //
 import 'dart:io';
-import 'package:Not3s/Screens/AddNewNoteScreen.dart';
 import 'package:Not3s/Screens/Bin.dart';
 import 'package:Not3s/Screens/EditAndViewNotes.dart';
 import 'package:Not3s/Screens/FlaggedNotes.dart';
@@ -26,7 +25,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker_saver/image_picker_saver.dart';
 import 'package:uuid/uuid.dart';
-import 'package:Not3s/UnderTheHood/text_field.dart' as customTextField;
 
 // ignore: must_be_immutable
 class MyHomePage extends StatefulWidget {
@@ -52,7 +50,6 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
 
   bool animationComplete = false;
   ScrollController _controller;
-  ScrollController _controller2;
 
   Image myImage;
   bool dummyBool;
@@ -100,7 +97,6 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
   @override
   void initState() {
     isEditing = true;
-    _scrollController = ScrollController();
     _focusNode1 = new FocusNode();
     _focusNode2 = new FocusNode();
     // canTap = true;
@@ -121,11 +117,15 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
     var androidPlatformChannelSpecifics = AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    // flutterLocalNotificationsPlugin.schedule(
-    //     0, 'To-do', 'Also test', time, notificationDetails);
+    flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails)
+      ..whenComplete(
+        () {
+          FlutterAppBadger.updateBadgeCount(2);
+        },
+      );
+
     dummyBool = false;
     _controller = ScrollController();
-    _controller2 = ScrollController();
     myImage = Image.asset('assets/images/appIcon.png');
     super.initState();
   }
@@ -149,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                   key: key1,
                   floatingActionButton: FloatingActionButton(
                     mini: true,
-                    backgroundColor: Colors.black,
+                    backgroundColor: Color.fromRGBO(29, 161, 242, 1.0),
                     child: Icon(
                       EvaIcons.plus,
                       color: Colors.white,
@@ -180,6 +180,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                           final id = Uuid().v4;
                           final File a = await image.copy('$path/$id');
                           final String b = a.path;
+                          b.contains('s');
                         },
                       ),
                       AnimatedSwitcher(
@@ -303,7 +304,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                         SizedBox(height: 10),
                         Padding(
                           padding: const EdgeInsets.only(left: 100.0),
-                          child: customTextField.TextField(
+                          child: TextField(
                             onTap: () {
                               setState(() {
                                 canTap = false;
@@ -325,9 +326,9 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                             enableInteractiveSelection: true,
                             enableSuggestions: true,
                             focusNode: _focusNode1,
-                            textCapitalization: customTextField.TextCapitalization.sentences,
+                            textCapitalization: TextCapitalization.sentences,
                             style: TextStyle(fontSize: 16, color: textColor),
-                            textInputAction: customTextField.TextInputAction.next,
+                            textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
                               labelText: 'Title',
                               labelStyle: TextStyle(fontSize: 13, color: liltextColor),
@@ -357,7 +358,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                             height: 0.0,
                           ),
                         ),
-                        customTextField.TextField(
+                        TextField(
                           onChanged: (String value) {
                             setState(
                               () {
@@ -377,10 +378,10 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                           maxLines: 5,
                           enableInteractiveSelection: true,
                           enableSuggestions: true,
-                          textCapitalization: customTextField.TextCapitalization.sentences,
+                          textCapitalization: TextCapitalization.sentences,
                           focusNode: _focusNode2,
                           style: TextStyle(fontSize: 16, color: liltextColor),
-                          textInputAction: customTextField.TextInputAction.newline,
+                          textInputAction: TextInputAction.newline,
                           decoration: InputDecoration(
                             labelText: 'To-do',
                             labelStyle: TextStyle(fontSize: 13, color: liltextColor),
@@ -412,7 +413,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                     child: FloatingActionButton(
                       // mini: true,
                       elevation: 2.0,
-                      backgroundColor: CupertinoColors.systemBlue,
+                      backgroundColor: Color.fromRGBO(29, 161, 242, 1.0),
                       child: Stack(
                         // alignment: Alignment.center,
                         children: [
@@ -462,7 +463,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                         physics: NoImplicitScrollPhysics(
                           parent: ScrollPhysics(),
                         ),
-                        controller: _controller2,
+                        controller: _controller,
                         slivers: [
                           SliverAppBar(
                             floating: true,
@@ -485,6 +486,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                               borderRadius: BorderRadius.circular(6),
                                             ),
                                             child: TextFormField(
+                                              initialValue: 'hello',
                                               onTap: () {
                                                 setState(() {
                                                   canTap = false;
@@ -493,17 +495,12 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                               // autofocus: true,
                                               onSaved: (input) {},
 
-                                              validator: (input) =>
-                                                  !input.contains('@') || !input.contains('.') || input.length < 5 || input == null || input.isEmpty || input.endsWith('.') ? null : null,
-                                              keyboardType: TextInputType.url,
+                                              keyboardType: TextInputType.text,
                                               cursorColor: Colors.grey[500],
-
                                               style: TextStyle(color: Theme.of(context).textTheme.bodyText2.color, fontSize: 15),
                                               autocorrect: false,
-                                              enableInteractiveSelection: false,
                                               decoration: InputDecoration(
                                                 // contentPadding: EdgeInsets.only(left: 15),
-                                                alignLabelWithHint: true,
                                                 isDense: true,
 
                                                 hintText: 'Email',
@@ -551,7 +548,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                                 scale: 0.8,
                                                 child: Icon(
                                                   EvaIcons.moreVertical,
-                                                  color: CupertinoColors.activeBlue,
+                                                  color: Color.fromRGBO(29, 161, 242, 1.0),
                                                 ),
                                               ),
                                             ),
@@ -745,7 +742,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                                     return returnValue;
                                                   },
                                                   background: Container(
-                                                    color: CupertinoColors.activeBlue,
+                                                    color: Color(0xFF1aa260),
                                                     child: Align(
                                                       alignment: Alignment.centerLeft,
                                                       child: Padding(
