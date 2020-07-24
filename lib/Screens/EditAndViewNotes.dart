@@ -87,12 +87,12 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
     var androidPlatformChannelSpecifics = AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails)
-      ..whenComplete(
-        () {
-          FlutterAppBadger.updateBadgeCount(2);
-        },
-      );
+    // flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails)
+    //   ..whenComplete(
+    //     () {
+    //       FlutterAppBadger.updateBadgeCount(2);
+    //     },
+    //   );
 
     super.initState();
   }
@@ -106,49 +106,48 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          whichTextField = null;
-          canTap = true;
-        });
-        if (canTap == true) {
-          FocusScope.of(context).requestFocus(FocusNode());
-        }
-      },
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: CupertinoColors.white,
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        brightness: Brightness.light,
         backgroundColor: CupertinoColors.white,
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          brightness: Brightness.light,
-          backgroundColor: CupertinoColors.white,
-          elevation: 0.0,
-          leading: CupertinoButton(
-            padding: EdgeInsets.zero,
-            child: Text(
-              'Cancel',
-              style: TextStyle(fontSize: 17),
-            ),
-            onPressed: () async {
-              FocusScope.of(context).requestFocus(FocusNode());
-              if (whichTextField != null) {
-                // await Future.delayed(Duration(milliseconds: 100), () async {
-                await Navigator.maybePop(context);
-                // });
-              } else if (whichTextField == null) {
-                await Navigator.maybePop(context);
-              }
-            },
+        elevation: 0.0,
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: Text(
+            'Cancel',
+            style: TextStyle(fontSize: 17),
           ),
-          actions: [
-            AnimatedSwitcher(
-              duration: Duration(milliseconds: 500),
-              child: isEditing
-                  ? CupertinoButton(
+          onPressed: () async {
+            setState(() {
+              whichTextField = null;
+            });
+            if (canTap == true) {
+              FocusScope.of(context).requestFocus(FocusNode());
+            }
+            if (whichTextField != null) {
+              await Future.delayed(Duration(milliseconds: 900), () async {
+                await Navigator.maybePop(context);
+              });
+            } else if (whichTextField == null) {
+              await Navigator.maybePop(context);
+            }
+          },
+        ),
+        actions: [
+          AnimatedSwitcher(
+            duration: Duration(milliseconds: 500),
+            child: isEditing
+                ? Padding(
+                    key: ValueKey(1),
+                    padding: const EdgeInsets.only(bottom: 5.0),
+                    child: CupertinoButton(
                       padding: EdgeInsets.zero,
                       child: Icon(
                         EvaIcons.checkmark,
                         color: Color.fromRGBO(29, 161, 242, 1.0),
+                        size: 22,
                       ),
                       onPressed: () async {
                         setState(() {
@@ -224,8 +223,12 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                           }
                         }
                       },
-                    )
-                  : Container(
+                    ),
+                  )
+                : Padding(
+                    key: ValueKey(2),
+                    padding: const EdgeInsets.only(bottom: 5.0),
+                    child: Container(
                       height: 50,
                       width: 44,
                       child: FlareActor(
@@ -233,189 +236,192 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                         animation: 'Untitled',
                       ),
                     ),
-            )
-          ],
-          title: TextFormField(
-            initialValue: Provider.of<UserData>(context).titleOfNotesFromUser[widget.index],
-            onTap: () {
-              setState(() {
-                whichTextField = false;
-                canTap = false;
-                isEditing = true;
-              });
-            },
-            autocorrect: true,
-            autofocus: false,
-            onChanged: (value) {
-              setState(
-                () {
-                  titleOfNotesFromUser = value;
-                },
-              );
-            },
-            enableInteractiveSelection: true,
-            enableSuggestions: true,
-            cursorColor: CupertinoColors.systemBlue,
-            focusNode: _focusNode1,
-            textCapitalization: TextCapitalization.sentences,
-            style: TextStyle(fontSize: 17, color: liltextColor),
-            textInputAction: TextInputAction.next,
-            keyboardAppearance: Brightness.light,
-            decoration: InputDecoration(
-              hintText: 'Title',
-              hintStyle: TextStyle(fontSize: 17, color: liltextColor),
-              contentPadding: EdgeInsets.only(left: 1, top: 1),
-              border: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.white, width: 0.4),
-              ),
-              disabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.white, width: 0.4),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.white, width: 0.4),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.white, width: 0.4),
-              ),
+                  ),
+          )
+        ],
+        title: TextFormField(
+          initialValue: Provider.of<UserData>(context).titleOfNotesFromUser[widget.index],
+          onTap: () {
+            setState(() {
+              whichTextField = false;
+              canTap = false;
+              isEditing = true;
+            });
+          },
+          autocorrect: true,
+          autofocus: false,
+          onChanged: (value) {
+            setState(
+              () {
+                titleOfNotesFromUser = value;
+              },
+            );
+          },
+          enableInteractiveSelection: true,
+          onEditingComplete: () {
+            FocusScope.of(context).requestFocus(_focusNode2);
+          },
+          enableSuggestions: true,
+          cursorColor: CupertinoColors.systemBlue,
+          focusNode: _focusNode1,
+          textCapitalization: TextCapitalization.sentences,
+          style: TextStyle(fontSize: 17, color: liltextColor),
+          textInputAction: TextInputAction.next,
+          keyboardAppearance: Brightness.light,
+          decoration: InputDecoration(
+            hintText: 'Title',
+            hintStyle: TextStyle(fontSize: 17, color: liltextColor),
+            contentPadding: EdgeInsets.only(left: 1, top: 1),
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 0.4),
+            ),
+            disabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 0.4),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 0.4),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 0.4),
             ),
           ),
         ),
-        body: FooterLayout(
-          footer: KeyboardAttachable(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(
-                    color: liltextColor,
-                    width: 0.2,
-                  ),
+      ),
+      body: FooterLayout(
+        footer: KeyboardAttachable(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(
+                  color: liltextColor,
+                  width: 0.2,
                 ),
-              ),
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: Icon(
-                      EvaIcons.eyeOff2Outline,
-                      color: Color.fromRGBO(170, 184, 194, 1.0),
-                    ),
-                    onPressed: () {},
-                  ),
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: Icon(
-                      EvaIcons.flagOutline,
-                      color: Color.fromRGBO(170, 184, 194, 1.0),
-                    ),
-                    onPressed: () {},
-                  ),
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: Icon(
-                      EvaIcons.micOutline,
-                      color: Color.fromRGBO(29, 161, 242, 1.0),
-                    ),
-                    onPressed: () {},
-                  ),
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: Icon(
-                      EvaIcons.clockOutline,
-                      color: Color.fromRGBO(29, 161, 242, 1.0),
-                    ),
-                    onPressed: () {},
-                  ),
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: Icon(
-                      EvaIcons.imageOutline,
-                      color: Color.fromRGBO(29, 161, 242, 1.0),
-                    ),
-                    onPressed: () async {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      final File image = await ImagePickerSaver.pickImage(source: ImageSource.gallery);
-                      if (image == null) {
-                        imagePath = null;
-                      } else {
-                        Directory path = await getApplicationDocumentsDirectory();
-                        final String pathToDeviceFolder = path.path;
-                        String uid = Uuid().v4();
-                        final File imageToCopy = await image.copy('$pathToDeviceFolder/$uid.png');
-                        imagePath = imageToCopy.path;
-                      }
-                      if (whichTextField == null) {
-                      } else if (whichTextField == false) {
-                        FocusScope.of(context).requestFocus(_focusNode1);
-                      } else if (whichTextField == true) {
-                        FocusScope.of(context).requestFocus(_focusNode2);
-                      }
-                    },
-                  ),
-                ],
               ),
             ),
-          ),
-          child: Scrollbar(
-            controller: _scrollController,
-            child: ListView(
-              controller: _scrollController,
-              children: <Widget>[
-                SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  initialValue: Provider.of<UserData>(context).notesFromUser[widget.index],
-                  onChanged: (String value) {
-                    setState(
-                      () {
-                        notesFromUser = value;
-                      },
-                    );
-                  },
-                  onTap: () {
-                    setState(() {
-                      whichTextField = true;
-                      canTap = false;
-                      isEditing = true;
-                    });
-                  },
-                  autocorrect: true,
-                  //autofocus: true,
-                  maxLength: 600,
-                  maxLines: 10,
-                  enableInteractiveSelection: true,
-                  enableSuggestions: true,
-                  cursorColor: CupertinoColors.systemBlue,
-                  textCapitalization: TextCapitalization.sentences,
-                  focusNode: _focusNode2,
-                  style: TextStyle(fontSize: 17, color: liltextColor),
-                  textInputAction: TextInputAction.newline,
-                  keyboardAppearance: Brightness.light,
-                  decoration: InputDecoration(
-                    hintText: 'To-do',
-                    hintStyle: TextStyle(fontSize: 17, color: liltextColor),
-                    contentPadding: EdgeInsets.only(left: 30, top: 1, right: 30),
-                    border: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 0.3),
-                    ),
-                    disabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 0.3),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 0.3),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 0.3),
-                    ),
+            height: 45,
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: Icon(
+                    EvaIcons.eyeOff2Outline,
+                    color: Color.fromRGBO(170, 184, 194, 1.0),
                   ),
+                  onPressed: () {},
+                ),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: Icon(
+                    EvaIcons.flagOutline,
+                    color: Color.fromRGBO(170, 184, 194, 1.0),
+                  ),
+                  onPressed: () {},
+                ),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: Icon(
+                    EvaIcons.micOutline,
+                    color: Color.fromRGBO(29, 161, 242, 1.0),
+                  ),
+                  onPressed: () {},
+                ),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: Icon(
+                    EvaIcons.clockOutline,
+                    color: Color.fromRGBO(29, 161, 242, 1.0),
+                  ),
+                  onPressed: () {},
+                ),
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: Icon(
+                    EvaIcons.imageOutline,
+                    color: Color.fromRGBO(29, 161, 242, 1.0),
+                  ),
+                  onPressed: () async {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    final File image = await ImagePickerSaver.pickImage(source: ImageSource.gallery);
+                    if (image == null) {
+                      imagePath = null;
+                    } else {
+                      Directory path = await getApplicationDocumentsDirectory();
+                      final String pathToDeviceFolder = path.path;
+                      String uid = Uuid().v4();
+                      final File imageToCopy = await image.copy('$pathToDeviceFolder/$uid.png');
+                      imagePath = imageToCopy.path;
+                    }
+                    if (whichTextField == null) {
+                    } else if (whichTextField == false) {
+                      FocusScope.of(context).requestFocus(_focusNode1);
+                    } else if (whichTextField == true) {
+                      FocusScope.of(context).requestFocus(_focusNode2);
+                    }
+                  },
                 ),
               ],
             ),
+          ),
+        ),
+        child: Scrollbar(
+          controller: _scrollController,
+          child: ListView(
+            controller: _scrollController,
+            children: <Widget>[
+              SizedBox(
+                height: 20,
+              ),
+              TextFormField(
+                initialValue: Provider.of<UserData>(context).notesFromUser[widget.index],
+                onChanged: (String value) {
+                  setState(
+                    () {
+                      notesFromUser = value;
+                    },
+                  );
+                },
+                onTap: () {
+                  setState(() {
+                    whichTextField = true;
+                    canTap = false;
+                    isEditing = true;
+                  });
+                },
+                autocorrect: true,
+                //autofocus: true,
+                maxLength: 600,
+                maxLines: 10,
+                enableInteractiveSelection: true,
+                enableSuggestions: true,
+                cursorColor: CupertinoColors.systemBlue,
+                textCapitalization: TextCapitalization.sentences,
+                focusNode: _focusNode2,
+                style: TextStyle(fontSize: 17, color: liltextColor),
+                textInputAction: TextInputAction.newline,
+                keyboardAppearance: Brightness.light,
+                decoration: InputDecoration(
+                  hintText: 'To-do',
+                  hintStyle: TextStyle(fontSize: 17, color: liltextColor),
+                  contentPadding: EdgeInsets.only(left: 30, top: 1, right: 30),
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 0.3),
+                  ),
+                  disabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 0.3),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 0.3),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 0.3),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

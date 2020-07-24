@@ -4,12 +4,14 @@
 
 //
 import 'dart:io';
+import 'package:Not3s/Screens/AddNewNoteScreen.dart';
 import 'package:Not3s/Screens/Bin.dart';
 import 'package:Not3s/Screens/EditAndViewNotes.dart';
 import 'package:Not3s/Screens/FlaggedNotes.dart';
 import 'package:Not3s/Screens/HiddenNotes.dart';
 import 'package:Not3s/UnderTheHood/Colors.dart';
 import 'package:Not3s/UnderTheHood/Provider.dart';
+import 'package:Not3s/UnderTheHood/lan.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
@@ -117,12 +119,12 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
     var androidPlatformChannelSpecifics = AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails)
-      ..whenComplete(
-        () {
-          FlutterAppBadger.updateBadgeCount(2);
-        },
-      );
+    // flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails)
+    //   ..whenComplete(
+    //     () {
+    //       FlutterAppBadger.updateBadgeCount(2);
+    //     },
+    //   );
 
     dummyBool = false;
     _controller = ScrollController();
@@ -144,848 +146,640 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
       child: SafeArea(
         child: AnimatedSwitcher(
           duration: Duration(milliseconds: 500),
-          child: dummyBool
-              ? Scaffold(
-                  key: key1,
-                  floatingActionButton: FloatingActionButton(
-                    mini: true,
-                    backgroundColor: Color.fromRGBO(29, 161, 242, 1.0),
-                    child: Icon(
-                      EvaIcons.plus,
-                      color: Colors.white,
-                      size: 27,
+          child: Scaffold(
+            key: key2,
+            backgroundColor: CupertinoColors.systemBackground,
+            resizeToAvoidBottomPadding: false,
+            floatingActionButton: Transform.scale(
+              scale: 1.0,
+              child: FloatingActionButton(
+                // mini: true,
+                elevation: 2.0,
+                backgroundColor: Color.fromRGBO(29, 161, 242, 1.0),
+                child: Stack(
+                  // alignment: Alignment.center,
+                  children: [
+                    Positioned(
+                      left: 20,
+                      top: 20,
+                      child: Icon(
+                        EvaIcons.fileText,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        dummyBool = !dummyBool;
-                      });
-                    },
-                  ),
-                  backgroundColor: CupertinoColors.white,
-                  resizeToAvoidBottomPadding: false,
-                  appBar: AppBar(
-                    brightness: Brightness.light,
-                    backgroundColor: CupertinoColors.white,
-                    elevation: 0.0,
-                    actions: [
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
+                    Positioned(
+                      right: 24,
+                      top: 7,
+                      child: Transform.scale(
+                        scale: 0.7,
                         child: Icon(
-                          EvaIcons.attachOutline,
-                          color: secondaryColor,
-                        ),
-                        onPressed: () async {
-                          final File image = await ImagePickerSaver.pickImage(source: ImageSource.gallery);
-                          final path = await getApplicationDocumentsDirectory();
-                          final id = Uuid().v4;
-                          final File a = await image.copy('$path/$id');
-                          final String b = a.path;
-                          b.contains('s');
-                        },
-                      ),
-                      AnimatedSwitcher(
-                        duration: Duration(milliseconds: 500),
-                        child: isEditing
-                            ? Row(
-                                children: [
-                                  CupertinoButton(
-                                    padding: EdgeInsets.zero,
-                                    child: Icon(
-                                      EvaIcons.doneAllOutline,
-                                      color: secondaryColor,
-                                    ),
-                                    onPressed: () async {
-                                      setState(() {
-                                        canTap = true;
-                                      });
-                                      if (canTap == true) {
-                                        FocusScope.of(context).requestFocus(FocusNode());
-                                      }
-                                      if (notesFromUser != null && titleOfNotesFromUser != null) {
-                                        Provider.of<UserData>(context, listen: false).notesFromUser.add(notesFromUser);
-                                        Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.add(titleOfNotesFromUser);
-                                        Provider.of<UserData>(context, listen: false).dateOfNoteCreation.add(
-                                              DateTime.now().toString().substring(0, 10).replaceAll('-', '. '),
-                                            );
-                                        print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                                        print(Provider.of<UserData>(context, listen: false).notesFromUser);
-                                        // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.add(imagePath);
-                                        await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
-                                        await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                                        await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
-                                        // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
-                                        setState(() {
-                                          isEditing = false;
-                                        });
-                                      } else {
-                                        Flushbar _flushBar = Flushbar(
-                                          margin: EdgeInsets.all(1),
-                                          borderRadius: 4,
-                                          isDismissible: true,
-                                          onTap: (flushbar) {
-                                            removeFlushbar(flushbar);
-                                          },
-                                          flushbarPosition: FlushbarPosition.TOP,
-                                          message: "A title and to-do is required.",
-                                          maxWidth: 250.0,
-                                          duration: Duration(seconds: 3),
-                                        );
-                                        _flushBar
-                                          ..onStatusChanged = (FlushbarStatus status) {
-                                            switch (status) {
-                                              case FlushbarStatus.SHOWING:
-                                                {
-                                                  setState(() {
-                                                    showing = true;
-                                                  });
-
-                                                  break;
-                                                }
-                                              case FlushbarStatus.IS_APPEARING:
-                                                {
-                                                  setState(() {
-                                                    showing = true;
-                                                  });
-
-                                                  break;
-                                                }
-                                              case FlushbarStatus.IS_HIDING:
-                                                {
-                                                  setState(() {
-                                                    showing = false;
-                                                  });
-                                                  break;
-                                                }
-                                              case FlushbarStatus.DISMISSED:
-                                                {
-                                                  setState(() {
-                                                    showing = false;
-                                                  });
-                                                  break;
-                                                }
-                                            }
-                                          };
-                                        if (showing == false) {
-                                          _flushBar..show(context);
-                                        }
-                                      }
-                                    },
-                                  ),
-                                ],
-                              )
-                            : Container(
-                                height: 50,
-                                width: 44,
-                                child: FlareActor(
-                                  'assets/flare/success.flr',
-                                  animation: 'Untitled',
-                                ),
-                              ),
-                      )
-                    ],
-                    title: Hero(
-                      tag: 'title',
-                      child: RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'Not3s ',
-                              style: TextStyle(color: liltextColor, fontSize: 20, fontWeight: FontWeight.w500),
-                            ),
-                          ],
+                          EvaIcons.plusOutline,
+                          color: Colors.white,
+                          size: 24,
                         ),
                       ),
                     ),
-                  ),
-                  body: Scrollbar(
-                    controller: _scrollController,
-                    child: ListView(
-                      children: <Widget>[
-                        SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 100.0),
-                          child: TextField(
-                            onTap: () {
-                              setState(() {
-                                canTap = false;
-                                isEditing = true;
-                              });
-                            },
-                            onSubmitted: (value) {
-                              FocusScope.of(context).requestFocus(_focusNode2);
-                            },
-                            autocorrect: true,
-                            autofocus: false,
-                            onChanged: (value) {
-                              setState(
-                                () {
-                                  titleOfNotesFromUser = value;
-                                },
-                              );
-                            },
-                            enableInteractiveSelection: true,
-                            enableSuggestions: true,
-                            focusNode: _focusNode1,
-                            textCapitalization: TextCapitalization.sentences,
-                            style: TextStyle(fontSize: 16, color: textColor),
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              labelText: 'Title',
-                              labelStyle: TextStyle(fontSize: 13, color: liltextColor),
-                              contentPadding: EdgeInsets.only(left: 1, top: 1),
-                              border: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white, width: 0.4),
-                              ),
-                              disabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white, width: 0.4),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white, width: 0.4),
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white, width: 0.4),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 70,
-                          child: Divider(
-                            indent: 70,
-                            endIndent: 70,
-                            color: liltextColor,
-                            thickness: 0.2,
-                            height: 0.0,
-                          ),
-                        ),
-                        TextField(
-                          onChanged: (String value) {
-                            setState(
-                              () {
-                                notesFromUser = value;
-                              },
-                            );
-                          },
-                          onTap: () {
-                            setState(() {
-                              canTap = false;
-                              isEditing = true;
-                            });
-                          },
-                          autocorrect: true,
-                          //autofocus: true,
-                          maxLength: 300,
-                          maxLines: 5,
-                          enableInteractiveSelection: true,
-                          enableSuggestions: true,
-                          textCapitalization: TextCapitalization.sentences,
-                          focusNode: _focusNode2,
-                          style: TextStyle(fontSize: 16, color: liltextColor),
-                          textInputAction: TextInputAction.newline,
-                          decoration: InputDecoration(
-                            labelText: 'To-do',
-                            labelStyle: TextStyle(fontSize: 13, color: liltextColor),
-                            contentPadding: EdgeInsets.only(left: 30, top: 1, right: 30),
-                            border: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white, width: 0.3),
-                            ),
-                            disabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white, width: 0.3),
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white, width: 0.3),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white, width: 0.3),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              : Scaffold(
-                  key: key2,
-                  backgroundColor: CupertinoColors.systemBackground,
-                  resizeToAvoidBottomPadding: false,
-                  floatingActionButton: Transform.scale(
-                    scale: 1.0,
-                    child: FloatingActionButton(
-                      // mini: true,
-                      elevation: 2.0,
-                      backgroundColor: Color.fromRGBO(29, 161, 242, 1.0),
-                      child: Stack(
-                        // alignment: Alignment.center,
-                        children: [
-                          Positioned(
-                            left: 20,
-                            top: 20,
-                            child: Icon(
-                              EvaIcons.fileText,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                          Positioned(
-                            right: 24,
-                            top: 7,
-                            child: Transform.scale(
-                              scale: 0.7,
-                              child: Icon(
-                                EvaIcons.plusOutline,
-                                color: Colors.white,
-                                size: 24,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          dummyBool = !dummyBool;
-                        });
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (_) {
-                        //       return AddNewNote();
-                        //     },
-                        //     fullscreenDialog: true,
-                        //   ),
-                        // );
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) {
+                        return AddNewNoteScreen();
                       },
+                      fullscreenDialog: true,
                     ),
-                  ),
-                  body: SafeArea(
-                    child: AnnotatedRegion<SystemUiOverlayStyle>(
-                      value: SystemUiOverlayStyle.light,
-                      child: CustomScrollView(
-                        physics: NoImplicitScrollPhysics(
-                          parent: ScrollPhysics(),
-                        ),
-                        controller: _controller,
-                        slivers: [
-                          SliverAppBar(
-                            floating: true,
-                            collapsedHeight: 70,
-                            // expandedHeight: 10,
-                            flexibleSpace: FlexibleSpaceBar(
-                              title: Form(
-                                // key: _formKey,
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: Stack(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                                        child: Container(
-                                          child: Card(
-                                            // shadowColor: CupertinoColors
-                                            //     .darkBackgroundGray,
-                                            shape: RoundedRectangleBorder(
+                  );
+                },
+              ),
+            ),
+            body: SafeArea(
+              child: AnnotatedRegion<SystemUiOverlayStyle>(
+                value: SystemUiOverlayStyle.light,
+                child: GestureDetector(
+                  onPanCancel: () {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                  },
+                  child: CustomScrollView(
+                    physics: NoImplicitScrollPhysics(
+                      parent: ScrollPhysics(),
+                    ),
+                    controller: _controller,
+                    slivers: [
+                      SliverAppBar(
+                        floating: true,
+                        collapsedHeight: 70,
+                        // expandedHeight: 10,
+                        flexibleSpace: FlexibleSpaceBar(
+                          title: Form(
+                            // key: _formKey,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Stack(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 35.0),
+                                    child: Container(
+                                      child: Card(
+                                        elevation: 0.0,
+                                        shadowColor: CupertinoColors.lightBackgroundGray,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        child: TextFormField(
+                                          textCapitalization: TextCapitalization.words,
+
+                                          onTap: () {
+                                            setState(() {
+                                              canTap = false;
+                                            });
+                                          },
+                                          // autofocus: true,
+                                          onSaved: (input) {},
+
+                                          keyboardType: TextInputType.text,
+                                          cursorColor: Color.fromRGBO(29, 161, 242, 1.0),
+                                          style: TextStyle(color: textColor, fontSize: 15),
+                                          autocorrect: false,
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.only(top: 10),
+                                            prefixIcon: Container(width: 1),
+                                            suffixIcon: Container(width: 1),
+                                            isDense: true,
+                                            hintText: 'Search',
+                                            hintStyle: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 17),
+                                            focusedBorder: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(6),
+                                              borderSide: BorderSide(color: Colors.grey[300], width: 0.7),
                                             ),
-                                            child: TextFormField(
-                                              initialValue: 'hello',
-                                              onTap: () {
-                                                setState(() {
-                                                  canTap = false;
-                                                });
-                                              },
-                                              // autofocus: true,
-                                              onSaved: (input) {},
-
-                                              keyboardType: TextInputType.text,
-                                              cursorColor: Colors.grey[500],
-                                              style: TextStyle(color: Theme.of(context).textTheme.bodyText2.color, fontSize: 15),
-                                              autocorrect: false,
-                                              decoration: InputDecoration(
-                                                // contentPadding: EdgeInsets.only(left: 15),
-                                                isDense: true,
-
-                                                hintText: 'Email',
-                                                hintStyle: TextStyle(color: liltextColor),
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(6),
-                                                  borderSide: BorderSide(color: CupertinoColors.systemBackground, width: 0.0),
-                                                ),
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(6),
-                                                  borderSide: BorderSide(color: CupertinoColors.systemBackground, width: 0.0),
-                                                ),
-                                                errorBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(6),
-                                                  borderSide: BorderSide(color: CupertinoColors.systemBackground, width: 0.0),
-                                                ),
-                                                border: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(6),
-                                                  borderSide: BorderSide(color: CupertinoColors.systemBackground, width: 0.0),
-                                                ),
-                                                focusedErrorBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(6),
-                                                  borderSide: BorderSide(color: CupertinoColors.systemBackground, width: 0.0),
-                                                ),
-                                                disabledBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(6),
-                                                  borderSide: BorderSide(color: CupertinoColors.systemBackground, width: 0.0),
-                                                ),
-                                              ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(6),
+                                              borderSide: BorderSide(color: Colors.grey[300], width: 0.7),
+                                            ),
+                                            errorBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(6),
+                                              borderSide: BorderSide(color: Colors.grey[300], width: 0.7),
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(6),
+                                              borderSide: BorderSide(color: Colors.grey[300], width: 0.7),
+                                            ),
+                                            focusedErrorBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(6),
+                                              borderSide: BorderSide(color: Colors.grey[300], width: 0.7),
+                                            ),
+                                            disabledBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(6),
+                                              borderSide: BorderSide(color: Colors.grey[300], width: 0.7),
                                             ),
                                           ),
                                         ),
                                       ),
-                                      Transform.translate(
-                                        offset: Offset(210, 0),
-                                        child: SizedBox(
-                                          height: 900,
-                                          width: 80,
-                                          child: FlatButton(
-                                            highlightColor: Colors.transparent,
-                                            splashColor: Colors.transparent,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(left: 10.0),
-                                              child: Transform.scale(
-                                                scale: 0.8,
-                                                child: Icon(
-                                                  EvaIcons.moreVertical,
-                                                  color: Color.fromRGBO(29, 161, 242, 1.0),
-                                                ),
-                                              ),
+                                    ),
+                                  ),
+                                  Transform.translate(
+                                    offset: Offset(200, 0),
+                                    child: SizedBox(
+                                      height: 1000,
+                                      width: 80,
+                                      child: FlatButton(
+                                        splashColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 30.0),
+                                          child: Transform.scale(
+                                            scale: 0.8,
+                                            child: Icon(
+                                              EvaIcons.moreVertical,
+                                              color: liltextColor.withOpacity(0.8),
                                             ),
-                                            onPressed: () async {
-                                              FlutterAppBadger.updateBadgeCount(7);
-                                              print(Provider.of<UserData>(context, listen: false).notesFromUser);
-                                              print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                                              print(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          FlutterAppBadger.updateBadgeCount(7);
+                                          print(Provider.of<UserData>(context, listen: false).notesFromUser);
+                                          print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                                          print(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
 
-                                              showModalBottomSheet(
-                                                context: context,
-                                                isDismissible: true,
-                                                builder: (BuildContext context) {
-                                                  return StatefulBuilder(
-                                                    builder: (BuildContext context, StateSetter setState) {
-                                                      return Column(
-                                                        mainAxisSize: MainAxisSize.min,
-                                                        children: <Widget>[
-                                                          ListTile(
-                                                            leading: Icon(
-                                                              EvaIcons.trash2Outline,
-                                                              color: liltextColor,
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isDismissible: true,
+                                            builder: (BuildContext context) {
+                                              return StatefulBuilder(
+                                                builder: (BuildContext context, StateSetter setState) {
+                                                  return Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      ListTile(
+                                                        leading: Icon(
+                                                          EvaIcons.trash2Outline,
+                                                          color: liltextColor,
+                                                        ),
+                                                        title: Text(
+                                                          'Bin',
+                                                          style: TextStyle(fontSize: 14, color: textColor),
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.pop(context);
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (_) {
+                                                                return Bin();
+                                                              },
+                                                              fullscreenDialog: true,
                                                             ),
-                                                            title: Text(
-                                                              'Bin',
-                                                              style: TextStyle(fontSize: 14, color: textColor),
+                                                          );
+                                                        },
+                                                      ),
+                                                      ListTile(
+                                                        leading: Icon(
+                                                          EvaIcons.flagOutline,
+                                                          color: liltextColor,
+                                                        ),
+                                                        title: Text(
+                                                          'Flagged',
+                                                          style: TextStyle(fontSize: 14, color: textColor),
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (_) {
+                                                                return FlaggedNotes();
+                                                              },
+                                                              fullscreenDialog: true,
                                                             ),
-                                                            onTap: () {
-                                                              Navigator.pop(context);
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder: (_) {
-                                                                    return Bin();
-                                                                  },
-                                                                  fullscreenDialog: true,
-                                                                ),
-                                                              );
+                                                          );
+                                                        },
+                                                      ),
+                                                      ListTile(
+                                                        leading: Icon(
+                                                          EvaIcons.eyeOff2Outline,
+                                                          color: liltextColor,
+                                                        ),
+                                                        title: Text(
+                                                          'Hidden Notes',
+                                                          style: TextStyle(fontSize: 14, color: textColor),
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (_) {
+                                                                return HiddenNotes();
+                                                              },
+                                                              fullscreenDialog: true,
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                      Divider(
+                                                        indent: 70,
+                                                        endIndent: 70,
+                                                        color: liltextColor,
+                                                        thickness: 0.2,
+                                                        height: 0.0,
+                                                      ),
+                                                      Theme(
+                                                        data: ThemeData(
+                                                          splashColor: Colors.transparent,
+                                                          highlightColor: Colors.transparent,
+                                                        ),
+                                                        child: ListTile(
+                                                          title: Text(
+                                                            'Empty Bin after 30 days.',
+                                                            style: TextStyle(fontSize: 14, color: liltextColor),
+                                                          ),
+                                                          //  dense: true,
+                                                          trailing: Switch.adaptive(
+                                                            activeTrackColor: buttonColor,
+                                                            activeColor: buttonColor,
+                                                            value: isSwitched,
+                                                            onChanged: (value) {
+                                                              setState(() {
+                                                                isSwitched = value;
+                                                                updateDeletePreference(value);
+                                                              });
                                                             },
                                                           ),
-                                                          ListTile(
-                                                            leading: Icon(
-                                                              EvaIcons.flagOutline,
-                                                              color: liltextColor,
-                                                            ),
-                                                            title: Text(
-                                                              'Flagged',
-                                                              style: TextStyle(fontSize: 14, color: textColor),
-                                                            ),
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder: (_) {
-                                                                    return FlaggedNotes();
-                                                                  },
-                                                                  fullscreenDialog: true,
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                          ListTile(
-                                                            leading: Icon(
-                                                              EvaIcons.eyeOff2Outline,
-                                                              color: liltextColor,
-                                                            ),
-                                                            title: Text(
-                                                              'Hidden Notes',
-                                                              style: TextStyle(fontSize: 14, color: textColor),
-                                                            ),
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder: (_) {
-                                                                    return HiddenNotes();
-                                                                  },
-                                                                  fullscreenDialog: true,
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                          Divider(
-                                                            indent: 70,
-                                                            endIndent: 70,
-                                                            color: liltextColor,
-                                                            thickness: 0.2,
-                                                            height: 0.0,
-                                                          ),
-                                                          Theme(
-                                                            data: ThemeData(
-                                                              splashColor: Colors.transparent,
-                                                              highlightColor: Colors.transparent,
-                                                            ),
-                                                            child: ListTile(
-                                                              title: Text(
-                                                                'Empty Bin after 30 days.',
-                                                                style: TextStyle(fontSize: 14, color: liltextColor),
-                                                              ),
-                                                              //  dense: true,
-                                                              trailing: Switch.adaptive(
-                                                                activeTrackColor: buttonColor,
-                                                                activeColor: buttonColor,
-                                                                value: isSwitched,
-                                                                onChanged: (value) {
-                                                                  setState(() {
-                                                                    isSwitched = value;
-                                                                    updateDeletePreference(value);
-                                                                  });
-                                                                },
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 5,
-                                                          )
-                                                        ],
-                                                      );
-                                                    },
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      )
+                                                    ],
                                                   );
                                                 },
-                                              ).whenComplete(() {
-                                                setState(() {
-                                                  canTap = true;
-                                                });
-                                              });
+                                              );
                                             },
+                                          ).whenComplete(() {
+                                            setState(() {
+                                              canTap = true;
+                                            });
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  Transform.translate(
+                                    offset: Offset(20, 0),
+                                    child: SizedBox(
+                                      height: 900,
+                                      width: 80,
+                                      child: FlatButton(
+                                        highlightColor: Colors.transparent,
+                                        splashColor: Colors.transparent,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 10.0),
+                                          child: Transform.scale(
+                                            scale: 0.8,
+                                            child: Icon(
+                                              EvaIcons.externalLinkOutline,
+                                              color: liltextColor.withOpacity(0.8),
+                                            ),
                                           ),
                                         ),
+                                        onPressed: () async {
+                                          FlutterAppBadger.updateBadgeCount(7);
+                                          print(Provider.of<UserData>(context, listen: false).notesFromUser);
+                                          print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                                          print(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isDismissible: true,
+                                            builder: (BuildContext context) {
+                                              return StatefulBuilder(
+                                                builder: (BuildContext context, StateSetter setState) {
+                                                  return Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      ListTile(
+                                                        leading: Icon(
+                                                          EvaIcons.trash2Outline,
+                                                          color: liltextColor,
+                                                        ),
+                                                        title: Text(
+                                                          'Bin',
+                                                          style: TextStyle(fontSize: 14, color: textColor),
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.pop(context);
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (_) {
+                                                                return Bin();
+                                                              },
+                                                              fullscreenDialog: true,
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                      ListTile(
+                                                        leading: Icon(
+                                                          EvaIcons.flagOutline,
+                                                          color: liltextColor,
+                                                        ),
+                                                        title: Text(
+                                                          'Flagged',
+                                                          style: TextStyle(fontSize: 14, color: textColor),
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (_) {
+                                                                return FlaggedNotes();
+                                                              },
+                                                              fullscreenDialog: true,
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                      ListTile(
+                                                        leading: Icon(
+                                                          EvaIcons.eyeOff2Outline,
+                                                          color: liltextColor,
+                                                        ),
+                                                        title: Text(
+                                                          'Hidden Notes',
+                                                          style: TextStyle(fontSize: 14, color: textColor),
+                                                        ),
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (_) {
+                                                                return HiddenNotes();
+                                                              },
+                                                              fullscreenDialog: true,
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                      Divider(
+                                                        indent: 70,
+                                                        endIndent: 70,
+                                                        color: liltextColor,
+                                                        thickness: 0.2,
+                                                        height: 0.0,
+                                                      ),
+                                                      Theme(
+                                                        data: ThemeData(
+                                                          splashColor: Colors.transparent,
+                                                          highlightColor: Colors.transparent,
+                                                        ),
+                                                        child: ListTile(
+                                                          title: Text(
+                                                            'Empty Bin after 30 days.',
+                                                            style: TextStyle(fontSize: 14, color: liltextColor),
+                                                          ),
+                                                          //  dense: true,
+                                                          trailing: Switch.adaptive(
+                                                            activeTrackColor: buttonColor,
+                                                            activeColor: buttonColor,
+                                                            value: isSwitched,
+                                                            onChanged: (value) {
+                                                              setState(() {
+                                                                isSwitched = value;
+                                                                updateDeletePreference(value);
+                                                              });
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      )
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          ).whenComplete(() {
+                                            setState(() {
+                                              canTap = true;
+                                            });
+                                          });
+                                        },
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
-                            brightness: Brightness.light,
-                            backgroundColor: Colors.transparent,
-                            elevation: 0.0,
-                            actions: [
-                              CupertinoButton(
-                                padding: EdgeInsets.zero,
-                                child: Icon(
-                                  EvaIcons.attachOutline,
-                                  color: Colors.transparent,
-                                ),
-                                onPressed: () => null,
-                              ),
-                            ],
-                            // title: Hero(
-                            //   tag: 'title',
-                            //   child: RichText(
-                            //     text: TextSpan(
-                            //       children: [
-                            //         TextSpan(
-                            //           text: 'Not3s ',
-                            //           style: TextStyle(
-                            //               letterSpacing: -0.5,
-                            //               color: liltextColor,
-                            //               fontSize: 18,
-                            //               fontWeight: FontWeight.w500),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
                           ),
-                          SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                return Column(
-                                  children: [
-                                    AnimatedSwitcher(
-                                      duration: Duration(milliseconds: 500),
-                                      child: animationComplete
-                                          ? (Provider.of<UserData>(context).notesFromUser.length != 0
-                                              ? Dismissible(
-                                                  key: UniqueKey(),
-                                                  confirmDismiss: (direction) async {
-                                                    bool returnValue;
-                                                    if (direction == DismissDirection.endToStart) {
-                                                      Provider.of<UserData>(context, listen: false).notesFromUser.removeAt(index);
-                                                      Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.removeAt(index);
-                                                      Provider.of<UserData>(context, listen: false).dateOfNoteCreation.removeAt(index);
-                                                      await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
-                                                      await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                                                      await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
-                                                      returnValue = true;
-                                                    } else if (direction == DismissDirection.startToEnd) {
-                                                      returnValue = true;
-                                                    }
-                                                    return returnValue;
-                                                  },
-                                                  background: Container(
-                                                    color: Color(0xFF1aa260),
-                                                    child: Align(
-                                                      alignment: Alignment.centerLeft,
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.only(left: 28.0),
-                                                        child: Icon(
-                                                          EvaIcons.flag,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                    ),
+                        ),
+
+                        brightness: Brightness.light,
+                        backgroundColor: Colors.transparent,
+                        elevation: 0.0,
+                        actions: [
+                          CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            child: Icon(
+                              EvaIcons.attachOutline,
+                              color: Colors.transparent,
+                            ),
+                            onPressed: () => null,
+                          ),
+                        ],
+                        // title: Hero(
+                        //   tag: 'title',
+                        //   child: RichText(
+                        //     text: TextSpan(
+                        //       children: [
+                        //         TextSpan(
+                        //           text: 'Not3s ',
+                        //           style: TextStyle(
+                        //               letterSpacing: -0.5,
+                        //               color: liltextColor,
+                        //               fontSize: 18,
+                        //               fontWeight: FontWeight.w500),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+                      ),
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            return Column(
+                              children: [
+                                AnimatedSwitcher(
+                                    duration: Duration(milliseconds: 500),
+                                    child: Provider.of<UserData>(context).notesFromUser.length != 0
+                                        ? Dismissible(
+                                            key: UniqueKey(),
+                                            confirmDismiss: (direction) async {
+                                              bool returnValue;
+                                              if (direction == DismissDirection.endToStart) {
+                                                Provider.of<UserData>(context, listen: false).notesFromUser.removeAt(index);
+                                                Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.removeAt(index);
+                                                Provider.of<UserData>(context, listen: false).dateOfNoteCreation.removeAt(index);
+                                                await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
+                                                await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                                                await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                                                returnValue = true;
+                                              } else if (direction == DismissDirection.startToEnd) {
+                                                returnValue = true;
+                                              }
+                                              return returnValue;
+                                            },
+                                            background: Container(
+                                              color: Color(0xFF1aa260),
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(left: 28.0),
+                                                  child: Icon(
+                                                    EvaIcons.flag,
+                                                    color: Colors.white,
                                                   ),
-                                                  secondaryBackground: Container(
-                                                    color: Colors.red,
-                                                    child: Align(
-                                                      alignment: Alignment.centerRight,
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.only(right: 28.0),
-                                                        child: Icon(
-                                                          EvaIcons.trash,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Card(
-                                                        color: CupertinoColors.systemBackground,
-                                                        shape: ContinuousRectangleBorder(
-                                                          borderRadius: BorderRadius.zero,
-                                                        ),
-                                                        borderOnForeground: true,
-                                                        elevation: 0,
-                                                        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                                        child: ListTile(
-                                                          contentPadding: EdgeInsets.only(left: 30.0, right: 30.0),
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                              context,
-                                                              CupertinoPageRoute(
-                                                                fullscreenDialog: true,
-                                                                builder: (_) {
-                                                                  return EditAndViewNotes(
-                                                                    index: index,
-                                                                  );
-                                                                },
-                                                              ),
-                                                            );
-                                                          },
-                                                          title: Column(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                              Row(
-                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                children: [
-                                                                  Text(
-                                                                    Provider.of<UserData>(context).titleOfNotesFromUser[index],
-                                                                    style: TextStyle(color: liltextColor, fontSize: 16),
-                                                                  ),
-                                                                  Text(
-                                                                      Provider.of<UserData>(context).dateOfNoteCreation[index] == DateTime.now().toString().substring(0, 10).replaceAll('-', '. ')
-                                                                          ? 'Today'
-                                                                          : Provider.of<UserData>(context).dateOfNoteCreation[index],
-                                                                      style: TextStyle(color: liltextColor, fontSize: 14)),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          subtitle: Padding(
-                                                            padding: const EdgeInsets.only(top: 8.0),
-                                                            child: Container(
-                                                              decoration: BoxDecoration(
-                                                                shape: BoxShape.rectangle,
-                                                                borderRadius: BorderRadius.circular(2),
-                                                              ),
-                                                              child: Column(
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: [
-                                                                  Text(
-                                                                    Provider.of<UserData>(context).notesFromUser[index],
-                                                                    style: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 15),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              : Column(
-                                                  key: ValueKey<int>(2),
-                                                  children: [
-                                                    SizedBox(
-                                                      height: MediaQuery.of(context).size.height / 4,
-                                                    ),
-                                                    Center(
-                                                      child: Container(
-                                                        height: 150,
-                                                        width: 150,
-                                                        child: FlareActor(
-                                                          'assets/flare/empty2.flr',
-                                                          animation: 'Idle',
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Center(
-                                                      child: Text(
-                                                        'Your notes are empty',
-                                                        style: TextStyle(color: textColor),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ))
-                                          : Container(
-                                              key: ValueKey<int>(3),
-                                              foregroundDecoration: Provider.of<UserData>(context).notesFromUser.length == 0 ? BoxDecoration(color: Colors.white) : BoxDecoration(),
-                                              child: Padding(
-                                                padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                                                child: Column(
-                                                  children: [
-                                                    ClipRRect(
-                                                      borderRadius: index == 0 && index == Provider.of<UserData>(context).notesFromUser.length - 1
-                                                          ? BorderRadius.only(
-                                                              topRight: Radius.circular(11),
-                                                              topLeft: Radius.circular(11),
-                                                              bottomRight: Radius.circular(11),
-                                                              bottomLeft: Radius.circular(11),
-                                                            )
-                                                          : index == 0
-                                                              ? BorderRadius.only(
-                                                                  topRight: Radius.circular(11),
-                                                                  topLeft: Radius.circular(11),
-                                                                )
-                                                              : index == Provider.of<UserData>(context).notesFromUser.length - 1
-                                                                  ? BorderRadius.only(
-                                                                      bottomRight: Radius.circular(11),
-                                                                      bottomLeft: Radius.circular(11),
-                                                                    )
-                                                                  : BorderRadius.zero,
-                                                      child: Card(
-                                                        color: CupertinoColors.systemBackground,
-                                                        shape: ContinuousRectangleBorder(
-                                                          borderRadius: BorderRadius.zero,
-                                                        ),
-                                                        borderOnForeground: true,
-                                                        elevation: 0,
-                                                        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                                        child: ListTile(
-                                                          title: Column(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                              SizedBox(
-                                                                height: 14,
-                                                              ),
-                                                              Row(
-                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                children: [
-                                                                  FLSkeleton(
-                                                                    shape: BoxShape.rectangle,
-                                                                    borderRadius: BorderRadius.circular(2),
-                                                                    width: 60,
-                                                                    height: 21,
-                                                                  ),
-                                                                  FLSkeleton(
-                                                                    shape: BoxShape.rectangle,
-                                                                    borderRadius: BorderRadius.circular(2),
-                                                                    width: 60,
-                                                                    height: 21,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          subtitle: Padding(
-                                                            padding: const EdgeInsets.only(top: 8.0),
-                                                            child: Container(
-                                                              decoration: BoxDecoration(
-                                                                shape: BoxShape.rectangle,
-                                                                borderRadius: BorderRadius.circular(2),
-                                                              ),
-                                                              child: Column(
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: [
-                                                                  FLSkeleton(
-                                                                    shape: BoxShape.rectangle,
-                                                                    borderRadius: BorderRadius.circular(2),
-                                                                    width: 200,
-                                                                    height: 21,
-                                                                  ),
-                                                                  // SizedBox(
-                                                                  //   height: 15,
-                                                                  // )
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          // trailing: Padding(
-                                                          //   padding: const EdgeInsets.only(bottom: 22.0, right: 10),
-                                                          //   child: Text(
-                                                          //     Provider.of<UserData>(context).dateOfNoteCreation[index],
-                                                          //     style: TextStyle(color: liltextColor, fontSize: 14),
-                                                          //   ),
-                                                          // ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
                                                 ),
                                               ),
                                             ),
-                                    ),
-                                  ],
-                                );
-                              },
-                              childCount:
-                                  // Provider.of<UserData>(context)
-                                  //     .notesFromUser
-                                  //     .length
-                                  Provider.of<UserData>(context).notesFromUser.length == 0 ? 1 : Provider.of<UserData>(context).notesFromUser.length,
-                            ),
-                          ),
-                          SliverList(
-                            delegate: SliverChildListDelegate(
-                              [
-                                SizedBox(
-                                  height: 300,
-                                )
+                                            secondaryBackground: Container(
+                                              color: Colors.red,
+                                              child: Align(
+                                                alignment: Alignment.centerRight,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(right: 28.0),
+                                                  child: Icon(
+                                                    EvaIcons.trash,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Card(
+                                                  color: CupertinoColors.systemBackground,
+                                                  shape: ContinuousRectangleBorder(
+                                                    borderRadius: BorderRadius.zero,
+                                                  ),
+                                                  borderOnForeground: true,
+                                                  elevation: 0,
+                                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                                  child: Theme(
+                                                    data: ThemeData(splashColor: Colors.transparent),
+                                                    child: ListTile(
+                                                      contentPadding: EdgeInsets.only(left: 30.0, right: 30.0),
+                                                      onTap: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          CupertinoPageRoute(
+                                                            fullscreenDialog: true,
+                                                            builder: (_) {
+                                                              return EditAndViewNotes(
+                                                                index: index,
+                                                              );
+                                                            },
+                                                          ),
+                                                        );
+                                                      },
+                                                      title: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                Provider.of<UserData>(context).titleOfNotesFromUser[index],
+                                                                style: TextStyle(color: liltextColor, fontSize: 16),
+                                                              ),
+                                                              Text(
+                                                                  Provider.of<UserData>(context).dateOfNoteCreation[index] == DateTime.now().toString().substring(0, 10).replaceAll('-', '. ')
+                                                                      ? 'Today'
+                                                                      : Provider.of<UserData>(context).dateOfNoteCreation[index],
+                                                                  style: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 14)),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      subtitle: Padding(
+                                                        padding: const EdgeInsets.only(top: 18.0),
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                            shape: BoxShape.rectangle,
+                                                            borderRadius: BorderRadius.circular(2),
+                                                          ),
+                                                          child: Column(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Text(
+                                                                Provider.of<UserData>(context).notesFromUser[index],
+                                                                style: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 15),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : Column(
+                                            key: ValueKey<int>(2),
+                                            children: [
+                                              SizedBox(
+                                                height: MediaQuery.of(context).size.height / 4,
+                                              ),
+                                              Center(
+                                                child: Container(
+                                                  height: 150,
+                                                  width: 150,
+                                                  child: FlareActor(
+                                                    'assets/flare/empty2.flr',
+                                                    animation: 'Idle',
+                                                  ),
+                                                ),
+                                              ),
+                                              Center(
+                                                child: Text(
+                                                  'Your notes are empty',
+                                                  style: TextStyle(color: textColor),
+                                                ),
+                                              )
+                                            ],
+                                          ))
                               ],
-                            ),
-                          )
-                        ],
+                            );
+                          },
+                          childCount:
+                              // Provider.of<UserData>(context)
+                              //     .notesFromUser
+                              //     .length
+                              Provider.of<UserData>(context).notesFromUser.length == 0 ? 1 : Provider.of<UserData>(context).notesFromUser.length,
+                        ),
                       ),
-                    ),
+                      SliverList(
+                        delegate: SliverChildListDelegate(
+                          [
+                            SizedBox(
+                              height: 500,
+                            )
+                          ],
+                        ),
+                      )
+                    ],
                   ),
                 ),
+              ),
+            ),
+          ),
         ),
       ),
     );

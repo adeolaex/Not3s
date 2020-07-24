@@ -1,5 +1,5 @@
 name: Not3s
-description: A new Flutter project.
+description: A TO-DO app bundled with some functionalites of a Notes app.
 
 publish_to: "none"
 
@@ -26,13 +26,15 @@ dependencies:
   uuid: ^2.2.0
   modal_bottom_sheet: ^0.2.0+1
   flutter_app_badger: ^1.1.2
-  keyboard_actions: ^3.3.0 
   keyboard_attachable: ^1.0.3
+  flutter_audio_recorder: ^0.5.5
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_native_splash: ^0.1.9
   flutter_launcher_icons: ^0.7.5
+
 flutter_icons:
   ios: true
   anroid: true
@@ -49,9 +51,5 @@ flutter:
     - assets/flare/empty2.flr
     - assets/flare/error.flr
     - assets/flare/success.flr
-    - assets/images/icons8-notes-app.svg
-    - assets/images/icons8-notes-app-2.svg
-    - assets/images/icons8-notes-app-3.svg
-    - assets/images/icons8-notes-app-4.svg
     - assets/images/appIcon1.png
     - assets/images/appIcon.png
