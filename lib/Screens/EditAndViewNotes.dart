@@ -9,7 +9,6 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker_saver/image_picker_saver.dart';
 import 'package:path_provider/path_provider.dart';
@@ -113,27 +112,31 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
         brightness: Brightness.light,
         backgroundColor: CupertinoColors.white,
         elevation: 0.0,
-        leading: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: Text(
-            'Cancel',
-            style: TextStyle(fontSize: 17),
-          ),
-          onPressed: () async {
-            setState(() {
-              whichTextField = null;
-            });
-            if (canTap == true) {
-              FocusScope.of(context).requestFocus(FocusNode());
-            }
-            if (whichTextField != null) {
-              await Future.delayed(Duration(milliseconds: 900), () async {
-                await Navigator.maybePop(context);
+        leading: Padding(
+          padding: EdgeInsets.only(right: 10, bottom: 5.0),
+          child: CupertinoButton(
+            padding: EdgeInsets.zero,
+            child: Icon(
+              EvaIcons.closeCircleOutline,
+              color: buttonColor,
+              size: 23,
+            ),
+            onPressed: () async {
+              setState(() {
+                whichTextField = null;
               });
-            } else if (whichTextField == null) {
-              await Navigator.maybePop(context);
-            }
-          },
+              if (canTap == true) {
+                FocusScope.of(context).requestFocus(FocusNode());
+              }
+              if (whichTextField != null) {
+                await Future.delayed(Duration(milliseconds: 900), () async {
+                  await Navigator.maybePop(context);
+                });
+              } else if (whichTextField == null) {
+                await Navigator.maybePop(context);
+              }
+            },
+          ),
         ),
         actions: [
           AnimatedSwitcher(
@@ -146,8 +149,8 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                       padding: EdgeInsets.zero,
                       child: Icon(
                         EvaIcons.checkmark,
-                        color: Color.fromRGBO(29, 161, 242, 1.0),
-                        size: 22,
+                        color: buttonColor,
+                        size: 23,
                       ),
                       onPressed: () async {
                         setState(() {
@@ -265,13 +268,13 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
           cursorColor: CupertinoColors.systemBlue,
           focusNode: _focusNode1,
           textCapitalization: TextCapitalization.sentences,
-          style: TextStyle(fontSize: 17, color: liltextColor),
+          style: TextStyle(fontSize: 18, color: liltextColor),
           textInputAction: TextInputAction.next,
           keyboardAppearance: Brightness.light,
           decoration: InputDecoration(
             hintText: 'Title',
-            hintStyle: TextStyle(fontSize: 17, color: liltextColor),
-            contentPadding: EdgeInsets.only(left: 1, top: 1),
+            hintStyle: TextStyle(fontSize: 18, color: liltextColor),
+            contentPadding: EdgeInsets.only(left: 1, top: 1, bottom: 5),
             border: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white, width: 0.4),
             ),
@@ -325,7 +328,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                   padding: EdgeInsets.zero,
                   child: Icon(
                     EvaIcons.micOutline,
-                    color: Color.fromRGBO(29, 161, 242, 1.0),
+                    color: buttonColor,
                   ),
                   onPressed: () {},
                 ),
@@ -333,7 +336,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                   padding: EdgeInsets.zero,
                   child: Icon(
                     EvaIcons.clockOutline,
-                    color: Color.fromRGBO(29, 161, 242, 1.0),
+                    color: buttonColor,
                   ),
                   onPressed: () {},
                 ),
@@ -341,7 +344,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                   padding: EdgeInsets.zero,
                   child: Icon(
                     EvaIcons.imageOutline,
-                    color: Color.fromRGBO(29, 161, 242, 1.0),
+                    color: buttonColor,
                   ),
                   onPressed: () async {
                     FocusScope.of(context).requestFocus(FocusNode());
@@ -373,7 +376,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
             controller: _scrollController,
             children: <Widget>[
               SizedBox(
-                height: 20,
+                height: 5,
               ),
               TextFormField(
                 initialValue: Provider.of<UserData>(context).notesFromUser[widget.index],
@@ -393,19 +396,20 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                 },
                 autocorrect: true,
                 //autofocus: true,
-                maxLength: 600,
-                maxLines: 10,
+                maxLength: null,
+                maxLines: 8,
                 enableInteractiveSelection: true,
                 enableSuggestions: true,
                 cursorColor: CupertinoColors.systemBlue,
                 textCapitalization: TextCapitalization.sentences,
                 focusNode: _focusNode2,
-                style: TextStyle(fontSize: 17, color: liltextColor),
+                style: TextStyle(fontSize: 18, color: liltextColor),
                 textInputAction: TextInputAction.newline,
                 keyboardAppearance: Brightness.light,
+                keyboardType: TextInputType.multiline,
                 decoration: InputDecoration(
                   hintText: 'To-do',
-                  hintStyle: TextStyle(fontSize: 17, color: liltextColor),
+                  hintStyle: TextStyle(fontSize: 18, color: liltextColor),
                   contentPadding: EdgeInsets.only(left: 30, top: 1, right: 30),
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white, width: 0.3),

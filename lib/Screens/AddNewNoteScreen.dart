@@ -113,9 +113,10 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
         elevation: 0.0,
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
-          child: Text(
-            'Cancel',
-            style: TextStyle(fontSize: 17),
+          child: Icon(
+            EvaIcons.close,
+            color: buttonColor,
+            size: 22,
           ),
           onPressed: () async {
             setState(() {
@@ -144,7 +145,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                       padding: EdgeInsets.zero,
                       child: Icon(
                         EvaIcons.checkmark,
-                        color: Color.fromRGBO(29, 161, 242, 1.0),
+                        color: buttonColor,
                         size: 22,
                       ),
                       onPressed: () async {
@@ -175,7 +176,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                           showSnackBars();
                           // Flushbar _flushBar = Flushbar(
                           //   flushbarStyle: FlushbarStyle.FLOATING,
-                          //   backgroundColor: Color.fromRGBO(29, 161, 242, 1.0),
+                          //   backgroundColor: buttonColor,
                           //   margin: EdgeInsets.only(bottom: 50),
                           //   borderRadius: 7,
                           //   isDismissible: true,
@@ -331,7 +332,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                   padding: EdgeInsets.zero,
                   child: Icon(
                     EvaIcons.micOutline,
-                    color: Color.fromRGBO(29, 161, 242, 1.0),
+                    color: buttonColor,
                   ),
                   onPressed: () {},
                 ),
@@ -339,7 +340,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                   padding: EdgeInsets.zero,
                   child: Icon(
                     EvaIcons.clockOutline,
-                    color: Color.fromRGBO(29, 161, 242, 1.0),
+                    color: buttonColor,
                   ),
                   onPressed: () {},
                 ),
@@ -347,7 +348,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                   padding: EdgeInsets.zero,
                   child: Icon(
                     EvaIcons.imageOutline,
-                    color: Color.fromRGBO(29, 161, 242, 1.0),
+                    color: buttonColor,
                   ),
                   onPressed: () async {
                     FocusScope.of(context).requestFocus(FocusNode());

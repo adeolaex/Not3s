@@ -130,7 +130,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Not3s',
-        theme: ThemeData(brightness: Brightness.light),
+        // theme: ThemeData(brightness: Brightness.light),
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
             builder: (BuildContext context) {
