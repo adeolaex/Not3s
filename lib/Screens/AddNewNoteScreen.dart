@@ -9,7 +9,6 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker_saver/image_picker_saver.dart';
 import 'package:keyboard_attachable/keyboard_attachable.dart';
@@ -53,6 +52,11 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
     preferences.setStringList('dateOfNoteCreation', dateOfNoteCreation);
   }
 
+  _updateFirstRun(bool value) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setBool('firstRun', value);
+  }
+
   updateimagePathOfEachNote(List<String> imagePathOfEachNote) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);
@@ -81,11 +85,13 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
     flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
+    // ignore: unused_local_variable
     var time = DateTime.now().add(
       Duration(seconds: 2),
     );
     var androidPlatformChannelSpecifics = AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    // ignore: unused_local_variable
     NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     // flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails)
     //   ..whenComplete(
@@ -127,10 +133,10 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
             }
             if (whichTextField != null) {
               await Future.delayed(Duration(milliseconds: 900), () async {
-                await Navigator.maybePop(context);
+                await Navigator.maybePop(context, 0);
               });
             } else if (whichTextField == null) {
-              await Navigator.maybePop(context);
+              await Navigator.maybePop(context, 0);
             }
           },
         ),
@@ -164,6 +170,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                           print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
                           print(Provider.of<UserData>(context, listen: false).notesFromUser);
                           // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.add(imagePath);
+                          await _updateFirstRun(false);
                           await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
                           await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
                           await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);

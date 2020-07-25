@@ -80,11 +80,13 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
     flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
+    // ignore: unused_local_variable
     var time = DateTime.now().add(
       Duration(seconds: 2),
     );
     var androidPlatformChannelSpecifics = AndroidNotificationDetails('your other channel id', 'your other channel name', 'your other channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    // ignore: unused_local_variable
     NotificationDetails notificationDetails = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     // flutterLocalNotificationsPlugin.schedule(0, 'To-do', 'Also test', time, notificationDetails)
     //   ..whenComplete(

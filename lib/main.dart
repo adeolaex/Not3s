@@ -43,11 +43,42 @@ Future<void> warmUp3() async {
 // Gets the User Data from the internal sotrage using https://pub.dev/packages/shared_preferences
 // and stores said data values into the Provider classes.
 //
+
+final List<String> dummyList = ['dummy'];
+
+_updateNotesFromUser(List<String> notesFromUseR) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  preferences.setStringList('notesFromUser', notesFromUseR);
+}
+
+_updatetitleOfNotesFromUser(List<String> titleOfNotesFromUseR) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  preferences.setStringList('titleOfNotesFromUser', titleOfNotesFromUseR);
+}
+
+_updatedateOfNoteCreation(List<String> dateOfNoteCreation) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  preferences.setStringList('dateOfNoteCreation', dateOfNoteCreation);
+}
+
+// updateimagePathOfEachNote(List<String> imagePathOfEachNote) async {
+//   SharedPreferences preferences = await SharedPreferences.getInstance();
+//   preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);..TODO
+// }
+
+_firstRun() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  // preferences.setStringList('notesFromUser', []);
+  // This are used to reset the data stored within the storage of a device during production.
+  bool notesFromUser = preferences.getBool('firstRun') ?? true;
+  return notesFromUser;
+}
+
 _notesFromUser() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   // preferences.setStringList('notesFromUser', []);
   // This are used to reset the data stored within the storage of a device during production.
-  List<String> notesFromUser = preferences.getStringList('notesFromUser') ?? [];
+  List<String> notesFromUser = preferences.getStringList('notesFromUser') ?? ['empty'];
   return notesFromUser;
 }
 
@@ -55,7 +86,7 @@ _titleOfNotesFromUser() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   // preferences.setStringList('titleOfNotesFromUser', []);
   // This are used to reset the data stored within the storage of a device during production.
-  List<String> titleOfNotesFromUser = preferences.getStringList('titleOfNotesFromUser') ?? [];
+  List<String> titleOfNotesFromUser = preferences.getStringList('titleOfNotesFromUser') ?? ['empty'];
 
   return titleOfNotesFromUser;
 }
@@ -72,7 +103,7 @@ _dateOfNoteCreation() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   // preferences.setStringList('dateOfNoteCreation', []);
   // This are used to reset the data stored within the storage of a device during production.
-  List<String> dateOfNoteCreation = preferences.getStringList('dateOfNoteCreation') ?? [];
+  List<String> dateOfNoteCreation = preferences.getStringList('dateOfNoteCreation') ?? ['empty'];
   return dateOfNoteCreation;
 }
 
@@ -80,7 +111,7 @@ _imagePathOfEachNote() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   // preferences.setStringList('imagePathOfEachNote', []);
   //  This are used to reset the data stored within the storage of a device during production.
-  List<String> imagePathOfEachNote = preferences.getStringList('imagePathOfEachNote') ?? [];
+  List<String> imagePathOfEachNote = preferences.getStringList('imagePathOfEachNote') ?? ['empty'];
   return imagePathOfEachNote;
 }
 
@@ -94,6 +125,13 @@ void main() async {
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitDown,
   ]);
+  final bool firstRun = await _firstRun();
+
+  if (firstRun == true) {
+    _updateNotesFromUser(dummyList);
+    _updatedateOfNoteCreation(dummyList);
+    _updatetitleOfNotesFromUser(dummyList);
+  }
   final List<String> notesFromUser = await _notesFromUser();
   final List<String> titleOfNotesFromUser = await _titleOfNotesFromUser();
   final List<String> imagePathOfEachNote = await _imagePathOfEachNote();
