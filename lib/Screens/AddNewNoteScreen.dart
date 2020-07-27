@@ -111,6 +111,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldkey,
       backgroundColor: CupertinoColors.white,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -303,81 +304,83 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
       ),
       body: FooterLayout(
         footer: KeyboardAttachable(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(
-                top: BorderSide(
-                  color: liltextColor,
-                  width: 0.2,
+          child: SafeArea(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  top: BorderSide(
+                    color: liltextColor,
+                    width: 0.2,
+                  ),
                 ),
               ),
-            ),
-            height: 45,
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  child: Icon(
-                    EvaIcons.eyeOff2Outline,
-                    color: Color.fromRGBO(170, 184, 194, 1.0),
+              height: 45,
+              width: MediaQuery.of(context).size.width,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(
+                      EvaIcons.eyeOff2Outline,
+                      color: Color.fromRGBO(170, 184, 194, 1.0),
+                    ),
+                    onPressed: () {},
                   ),
-                  onPressed: () {},
-                ),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  child: Icon(
-                    EvaIcons.flagOutline,
-                    color: Color.fromRGBO(170, 184, 194, 1.0),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(
+                      EvaIcons.flagOutline,
+                      color: Color.fromRGBO(170, 184, 194, 1.0),
+                    ),
+                    onPressed: () {},
                   ),
-                  onPressed: () {},
-                ),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  child: Icon(
-                    EvaIcons.micOutline,
-                    color: buttonColor,
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(
+                      EvaIcons.micOutline,
+                      color: buttonColor,
+                    ),
+                    onPressed: () {},
                   ),
-                  onPressed: () {},
-                ),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  child: Icon(
-                    EvaIcons.clockOutline,
-                    color: buttonColor,
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(
+                      EvaIcons.clockOutline,
+                      color: buttonColor,
+                    ),
+                    onPressed: () {},
                   ),
-                  onPressed: () {},
-                ),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  child: Icon(
-                    EvaIcons.imageOutline,
-                    color: buttonColor,
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(
+                      EvaIcons.imageOutline,
+                      color: buttonColor,
+                    ),
+                    onPressed: () async {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      final File image = await ImagePickerSaver.pickImage(source: ImageSource.gallery);
+                      if (image == null) {
+                        imagePath = null;
+                      } else {
+                        Directory path = await getApplicationDocumentsDirectory();
+                        final String pathToDeviceFolder = path.path;
+                        String uid = Uuid().v4();
+                        final File imageToCopy = await image.copy('$pathToDeviceFolder/$uid.png');
+                        imagePath = imageToCopy.path;
+                      }
+                      if (whichTextField == null) {
+                      } else if (whichTextField == false) {
+                        FocusScope.of(context).requestFocus(_focusNode1);
+                      } else if (whichTextField == true) {
+                        FocusScope.of(context).requestFocus(_focusNode2);
+                      }
+                    },
                   ),
-                  onPressed: () async {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    final File image = await ImagePickerSaver.pickImage(source: ImageSource.gallery);
-                    if (image == null) {
-                      imagePath = null;
-                    } else {
-                      Directory path = await getApplicationDocumentsDirectory();
-                      final String pathToDeviceFolder = path.path;
-                      String uid = Uuid().v4();
-                      final File imageToCopy = await image.copy('$pathToDeviceFolder/$uid.png');
-                      imagePath = imageToCopy.path;
-                    }
-                    if (whichTextField == null) {
-                    } else if (whichTextField == false) {
-                      FocusScope.of(context).requestFocus(_focusNode1);
-                    } else if (whichTextField == true) {
-                      FocusScope.of(context).requestFocus(_focusNode2);
-                    }
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -444,7 +447,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
   void showSnackBars() {
     final snackBarContent = SnackBar(
       content: Text("sagar"),
-      action: SnackBarAction(label: 'UNDO', onPressed: _scaffoldkey.currentState.hideCurrentSnackBar),
+      // action: SnackBarAction(label: 'UNDO', onPressed: _scaffoldkey.currentState.hideCurrentSnackBar),
     );
     _scaffoldkey.currentState.showSnackBar(snackBarContent);
   }

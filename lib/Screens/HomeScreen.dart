@@ -93,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
     canBeClicked = 0;
     clicked = false;
     _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    sizeAnimation = Tween(begin: 1.0, end: 0.8).animate(_animationController)
+    sizeAnimation = Tween(begin: 1.0, end: 0.7).animate(_animationController)
       ..addListener(() {
         setState(() {});
       });
@@ -120,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
     return Container(
       color: backGroundColor,
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
           key: key2,
           backgroundColor: backGroundColor,
@@ -133,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                 });
                 if (canBeClicked == 1) {
                   _animationController.forward();
-                  Future.delayed(Duration(milliseconds: 200), () {
+                  Future.delayed(Duration(seconds: 2), () {
                     _animationController.reverse();
                   });
                   Future.delayed(Duration(milliseconds: 400), () async {
@@ -143,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
               },
               child: FloatingActionButton(
                 splashColor: Colors.transparent,
-
+                highlightElevation: 0.0,
                 onPressed: () async {
                   setState(() {
                     canBeClicked = canBeClicked + 1;
@@ -199,324 +200,287 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
             ),
           ),
           body: GestureDetector(
-              onPanCancel: () {
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
-              child: CustomScrollView(
-                cacheExtent: 10.0,
-                physics: NoImplicitScrollPhysics(
-                  parent: ScrollPhysics(),
-                ),
-                controller: _controller,
-                slivers: [
-                  SliverAppBar(
-                    floating: true,
-                    collapsedHeight: 73,
-                    // expandedHeight: 10,
-                    flexibleSpace: FlexibleSpaceBar(
-                      title: Form(
-                        // key: _formKey,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 27.0, right: 27.0),
-                          child: Card(
-                            elevation: 0.0,
-                            shadowColor: CupertinoColors.lightBackgroundGray,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Stack(
-                              alignment: Alignment(1.0, 0.0),
-                              children: <Widget>[
-                                TextFormField(
-                                  textCapitalization: TextCapitalization.words,
+            onPanCancel: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: CustomScrollView(
+              cacheExtent: 10.0,
+              physics: NoImplicitScrollPhysics(
+                parent: ScrollPhysics(),
+              ),
+              controller: _controller,
+              slivers: [
+                SliverAppBar(
+                  floating: true,
+                  collapsedHeight: 73,
+                  // expandedHeight: 10,
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: Form(
+                      // key: _formKey,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 27.0, right: 27.0),
+                        child: Card(
+                          elevation: 0.0,
+                          shadowColor: CupertinoColors.lightBackgroundGray,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Stack(
+                            alignment: Alignment(1.0, 0.0),
+                            children: <Widget>[
+                              TextFormField(
+                                textCapitalization: TextCapitalization.words,
 
-                                  onTap: () {},
-                                  // autofocus: true,
-                                  onSaved: (input) {},
+                                onTap: () {},
+                                // autofocus: true,
+                                onSaved: (input) {},
 
-                                  keyboardType: TextInputType.text,
-                                  cursorColor: CupertinoColors.activeBlue,
-                                  style: TextStyle(color: liltextColor.withOpacity(0.9), fontSize: 16),
-                                  autocorrect: false,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.only(left: 10, top: 1),
-                                    hintText: 'Search',
-                                    hintStyle: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 16),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide(color: Colors.grey[300].withOpacity(0.8), width: 1.0),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide(color: Colors.grey[300].withOpacity(0.8), width: 1.0),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide(color: Colors.grey[300].withOpacity(0.8), width: 1.0),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide(color: Colors.grey[300].withOpacity(0.8), width: 1.0),
-                                    ),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide(color: Colors.grey[300].withOpacity(0.8), width: 1.0),
-                                    ),
-                                    disabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide(color: Colors.grey[300].withOpacity(0.8), width: 1.0),
-                                    ),
+                                keyboardType: TextInputType.text,
+                                cursorColor: CupertinoColors.activeBlue,
+                                style: TextStyle(color: liltextColor.withOpacity(0.9), fontSize: 16),
+                                autocorrect: false,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.only(left: 10, top: 1),
+                                  hintText: 'Search',
+                                  hintStyle: TextStyle(color: liltextColor.withOpacity(0.7), fontSize: 16),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: Colors.grey[300].withOpacity(0.8), width: 1.0),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: Colors.grey[300].withOpacity(0.8), width: 1.0),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: Colors.grey[300].withOpacity(0.8), width: 1.0),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: Colors.grey[300].withOpacity(0.8), width: 1.0),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: Colors.grey[300].withOpacity(0.8), width: 1.0),
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: Colors.grey[300].withOpacity(0.8), width: 1.0),
                                   ),
                                 ),
-                                Positioned(
-                                  child: IconButton(
-                                    splashColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    icon: Icon(EvaIcons.menu2Outline, color: liltextColor.withOpacity(0.8)),
-                                    onPressed: () {
-                                      _sweetSheet.show(
-                                        context: context,
-                                        description: Text(
-                                          'Choose the folder displayed',
-                                          style: TextStyle(color: Color(0xff2D3748)),
-                                        ),
-                                        color: CustomSheetColor(
-                                          main: Colors.white,
-                                          accent: Color(0xff5A67D8),
-                                          icon: Color(0xff5A67D8),
-                                        ),
-                                        icon: EvaIcons.folder,
-                                        positive: SweetSheetAction(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          title: 'Deleted',
-                                        ),
-                                        negative: SweetSheetAction(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          title: 'Flaged Notes',
-                                        ),
-                                      );
-                                    },
-                                  ),
+                              ),
+                              Positioned(
+                                child: IconButton(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  icon: Icon(EvaIcons.menu2Outline, color: liltextColor.withOpacity(0.8)),
+                                  onPressed: () {
+                                    _sweetSheet.show(
+                                      context: context,
+                                      description: Text(
+                                        'Choose the folder displayed',
+                                        style: TextStyle(color: Color(0xff2D3748)),
+                                      ),
+                                      color: CustomSheetColor(
+                                        main: Colors.white,
+                                        accent: Color(0xff5A67D8),
+                                        icon: Color(0xff5A67D8),
+                                      ),
+                                      icon: EvaIcons.folder,
+                                      positive: SweetSheetAction(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        title: 'Deleted',
+                                      ),
+                                      negative: SweetSheetAction(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        title: 'Flaged Notes',
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-
-                    // brightness: Brightness.light,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0.0,
-                    actions: [
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        child: Icon(
-                          EvaIcons.attachOutline,
-                          color: Colors.transparent,
-                        ),
-                        onPressed: () => null,
-                      ),
-                    ],
-                    // title: Hero(
-                    //   tag: 'title',
-                    //   child: RichText(
-                    //     text: TextSpan(
-                    //       children: [
-                    //         TextSpan(
-                    //           text: 'Not3s ',
-                    //           style: TextStyle(
-                    //               letterSpacing: -0.5,
-                    //               color: liltextColor,
-                    //               fontSize: 18,
-                    //               fontWeight: FontWeight.w500),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
                   ),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        return index == 0
-                            ? Container(
-                                margin: EdgeInsets.only(left: 30, bottom: 7),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      EvaIcons.folderOutline,
-                                      size: 14,
-                                      color: liltextColor.withOpacity(0.8),
-                                    ),
-                                    Text(
-                                      ' Notes',
-                                      style: TextStyle(color: liltextColor, fontSize: 15),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Dismissible(
-                                key: UniqueKey(),
-                                onDismissed: (direction) async {
-                                  if (direction == DismissDirection.endToStart) {
-                                    Provider.of<UserData>(context, listen: false).notesFromUser.removeAt(index);
-                                    Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.removeAt(index);
-                                    Provider.of<UserData>(context, listen: false).dateOfNoteCreation.removeAt(index);
-                                    await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
-                                    await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                                    await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
-                                  } else if (direction == DismissDirection.startToEnd) {}
-                                },
-                                background: Container(
-                                  color: buttonColor,
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 28.0),
-                                      child: Icon(
-                                        EvaIcons.flag,
-                                        color: Colors.white,
-                                      ),
+
+                  // brightness: Brightness.light,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0.0,
+                  actions: [
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: Icon(
+                        EvaIcons.attachOutline,
+                        color: Colors.transparent,
+                      ),
+                      onPressed: () => null,
+                    ),
+                  ],
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return index == 0
+                          ? Container(
+                              margin: EdgeInsets.only(left: 30, bottom: 7),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    EvaIcons.folderOutline,
+                                    size: 14,
+                                    color: liltextColor.withOpacity(0.8),
+                                  ),
+                                  Text(
+                                    ' Notes',
+                                    style: TextStyle(color: liltextColor, fontSize: 15),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Dismissible(
+                              key: UniqueKey(),
+                              onDismissed: (direction) async {
+                                if (direction == DismissDirection.endToStart) {
+                                  Provider.of<UserData>(context, listen: false).notesFromUser.removeAt(index);
+                                  Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.removeAt(index);
+                                  Provider.of<UserData>(context, listen: false).dateOfNoteCreation.removeAt(index);
+                                  await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
+                                  await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                                  await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                                } else if (direction == DismissDirection.startToEnd) {}
+                              },
+                              background: Container(
+                                color: buttonColor,
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 28.0),
+                                    child: Icon(
+                                      EvaIcons.flag,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
-                                secondaryBackground: Container(
-                                  color: Colors.red,
-                                  child: Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 28.0),
-                                      child: Icon(
-                                        EvaIcons.trash2,
-                                        color: Colors.white,
-                                      ),
+                              ),
+                              secondaryBackground: Container(
+                                color: Colors.red,
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 28.0),
+                                    child: Icon(
+                                      EvaIcons.trash2,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Card(
-                                      color: backGroundColor,
-                                      shape: ContinuousRectangleBorder(
-                                        borderRadius: BorderRadius.zero,
-                                      ),
-                                      borderOnForeground: true,
-                                      elevation: 0,
-                                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Theme(
-                                        data: ThemeData(splashColor: Colors.transparent),
-                                        child: ListTile(
-                                          // dense: true,
-                                          contentPadding: EdgeInsets.only(left: 30.0, right: 30.0),
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              CupertinoPageRoute(
-                                                fullscreenDialog: true,
-                                                builder: (_) {
-                                                  return EditAndViewNotes(
-                                                    index: index,
-                                                  );
-                                                },
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Card(
+                                    color: backGroundColor,
+                                    shape: ContinuousRectangleBorder(
+                                      borderRadius: BorderRadius.zero,
+                                    ),
+                                    borderOnForeground: true,
+                                    elevation: 0,
+                                    margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    child: Theme(
+                                      data: ThemeData(splashColor: Colors.transparent),
+                                      child: ListTile(
+                                        // dense: true,
+                                        contentPadding: EdgeInsets.only(left: 30.0, right: 30.0),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            CupertinoPageRoute(
+                                              fullscreenDialog: true,
+                                              builder: (_) {
+                                                return EditAndViewNotes(
+                                                  index: index,
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        },
+                                        title: Padding(
+                                          padding: EdgeInsets.only(top: 3.0),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    Provider.of<UserData>(context).titleOfNotesFromUser[index].trim(),
+                                                    style: TextStyle(color: liltextColor, fontSize: 15.7),
+                                                  ),
+                                                  Text(
+                                                      Provider.of<UserData>(context).dateOfNoteCreation[index] == DateTime.now().toString().substring(0, 10).replaceAll('-', '. ')
+                                                          ? 'Today'
+                                                          : Provider.of<UserData>(context).dateOfNoteCreation[index].trim(),
+                                                      style: TextStyle(color: liltextColor, fontSize: 15.7)),
+                                                ],
                                               ),
-                                            );
-                                          },
-                                          title: Padding(
-                                            padding: EdgeInsets.only(top: 1.0),
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      Provider.of<UserData>(context).titleOfNotesFromUser[index],
-                                                      style: TextStyle(color: liltextColor, fontSize: 15),
-                                                    ),
-                                                    Text(
-                                                        Provider.of<UserData>(context).dateOfNoteCreation[index] == DateTime.now().toString().substring(0, 10).replaceAll('-', '. ')
-                                                            ? 'Today'
-                                                            : Provider.of<UserData>(context).dateOfNoteCreation[index],
-                                                        style: TextStyle(color: liltextColor, fontSize: 15)),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
+                                            ],
                                           ),
-                                          subtitle: Padding(
-                                            padding: const EdgeInsets.only(top: 15.0),
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      Provider.of<UserData>(context).notesFromUser[index],
-                                                      style: TextStyle(color: liltextColor, fontSize: 15),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
+                                        ),
+                                        subtitle: Padding(
+                                          padding: const EdgeInsets.only(top: 15.0),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    Provider.of<UserData>(context).notesFromUser[index].trim(),
+                                                    style: TextStyle(color: liltextColor, fontSize: 15),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              );
-                      },
-                      childCount: Provider.of<UserData>(context).notesFromUser.length,
-                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                    },
+                    childCount: Provider.of<UserData>(context).notesFromUser.length,
                   ),
-                  SliverList(
-                    delegate: SliverChildListDelegate(
-                      [
-                        SizedBox(
-                          height: 500,
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              )
-
-              //  Provider.of<UserData>(context).notesFromUser.length == 0
-              //  Column(
-              //     key: ValueKey<int>(2),
-              //     children: [
-              //       SizedBox(
-              //         height: MediaQuery.of(context).size.height / 4,
-              //       ),
-              //       Center(
-              //         child: Container(
-              //           height: 150,
-              //           width: 150,
-              //           child: FlareActor(
-              //             'assets/flare/empty2.flr',
-              //             animation: 'Idle',
-              //           ),
-              //         ),
-              //       ),
-              //       Center(
-              //         child: Text(
-              //           'Your notes are empty',
-              //           style: TextStyle(color: textColor),
-              //         ),
-              //       )
-              //     ],
-              //   ),
-              ),
+                ),
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      GestureDetector(
+                        onPanCancel: () {
+                          print('worked');
+                          FocusScope.of(context).requestFocus(FocusNode());
+                        },
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height / 1.2,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
