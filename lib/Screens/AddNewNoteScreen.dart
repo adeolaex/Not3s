@@ -121,7 +121,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           child: Icon(
-            EvaIcons.close,
+            EvaIcons.closeCircleOutline,
             color: buttonColor,
             size: 22,
           ),
@@ -134,10 +134,10 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
             }
             if (whichTextField != null) {
               await Future.delayed(Duration(milliseconds: 900), () async {
-                await Navigator.maybePop(context, 0);
+                Navigator.pop(context, 0);
               });
             } else if (whichTextField == null) {
-              await Navigator.maybePop(context, 0);
+              Navigator.pop(context, 0);
             }
           },
         ),
@@ -151,7 +151,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                     child: CupertinoButton(
                       padding: EdgeInsets.zero,
                       child: Icon(
-                        EvaIcons.checkmark,
+                        EvaIcons.checkmarkCircleOutline,
                         color: buttonColor,
                         size: 22,
                       ),

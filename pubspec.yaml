@@ -26,8 +26,7 @@ dependencies:
   uuid: ^2.2.0
   flutter_app_badger: ^1.1.2
   keyboard_attachable: ^1.0.3
-  flutter_audio_recorder: ^0.5.5
-  sweetsheet: ^0.2.0
+  speech_to_text: ^2.3.0
   
 dev_dependencies:
   flutter_test:

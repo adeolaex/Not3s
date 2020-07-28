@@ -15,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sweetsheet/sweetsheet.dart';
 
 // ignore: must_be_immutable
 class MyHomePage extends StatefulWidget {
@@ -32,12 +31,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTickerProviderStateMixin {
   //Various keys are used in order for the animation switcher widget to transitions without errors.
-  final GlobalKey<ScaffoldState> key1 = GlobalKey<ScaffoldState>();
+
   final GlobalKey<ScaffoldState> key2 = GlobalKey<ScaffoldState>();
-  updateDeletePreference(bool value) async {
-    SharedPreferences _preferences = await SharedPreferences.getInstance();
-    _preferences.setBool('emptyAfter30Days', value);
-  }
+  final GlobalKey key1 = GlobalKey();
 
   bool animationComplete = false;
   ScrollController _controller;
@@ -57,11 +53,11 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
   bool isEditing;
   int index;
   bool timerOn;
-  SweetSheet _sweetSheet;
   AnimationController _animationController;
   Animation<double> sizeAnimation;
   int canBeClicked;
   bool clicked;
+  double height, width, defaultHeight, defaultWidth;
 //This are functions that carry out the task of updating and deleting to-do's in the system(phone's)
 //storage
   _updateNotesFromUser(List<String> notesFromUseR) async {
@@ -98,7 +94,6 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
         setState(() {});
       });
 
-    _sweetSheet = SweetSheet();
     timerOn = false;
     isEditing = true;
     // canTap = true;
@@ -110,8 +105,12 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
 
   @override
   void didChangeDependencies() {
+    height = MediaQuery.of(context).size.height;
+    width = MediaQuery.of(context).size.width;
+    defaultHeight = MediaQuery.of(context).size.height / 1.6;
+    defaultWidth = MediaQuery.of(context).size.width / 1.2;
     precacheImage(myImage.image, context);
-    isSwitched = Provider.of<UserData>(context).emptyAfter30Days; //Note to self..... init the state of bool value with after layout
+//Note to self..... init the state of bool value with after layout
     super.didChangeDependencies();
   }
 
@@ -211,6 +210,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
               controller: _controller,
               slivers: [
                 SliverAppBar(
+                  snap: true,
                   floating: true,
                   collapsedHeight: 73,
                   // expandedHeight: 10,
@@ -275,31 +275,15 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                   highlightColor: Colors.transparent,
                                   icon: Icon(EvaIcons.menu2Outline, color: liltextColor.withOpacity(0.8)),
                                   onPressed: () {
-                                    _sweetSheet.show(
-                                      context: context,
-                                      description: Text(
-                                        'Choose the folder displayed',
-                                        style: TextStyle(color: Color(0xff2D3748)),
-                                      ),
-                                      color: CustomSheetColor(
-                                        main: Colors.white,
-                                        accent: Color(0xff5A67D8),
-                                        icon: Color(0xff5A67D8),
-                                      ),
-                                      icon: EvaIcons.folder,
-                                      positive: SweetSheetAction(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        title: 'Deleted',
-                                      ),
-                                      negative: SweetSheetAction(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        title: 'Flaged Notes',
-                                      ),
-                                    );
+                                    showCupertinoDialogCustom(
+                                        context: context,
+                                        barrierDismissible: true,
+                                        builder: (context) => CustomBox(
+                                              height: height,
+                                              width: width,
+                                              defaultHeight: defaultHeight,
+                                              defaultWidth: defaultWidth,
+                                            ));
                                   },
                                 ),
                               ),
@@ -413,7 +397,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                           );
                                         },
                                         title: Padding(
-                                          padding: EdgeInsets.only(top: 3.0),
+                                          padding: EdgeInsets.only(top: 15.0, bottom: 5.0),
                                           child: Column(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -436,7 +420,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, SingleTi
                                           ),
                                         ),
                                         subtitle: Padding(
-                                          padding: const EdgeInsets.only(top: 15.0),
+                                          padding: const EdgeInsets.only(top: 5.0, bottom: 15),
                                           child: Column(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -519,4 +503,323 @@ class NoImplicitScrollPhysics extends AlwaysScrollableScrollPhysics {
   NoImplicitScrollPhysics applyTo(ScrollPhysics ancestor) {
     return NoImplicitScrollPhysics(parent: buildParent(ancestor));
   }
+}
+
+class CustomBox extends StatefulWidget {
+  final double height, width, defaultWidth, defaultHeight;
+  CustomBox({this.height, this.width, this.defaultHeight, this.defaultWidth});
+  @override
+  _CustomBoxState createState() => _CustomBoxState();
+}
+
+class _CustomBoxState extends State<CustomBox> with TickerProviderStateMixin {
+  AnimationController _animationController;
+  AnimationController _animationController2;
+  Animation<double> height;
+  Animation<double> width;
+  Animation<double> radius;
+  Animation<double> padding;
+  Animation<double> alignment;
+  Animation<double> position;
+  Animation<double> safeArea;
+  Animation<double> spacer;
+  double defaultHeight;
+  double defaultWidth;
+  bool clicked;
+  bool normalPosition;
+  bool checkbox;
+  updateDeletePreference(bool value) async {
+    SharedPreferences _preferences = await SharedPreferences.getInstance();
+    _preferences.setBool('emptyAfter30Days', value);
+    Provider.of<UserData>(context, listen: false).emptyAfter30Days = value;
+  }
+
+  @override
+  void initState() {
+    clicked = false;
+    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 500), reverseDuration: Duration(milliseconds: 250));
+    _animationController2 = AnimationController(vsync: this, duration: Duration(milliseconds: 400));
+    height = Tween(begin: widget.defaultHeight, end: widget.height).animate(_animationController2)
+      ..addListener(() {
+        setState(() {});
+      });
+    width = Tween(begin: widget.defaultWidth, end: widget.width).animate(_animationController2)
+      ..addListener(() {
+        setState(() {});
+      });
+    padding = Tween(begin: 60.0, end: 110.0).animate(_animationController2)
+      ..addListener(() {
+        setState(() {});
+      });
+    safeArea = Tween(begin: 0.0, end: 15.0).animate(_animationController2)
+      ..addListener(() {
+        setState(() {});
+      });
+    spacer = Tween(begin: 5.0, end: 15.0).animate(_animationController2)
+      ..addListener(() {
+        setState(() {});
+      });
+    radius = Tween(begin: 10.0, end: 0.0).animate(_animationController)
+      ..addListener(() {
+        setState(() {});
+      });
+    alignment = Tween(begin: 1.0, end: 5.0).animate(_animationController)
+      ..addListener(() {
+        setState(() {});
+      });
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    checkbox = Provider.of<UserData>(context).emptyAfter30Days;
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment(0.0, -.3),
+      child: GestureDetector(
+        onVerticalDragUpdate: (DragUpdateDetails details) {
+          // direction == true ? _animationController2.forward() : _animationController2.reverse();
+          if (details.delta.dy < 0.0) {
+            _animationController.forward();
+            _animationController2.forward();
+          } else if (details.delta.direction > 0.0) {
+            _animationController2.reverse();
+            _animationController.reverse();
+          }
+        },
+        onTap: () {
+          if (clicked == false) {
+            _animationController2.forward();
+            _animationController.forward();
+            setState(() {
+              clicked = !clicked;
+            });
+          } else if (clicked == true) {
+            _animationController2.reverse();
+            _animationController.reverse();
+            setState(() {
+              clicked = !clicked;
+            });
+          }
+          // Navigator.pop(context);
+        },
+        child: Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(radius.value), color: Colors.white),
+          width: width.value,
+          height: height.value,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(radius.value),
+            child: Material(
+              color: Colors.white,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    color: Colors.white,
+                    height: padding.value,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          child: Icon(
+                            EvaIcons.closeOutline,
+                            color: liltextColor,
+                            size: 22,
+                          ),
+                          onPressed: () async {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        Text(
+                          'Not3s',
+                          style: TextStyle(color: liltextColor.withOpacity(0.8), fontSize: 23),
+                        ),
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          child: Icon(
+                            EvaIcons.checkmarkCircleOutline,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                          onPressed: () {},
+                        )
+                      ],
+                    ),
+                  ),
+                  // Divider(
+                  //   height: 0.0,
+                  //   thickness: 0.7,
+                  //   color: Color(0xFFE1E8ED),
+                  // ),
+                  Theme(
+                    data: ThemeData(
+                      splashColor: Colors.transparent,
+                      highlightColor: Color(0xFFE1E8ED).withOpacity(0.5),
+                    ),
+                    child: ListTile(
+                      dense: true,
+                      title: Text(
+                        'Flagged Notes',
+                        style: TextStyle(
+                          color: liltextColor.withOpacity(0.9),
+                        ),
+                      ),
+                      leading: Icon(EvaIcons.flagOutline, size: 20),
+                      onTap: () {},
+                    ),
+                  ),
+                  Theme(
+                    data: ThemeData(
+                      splashColor: Colors.transparent,
+                      highlightColor: Color(0xFFE1E8ED).withOpacity(0.5),
+                    ),
+                    child: ListTile(
+                      dense: true,
+                      title: Text(
+                        'Bin',
+                        style: TextStyle(
+                          color: liltextColor.withOpacity(0.9),
+                        ),
+                      ),
+                      leading: Icon(EvaIcons.trash2Outline, size: 20),
+                      onTap: () {},
+                    ),
+                  ),
+                  SizedBox(
+                    height: spacer.value,
+                  ),
+                  Theme(
+                    data: ThemeData(splashColor: Colors.transparent),
+                    child: ListTile(
+                      dense: true,
+                      title: Text(
+                        'Empty bin after 30 days',
+                        style: TextStyle(
+                          color: liltextColor.withOpacity(0.9),
+                        ),
+                      ),
+                      // leading: Icon(EvaIcons.trash2Outline, size: 20),
+                      trailing: Checkbox(
+                        activeColor: buttonColor,
+                        value: checkbox,
+                        onChanged: (bool value) {
+                          setState(() {
+                            checkbox = !checkbox;
+                          });
+                          updateDeletePreference(checkbox);
+                        },
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: SafeArea(
+                        top: false,
+                        bottom: false,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Divider(
+                              height: 0.0,
+                              thickness: 0.7,
+                              color: Color(0xFFE1E8ED),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  child: Icon(
+                                    EvaIcons.githubOutline,
+                                    color: liltextColor.withOpacity(0.8),
+                                    size: 15,
+                                  ),
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                Icon(
+                                  Icons.fiber_manual_record,
+                                  size: 6,
+                                  color: liltextColor,
+                                ),
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  child: Icon(
+                                    EvaIcons.messageSquareOutline,
+                                    color: liltextColor.withOpacity(0.8),
+                                    size: 15,
+                                  ),
+                                  onPressed: () {},
+                                )
+                              ],
+                            ),
+                            SizedBox(height: safeArea.value)
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+Future<T> showCupertinoDialogCustom<T>({
+  @required BuildContext context,
+  @required WidgetBuilder builder,
+  bool useRootNavigator = true,
+  bool barrierDismissible = false,
+  RouteSettings routeSettings,
+}) {
+  assert(builder != null);
+  assert(useRootNavigator != null);
+  return showGeneralDialog(
+    context: context,
+    barrierDismissible: barrierDismissible,
+    barrierLabel: CupertinoLocalizations.of(context).modalBarrierDismissLabel,
+    barrierColor: Colors.black54,
+    // This transition duration was eyeballed comparing with iOS
+    transitionDuration: const Duration(milliseconds: 250),
+    pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+      return builder(context);
+    },
+    transitionBuilder: _buildCupertinoDialogTransitions,
+    useRootNavigator: useRootNavigator,
+    routeSettings: routeSettings,
+  );
+}
+
+final Animatable<double> _dialogScaleTween = Tween<double>(begin: 1.3, end: 1.0).chain(CurveTween(curve: Curves.linearToEaseOut));
+
+Widget _buildCupertinoDialogTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+  final CurvedAnimation fadeAnimation = CurvedAnimation(
+    parent: animation,
+    curve: Curves.easeInOut,
+  );
+  if (animation.status == AnimationStatus.reverse) {
+    return FadeTransition(
+      opacity: fadeAnimation,
+      child: child,
+    );
+  }
+  return FadeTransition(
+    opacity: fadeAnimation,
+    child: ScaleTransition(
+      child: child,
+      scale: animation.drive(_dialogScaleTween),
+    ),
+  );
 }

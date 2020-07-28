@@ -150,7 +150,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                     child: CupertinoButton(
                       padding: EdgeInsets.zero,
                       child: Icon(
-                        EvaIcons.checkmark,
+                        EvaIcons.checkmarkCircleOutline,
                         color: buttonColor,
                         size: 23,
                       ),

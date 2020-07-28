@@ -146,13 +146,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.2"
-  flutter_audio_recorder:
-    dependency: "direct main"
-    description:
-      name: flutter_audio_recorder
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.5"
   flutter_keyboard_visibility:
     dependency: transitive
     description:
@@ -371,6 +364,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
+  speech_to_text:
+    dependency: "direct main"
+    description:
+      name: speech_to_text
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.3.0"
   stack_trace:
     dependency: transitive
     description:
@@ -392,13 +392,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
-  sweetsheet:
-    dependency: "direct main"
-    description:
-      name: sweetsheet
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0"
   term_glyph:
     dependency: transitive
     description:
