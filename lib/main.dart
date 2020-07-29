@@ -61,10 +61,15 @@ _updatedateOfNoteCreation(List<String> dateOfNoteCreation) async {
   preferences.setStringList('dateOfNoteCreation', dateOfNoteCreation);
 }
 
-// updateimagePathOfEachNote(List<String> imagePathOfEachNote) async {
-//   SharedPreferences preferences = await SharedPreferences.getInstance();
-//   preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);..TODO
-// }
+_updateHasAlarm(List<String> hasAlarm) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  preferences.setStringList('hasAlarm', hasAlarm);
+}
+
+updateimagePathOfEachNote(List<String> imagePathOfEachNote) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);
+}
 
 _firstRun() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -107,6 +112,14 @@ _dateOfNoteCreation() async {
   return dateOfNoteCreation;
 }
 
+_hasAlarm() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  // preferences.setStringList('notesFromUser', []);
+  // This are used to reset the data stored within the storage of a device during production.
+  List<String> notesFromUser = preferences.getStringList('hasAlarm') ?? ['empty'];
+  return notesFromUser;
+}
+
 _imagePathOfEachNote() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   // preferences.setStringList('imagePathOfEachNote', []);
@@ -131,12 +144,15 @@ void main() async {
     _updateNotesFromUser(dummyList);
     _updatedateOfNoteCreation(dummyList);
     _updatetitleOfNotesFromUser(dummyList);
+    _updateHasAlarm(dummyList);
+    updateimagePathOfEachNote(dummyList);
   }
   final List<String> notesFromUser = await _notesFromUser();
   final List<String> titleOfNotesFromUser = await _titleOfNotesFromUser();
   final List<String> imagePathOfEachNote = await _imagePathOfEachNote();
   bool emptyAfter30Days = await _emptyAfter30Days();
   final List<String> dateOfNoteCreation = await _dateOfNoteCreation();
+  final List<String> hasAlarm = await _hasAlarm();
   FlareCache.doesPrune = false; //This makes sure the wamr up function caches the flare asset files.
   warmUp();
   FlareCache.doesPrune = false;
@@ -149,6 +165,7 @@ void main() async {
       emptyAfter30Days: emptyAfter30Days,
       dateOfNoteCreation: dateOfNoteCreation,
       imagePathOfEachNote: imagePathOfEachNote,
+      hasAlarm: hasAlarm,
     ),
   );
 }
@@ -158,9 +175,11 @@ class MyApp extends StatelessWidget {
   final List<String> titleOfNotesFromUser;
   final List<String> dateOfNoteCreation;
   final List<String> imagePathOfEachNote;
+  final List<String> hasAlarm;
+
   final int numberOfNotes;
   final bool emptyAfter30Days;
-  const MyApp({Key key, this.notesFromUser, this.numberOfNotes, this.emptyAfter30Days, this.titleOfNotesFromUser, this.dateOfNoteCreation, this.imagePathOfEachNote}) : super(key: key);
+  const MyApp({Key key, this.notesFromUser, this.numberOfNotes, this.emptyAfter30Days, this.titleOfNotesFromUser, this.dateOfNoteCreation, this.imagePathOfEachNote, this.hasAlarm}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -177,6 +196,7 @@ class MyApp extends StatelessWidget {
               Provider.of<UserData>(context).emptyAfter30Days = emptyAfter30Days;
               Provider.of<UserData>(context).dateOfNoteCreation = dateOfNoteCreation;
               Provider.of<UserData>(context).imagePathOfEachNote = imagePathOfEachNote;
+              Provider.of<UserData>(context).hasAlarm = hasAlarm;
               return MyHomePage();
             },
           );

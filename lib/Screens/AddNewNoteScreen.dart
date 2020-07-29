@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:Not3s/UnderTheHood/Colors.dart';
 import 'package:Not3s/UnderTheHood/Provider.dart';
@@ -36,7 +37,9 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
   String titleOfNotesFromUser;
   String dateOfNoteCreated;
   String imagePath;
+  String hasAlarm;
   bool whichTextField;
+  var bytes;
   _updateNotesFromUser(List<String> notesFromUseR) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setStringList('notesFromUser', notesFromUseR);
@@ -62,6 +65,11 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
     preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);
   }
 
+  _updateHasAlarm(List<String> hasAlarm) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setStringList('hasAlarm', hasAlarm);
+  }
+
   submit() async {}
   removeFlushbar(Flushbar flushbar) {
     flushbar.dismiss();
@@ -70,6 +78,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
   @override
   void initState() {
     isEditing = false;
+    hasAlarm = 'false';
     _scrollController = ScrollController();
     _focusNode1 = new FocusNode();
     _focusNode2 = new FocusNode();
@@ -126,19 +135,20 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
             size: 22,
           ),
           onPressed: () async {
-            setState(() {
-              whichTextField = null;
-            });
-            if (canTap == true) {
-              FocusScope.of(context).requestFocus(FocusNode());
-            }
-            if (whichTextField != null) {
-              await Future.delayed(Duration(milliseconds: 900), () async {
-                Navigator.pop(context, 0);
-              });
-            } else if (whichTextField == null) {
-              Navigator.pop(context, 0);
-            }
+            FocusScope.of(context).requestFocus(FocusNode());
+            // setState(() {
+            //   whichTextField = null;
+            // });
+            // if (canTap == true) {
+            //   FocusScope.of(context).requestFocus(FocusNode());
+            // }
+            // if (whichTextField != null) {
+            //   await Future.delayed(Duration(milliseconds: 900), () async {
+            //     Navigator.pop(context, 0);
+            //   });
+            // } else if (whichTextField == null) {
+            //   Navigator.pop(context, 0);
+            // }
           },
         ),
         actions: [
@@ -165,6 +175,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                         if (notesFromUser != null && titleOfNotesFromUser != null) {
                           Provider.of<UserData>(context, listen: false).notesFromUser.add(notesFromUser);
                           Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.add(titleOfNotesFromUser);
+                          Provider.of<UserData>(context, listen: false).hasAlarm.add(hasAlarm);
                           Provider.of<UserData>(context, listen: false).dateOfNoteCreation.add(
                                 DateTime.now().toString().substring(0, 10).replaceAll('-', '. '),
                               );
@@ -175,6 +186,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                           await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
                           await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
                           await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                          await _updateHasAlarm(Provider.of<UserData>(context, listen: false).hasAlarm);
                           // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
                           setState(() {
                             isEditing = false;
@@ -182,61 +194,6 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                         } else {
                           print('yes');
                           showSnackBars();
-                          // Flushbar _flushBar = Flushbar(
-                          //   flushbarStyle: FlushbarStyle.FLOATING,
-                          //   backgroundColor: buttonColor,
-                          //   margin: EdgeInsets.only(bottom: 50),
-                          //   borderRadius: 7,
-                          //   isDismissible: true,
-                          //   onTap: (flushbar) {
-                          //     removeFlushbar(flushbar);
-                          //   },
-                          //   flushbarPosition: FlushbarPosition.TOP,
-                          //   messageText: Text(
-                          //     "A title and to-do is required.",
-                          //     style: TextStyle(fontSize: 15, color: Colors.white),
-                          //   ),
-                          //   maxWidth: 210.0,
-                          //   duration: Duration(seconds: 3),
-                          // );
-                          // _flushBar
-                          //   ..onStatusChanged = (FlushbarStatus status) {
-                          //     switch (status) {
-                          //       case FlushbarStatus.SHOWING:
-                          //         {
-                          //           setState(() {
-                          //             showing = true;
-                          //           });
-
-                          //           break;
-                          //         }
-                          //       case FlushbarStatus.IS_APPEARING:
-                          //         {
-                          //           setState(() {
-                          //             showing = true;
-                          //           });
-
-                          //           break;
-                          //         }
-                          //       case FlushbarStatus.IS_HIDING:
-                          //         {
-                          //           setState(() {
-                          //             showing = false;
-                          //           });
-                          //           break;
-                          //         }
-                          //       case FlushbarStatus.DISMISSED:
-                          //         {
-                          //           setState(() {
-                          //             showing = false;
-                          //           });
-                          //           break;
-                          //         }
-                          //     }
-                          //   };
-                          // if (showing == false) {
-                          //   _flushBar..show(context);
-                          // }
                         }
                       },
                     ),
@@ -285,7 +242,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
           keyboardAppearance: Brightness.light,
           decoration: InputDecoration(
             hintText: 'Title',
-            hintStyle: TextStyle(fontSize: 17, color: liltextColor),
+            hintStyle: TextStyle(fontSize: 17, color: liltextColor.withOpacity(0.8)),
             contentPadding: EdgeInsets.only(left: 1, top: 1),
             border: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white, width: 0.4),
@@ -310,8 +267,8 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                 color: Colors.white,
                 border: Border(
                   top: BorderSide(
-                    color: liltextColor,
-                    width: 0.2,
+                    color: Color(0xFFE1E8ED),
+                    width: 0.7,
                   ),
                 ),
               ),
@@ -325,7 +282,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                     padding: EdgeInsets.zero,
                     child: Icon(
                       EvaIcons.eyeOff2Outline,
-                      color: Color.fromRGBO(170, 184, 194, 1.0),
+                      color: liltextColor.withOpacity(0.6),
                     ),
                     onPressed: () {},
                   ),
@@ -333,7 +290,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                     padding: EdgeInsets.zero,
                     child: Icon(
                       EvaIcons.flagOutline,
-                      color: Color.fromRGBO(170, 184, 194, 1.0),
+                      color: liltextColor.withOpacity(0.6),
                     ),
                     onPressed: () {},
                   ),
@@ -351,7 +308,18 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                       EvaIcons.clockOutline,
                       color: buttonColor,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      //OPEN CLOCK..TODO
+                      if (hasAlarm == 'false') {
+                        setState(() {
+                          hasAlarm = 'true';
+                        });
+                      } else if (hasAlarm == 'true') {
+                        setState(() {
+                          hasAlarm = 'false';
+                        });
+                      }
+                    },
                   ),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
@@ -370,13 +338,17 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                         String uid = Uuid().v4();
                         final File imageToCopy = await image.copy('$pathToDeviceFolder/$uid.png');
                         imagePath = imageToCopy.path;
+                        setState(() {
+                          bytes = image.readAsBytesSync();
+                        });
                       }
-                      if (whichTextField == null) {
-                      } else if (whichTextField == false) {
-                        FocusScope.of(context).requestFocus(_focusNode1);
-                      } else if (whichTextField == true) {
-                        FocusScope.of(context).requestFocus(_focusNode2);
-                      }
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      // if (whichTextField == null) {
+                      // } else if (whichTextField == false) {
+                      //   FocusScope.of(context).requestFocus(_focusNode1);
+                      // } else if (whichTextField == true) {
+                      //   FocusScope.of(context).requestFocus(_focusNode2);
+                      // }
                     },
                   ),
                 ],
@@ -408,9 +380,10 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                   });
                 },
                 autocorrect: true,
+                keyboardType: TextInputType.multiline,
                 //autofocus: true,
-                maxLength: 600,
-                maxLines: 10,
+                maxLength: null,
+                maxLines: null,
                 enableInteractiveSelection: true,
                 enableSuggestions: true,
                 cursorColor: CupertinoColors.systemBlue,
@@ -421,8 +394,8 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                 keyboardAppearance: Brightness.light,
                 decoration: InputDecoration(
                   hintText: 'To-do',
-                  hintStyle: TextStyle(fontSize: 17, color: liltextColor),
-                  contentPadding: EdgeInsets.only(left: 30, top: 1, right: 30),
+                  hintStyle: TextStyle(fontSize: 17, color: liltextColor.withOpacity(0.8)),
+                  contentPadding: EdgeInsets.only(left: 50, top: 1, right: 10, bottom: 0.0),
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white, width: 0.3),
                   ),
@@ -437,6 +410,60 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                   ),
                 ),
               ),
+              Padding(
+                padding: EdgeInsets.only(left: 20, right: 0),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  transitionBuilder: (Widget child, Animation<double> animation) {
+                    return FadeTransition(child: child, opacity: animation);
+                  },
+                  child: bytes == null
+                      ? SizedBox()
+                      : Dismissible(
+                          key: ValueKey<Uint8List>(bytes),
+                          onDismissed: (direction) {},
+                          background: Container(
+                            color: Colors.white,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 28.0),
+                                child: Icon(
+                                  EvaIcons.close,
+                                  color: liltextColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                          secondaryBackground: Container(
+                            color: Colors.white,
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 28.0),
+                                child: Icon(
+                                  EvaIcons.close,
+                                  color: liltextColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                          child: Transform.scale(
+                            key: ValueKey<Uint8List>(bytes),
+                            scale: 0.8,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.memory(
+                                bytes,
+                              ),
+                            ),
+                          ),
+                        ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              )
             ],
           ),
         ),

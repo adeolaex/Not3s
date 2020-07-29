@@ -401,7 +401,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                 autocorrect: true,
                 //autofocus: true,
                 maxLength: null,
-                maxLines: 8,
+                maxLines: null,
                 enableInteractiveSelection: true,
                 enableSuggestions: true,
                 cursorColor: CupertinoColors.systemBlue,
@@ -413,7 +413,7 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                 keyboardType: TextInputType.multiline,
                 decoration: InputDecoration(
                   hintText: 'To-do',
-                  hintStyle: TextStyle(fontSize: 18, color: liltextColor),
+                  hintStyle: TextStyle(fontSize: 18, color: liltextColor.withOpacity(0.7)),
                   contentPadding: EdgeInsets.only(left: 30, top: 1, right: 30),
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white, width: 0.3),
