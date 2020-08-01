@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:Not3s/UnderTheHood/Colors.dart';
 import 'package:Not3s/UnderTheHood/Provider.dart';
@@ -341,8 +340,10 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                         setState(() {
                           bytes = image.readAsBytesSync();
                         });
+                      
                       }
                       FocusScope.of(context).requestFocus(FocusNode());
+                        print(bytes);
                       // if (whichTextField == null) {
                       // } else if (whichTextField == false) {
                       //   FocusScope.of(context).requestFocus(_focusNode1);
@@ -361,9 +362,6 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
           child: ListView(
             controller: _scrollController,
             children: <Widget>[
-              SizedBox(
-                height: 20,
-              ),
               TextFormField(
                 onChanged: (String value) {
                   setState(
@@ -390,12 +388,12 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                 textCapitalization: TextCapitalization.sentences,
                 focusNode: _focusNode2,
                 style: TextStyle(fontSize: 17, color: liltextColor),
-                textInputAction: TextInputAction.newline,
+                textInputAction: TextInputAction.done,
                 keyboardAppearance: Brightness.light,
                 decoration: InputDecoration(
                   hintText: 'To-do',
                   hintStyle: TextStyle(fontSize: 17, color: liltextColor.withOpacity(0.8)),
-                  contentPadding: EdgeInsets.only(left: 50, top: 1, right: 10, bottom: 0.0),
+                  contentPadding: EdgeInsets.only(left: 50, top: 1, right: 15, bottom: 0.0),
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.white, width: 0.3),
                   ),
@@ -410,8 +408,9 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                   ),
                 ),
               ),
+              // Image.memory(bytes),
               Padding(
-                padding: EdgeInsets.only(left: 20, right: 0),
+                padding: EdgeInsets.only(left: 50, right: 15, top: 0.0),
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 400),
                   transitionBuilder: (Widget child, Animation<double> animation) {
@@ -419,44 +418,11 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                   },
                   child: bytes == null
                       ? SizedBox()
-                      : Dismissible(
-                          key: ValueKey<Uint8List>(bytes),
-                          onDismissed: (direction) {},
-                          background: Container(
-                            color: Colors.white,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 28.0),
-                                child: Icon(
-                                  EvaIcons.close,
-                                  color: liltextColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                          secondaryBackground: Container(
-                            color: Colors.white,
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 28.0),
-                                child: Icon(
-                                  EvaIcons.close,
-                                  color: liltextColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                          child: Transform.scale(
-                            key: ValueKey<Uint8List>(bytes),
-                            scale: 0.8,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.memory(
-                                bytes,
-                              ),
-                            ),
+                      : ClipRRect(
+                          key: ValueKey(bytes),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.memory(
+                            bytes,
                           ),
                         ),
                 ),

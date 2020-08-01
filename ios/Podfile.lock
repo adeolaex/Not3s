@@ -6,6 +6,9 @@ PODS:
     - Flutter
   - flutter_local_notifications (0.0.1):
     - Flutter
+  - image_cropper (0.0.2):
+    - Flutter
+    - TOCropViewController (~> 2.5.2)
   - image_picker_saver (0.0.1):
     - Flutter
   - path_provider (0.0.1):
@@ -15,6 +18,7 @@ PODS:
   - speech_to_text (0.0.1):
     - Flutter
     - Try
+  - TOCropViewController (2.5.4)
   - Try (2.1.1)
 
 DEPENDENCIES:
@@ -22,6 +26,7 @@ DEPENDENCIES:
   - flutter_app_badger (from `.symlinks/plugins/flutter_app_badger/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
+  - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_picker_saver (from `.symlinks/plugins/image_picker_saver/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
@@ -29,6 +34,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - TOCropViewController
     - Try
 
 EXTERNAL SOURCES:
@@ -40,6 +46,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
+  image_cropper:
+    :path: ".symlinks/plugins/image_cropper/ios"
   image_picker_saver:
     :path: ".symlinks/plugins/image_picker_saver/ios"
   path_provider:
@@ -54,10 +62,12 @@ SPEC CHECKSUMS:
   flutter_app_badger: 65de4d6f0c34a891df49e6cfb8a1c0496426fa68
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_local_notifications: 9e4738ce2471c5af910d961a6b7eadcf57c50186
+  image_cropper: 3c16d7651730ffe85897f5a1c4e2547e6b54989a
   image_picker_saver: 4f28bd70e1efdca68ad88beab0f11d22cffe04f6
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
+  TOCropViewController: 2a1ae1242600b1f2d996fd91a5268b2309a33b5c
   Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
