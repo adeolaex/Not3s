@@ -1,4 +1,4 @@
-<h1 align="center">FLUI</h1>
+<h1 align="center">NOT3s</h1>
 
 <div align="center">
 
