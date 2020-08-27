@@ -135,19 +135,19 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
           ),
           onPressed: () async {
             FocusScope.of(context).requestFocus(FocusNode());
-            // setState(() {
-            //   whichTextField = null;
-            // });
-            // if (canTap == true) {
-            //   FocusScope.of(context).requestFocus(FocusNode());
-            // }
-            // if (whichTextField != null) {
-            //   await Future.delayed(Duration(milliseconds: 900), () async {
-            //     Navigator.pop(context, 0);
-            //   });
-            // } else if (whichTextField == null) {
-            //   Navigator.pop(context, 0);
-            // }
+            setState(() {
+              whichTextField = null;
+            });
+            if (canTap == true) {
+              FocusScope.of(context).requestFocus(FocusNode());
+            }
+            if (whichTextField != null) {
+              await Future.delayed(Duration(milliseconds: 900), () async {
+                Navigator.pop(context, 0);
+              });
+            } else if (whichTextField == null) {
+              Navigator.pop(context, 0);
+            }
           },
         ),
         actions: [
@@ -340,10 +340,9 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                         setState(() {
                           bytes = image.readAsBytesSync();
                         });
-                      
                       }
                       FocusScope.of(context).requestFocus(FocusNode());
-                        print(bytes);
+                      print(bytes);
                       // if (whichTextField == null) {
                       // } else if (whichTextField == false) {
                       //   FocusScope.of(context).requestFocus(_focusNode1);
