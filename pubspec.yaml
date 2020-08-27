@@ -28,6 +28,7 @@ dependencies:
   keyboard_attachable: ^1.0.3
   speech_to_text: ^2.3.0
   image_cropper: ^1.2.3
+  colorful_safe_area: ^0.2.0
   
 dev_dependencies:
   flutter_test:
