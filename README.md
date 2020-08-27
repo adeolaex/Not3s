@@ -1,8 +1,10 @@
-# Not3s
+<h1 align="center">FLUI</h1>
+
+<div align="center">
 
 
 
-## Getting Started
+
 
 ![Text](image2.png)
 ![Text](image1.png)
