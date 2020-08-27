@@ -1,6 +1,7 @@
 <h1 align="center">NOT3s</h1>
 
-<div align="center">
+
+
 
 
 
@@ -9,6 +10,8 @@
 * A set of usefull tools to help store txt, audio and video files.
 * Uses sharred preferences to store data files
 * Cross platform
+
+---
 
 ## Upcoming Fixes
 
