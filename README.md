@@ -4,8 +4,8 @@
 
 ## Getting Started
 
-This powered by Flutter
+![Text](Screenshot 2020-08-27 at 13.07.10.png)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
+
 
 
