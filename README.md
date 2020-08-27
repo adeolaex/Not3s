@@ -20,6 +20,7 @@
 * Planning on using the SKSL shader warmup on ios for a better faster perfoamce. See [this][website]! for more info.
 * General bug fixes as the app still has loopholes.
 
+---
 
 ![](image2.png)
 ![Text](image1.png)
