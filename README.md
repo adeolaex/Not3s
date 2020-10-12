@@ -55,8 +55,9 @@ It uses the [SharedPreferences](https://pub.dev/packages/shared_preferences) pac
 
 ## Upcoming Fixes
 
-* Speech-to-text
+* Speech-to-text. This would greatly imporve note taking, as it would expose a user's device specific speech recognition capability to allow text input from speech.
 * Cloud Syncing and Authentication.
+* Overall Optimization for larger screens.
 * Planning on using the SKSL shader warmup on ios for a better faster perfoamce. See [this](https://github.com/flutter/flutter/issues/61450) for more info.
 
 
