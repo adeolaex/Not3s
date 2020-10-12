@@ -13,6 +13,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -84,6 +85,17 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, TickerPr
     dummyBool = false;
     _controller = ScrollController();
     myImage = Image.asset('assets/images/appIcon.png');
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var andriod = AndroidInitializationSettings('app_icon');
+    var ios = IOSInitializationSettings(
+      requestSoundPermission: true,
+      requestBadgePermission: true,
+      requestAlertPermission: true,
+    );
+    InitializationSettings initializationSettings = InitializationSettings(andriod, ios);
+    flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+    );
     super.initState();
   }
 
@@ -93,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, TickerPr
     width = MediaQuery.of(context).size.width;
     defaultHeight = MediaQuery.of(context).size.height / 1.48;
     defaultWidth = MediaQuery.of(context).size.width / 1.22;
-    precacheImage(myImage.image, context);
+    // precacheImage(myImage.image, context);
 //Note to self..... init the state of bool value with after layout
     super.didChangeDependencies();
   }

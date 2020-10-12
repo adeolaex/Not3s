@@ -49,17 +49,7 @@ class _AddNewNotesState extends State<AddNewNotes> with AfterLayoutMixin {
     _focusNode1 = new FocusNode();
     _focusNode2 = new FocusNode();
     canTap = true;
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    var andriod = AndroidInitializationSettings('app_icon');
-    var ios = IOSInitializationSettings(
-      requestSoundPermission: true,
-      requestBadgePermission: true,
-      requestAlertPermission: true,
-    );
-    InitializationSettings initializationSettings = InitializationSettings(andriod, ios);
-    flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-    );
+
     // ignore: unused_local_variable
     var time = DateTime.now().add(
       Duration(seconds: 2),
