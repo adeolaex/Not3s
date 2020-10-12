@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, TickerPr
     preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);
   }
 
-  _updateHasAlarm(List<String> hasAlarm) async {
+  updateHasAlarm(List<String> hasAlarm) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setStringList('hasAlarm', hasAlarm);
   }
