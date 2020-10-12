@@ -1,7 +1,8 @@
 import 'dart:io';
 
-import 'package:Not3s/UnderTheHood/Colors.dart';
-import 'package:Not3s/UnderTheHood/Provider.dart';
+import 'package:Not3s/Colors/Colors.dart';
+import 'package:Not3s/Data/Provider.dart';
+import 'package:Not3s/Data/SharedPreferencesClass.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
@@ -13,7 +14,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker_saver/image_picker_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:keyboard_attachable/keyboard_attachable.dart';
 
@@ -37,25 +37,6 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
   String dateOfNoteCreated;
   String imagePath;
   bool whichTextField;
-  _updateNotesFromUser(List<String> notesFromUseR) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('notesFromUser', notesFromUseR);
-  }
-
-  _updatetitleOfNotesFromUser(List<String> titleOfNotesFromUseR) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('titleOfNotesFromUser', titleOfNotesFromUseR);
-  }
-
-  _updatedateOfNoteCreation(List<String> dateOfNoteCreation) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('dateOfNoteCreation', dateOfNoteCreation);
-  }
-
-  updateimagePathOfEachNote(List<String> imagePathOfEachNote) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);
-  }
 
   submit() async {}
   removeFlushbar(Flushbar flushbar) {
@@ -166,9 +147,9 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                           Provider.of<UserData>(context, listen: false).titleOfNotesFromUser[widget.index] = titleOfNotesFromUser;
                           Provider.of<UserData>(context, listen: false).dateOfNoteCreation[widget.index] = DateTime.now().toString().substring(0, 10).replaceAll('-', '. ');
                           // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.add(imagePath);
-                          await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
-                          await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                          await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                          await SharedPreferencesClass().updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
+                          await SharedPreferencesClass().updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                          await SharedPreferencesClass().updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
                           setState(
                             () {
                               isEditing = false;

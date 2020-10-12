@@ -1,7 +1,8 @@
 import 'dart:io';
 
-import 'package:Not3s/UnderTheHood/Colors.dart';
-import 'package:Not3s/UnderTheHood/Provider.dart';
+import 'package:Not3s/Colors/Colors.dart';
+import 'package:Not3s/Data/Provider.dart';
+import 'package:Not3s/Data/SharedPreferencesClass.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
@@ -14,16 +15,15 @@ import 'package:image_picker_saver/image_picker_saver.dart';
 import 'package:keyboard_attachable/keyboard_attachable.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:uuid/uuid.dart';
 
-class AddNewNoteScreen extends StatefulWidget {
+class AddNewNotes extends StatefulWidget {
   @override
-  _AddNewNoteScreenState createState() => _AddNewNoteScreenState();
+  _AddNewNotesState createState() => _AddNewNotesState();
 }
 
-class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMixin {
+class _AddNewNotesState extends State<AddNewNotes> with AfterLayoutMixin {
   final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   ScrollController _scrollController;
   bool isEditing;
@@ -39,35 +39,6 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
   String hasAlarm;
   bool whichTextField;
   var bytes;
-  _updateNotesFromUser(List<String> notesFromUseR) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('notesFromUser', notesFromUseR);
-  }
-
-  _updatetitleOfNotesFromUser(List<String> titleOfNotesFromUseR) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('titleOfNotesFromUser', titleOfNotesFromUseR);
-  }
-
-  _updatedateOfNoteCreation(List<String> dateOfNoteCreation) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('dateOfNoteCreation', dateOfNoteCreation);
-  }
-
-  _updateFirstRun(bool value) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setBool('firstRun', value);
-  }
-
-  updateimagePathOfEachNote(List<String> imagePathOfEachNote) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);
-  }
-
-  _updateHasAlarm(List<String> hasAlarm) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('hasAlarm', hasAlarm);
-  }
 
   submit() async {}
   removeFlushbar(Flushbar flushbar) {
@@ -181,11 +152,11 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> with AfterLayoutMix
                           print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
                           print(Provider.of<UserData>(context, listen: false).notesFromUser);
                           // Provider.of<UserData>(context, listen: false).imagePathOfEachNote.add(imagePath);
-                          await _updateFirstRun(false);
-                          await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
-                          await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                          await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
-                          await _updateHasAlarm(Provider.of<UserData>(context, listen: false).hasAlarm);
+                          await SharedPreferencesClass().updateFirstRun(false);
+                          await SharedPreferencesClass().updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
+                          await SharedPreferencesClass().updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                          await SharedPreferencesClass().updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                          await SharedPreferencesClass().updateHasAlarm(Provider.of<UserData>(context, listen: false).hasAlarm);
                           // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
                           setState(() {
                             isEditing = false;

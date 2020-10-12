@@ -1,18 +1,20 @@
+import 'package:Not3s/Data/SharedPreferencesClass.dart';
 import 'package:Not3s/Screens/HomeScreen.dart';
-import 'package:Not3s/UnderTheHood/Provider.dart';
+import 'package:Not3s/Data/Provider.dart';
 import 'package:flare_flutter/flare_cache.dart';
 import 'package:flare_flutter/provider/asset_flare.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-// Used to warm up the flare asset files so as to speed up animation play times.
-//Another method would be to run  the same function with after layout. A flutter package that runs
+// Used to warm up the flare asset files so as to speed up animation play times
+// Another method would be to run  the same function with after layout. A flutter package that runs
 // code when the first frame of a screen is shown (rendered)
-// Although this would be practical, it might result it a slow user experience.
-// This method makes sure the warm up is executed during the splash screen resulting the little to know startup time :)
+
+// Although this would be practical, it might result it a slower user experience
+// This method makes sure the warm up is executed during the splash screen resulting the little to no startup time :)
+
 Future<void> warmUp() async {
   cachedActor(
     AssetFlare(
@@ -46,88 +48,6 @@ Future<void> warmUp3() async {
 
 final List<String> dummyList = ['dummy'];
 
-_updateNotesFromUser(List<String> notesFromUseR) async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  preferences.setStringList('notesFromUser', notesFromUseR);
-}
-
-_updatetitleOfNotesFromUser(List<String> titleOfNotesFromUseR) async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  preferences.setStringList('titleOfNotesFromUser', titleOfNotesFromUseR);
-}
-
-_updatedateOfNoteCreation(List<String> dateOfNoteCreation) async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  preferences.setStringList('dateOfNoteCreation', dateOfNoteCreation);
-}
-
-_updateHasAlarm(List<String> hasAlarm) async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  preferences.setStringList('hasAlarm', hasAlarm);
-}
-
-updateimagePathOfEachNote(List<String> imagePathOfEachNote) async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);
-}
-
-_firstRun() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  // preferences.setStringList('notesFromUser', []);
-  // This are used to reset the data stored within the storage of a device during production.
-  bool notesFromUser = preferences.getBool('firstRun') ?? true;
-  return notesFromUser;
-}
-
-_notesFromUser() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  // preferences.setStringList('notesFromUser', []);
-  // This are used to reset the data stored within the storage of a device during production.
-  List<String> notesFromUser = preferences.getStringList('notesFromUser') ?? ['empty'];
-  return notesFromUser;
-}
-
-_titleOfNotesFromUser() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  // preferences.setStringList('titleOfNotesFromUser', []);
-  // This are used to reset the data stored within the storage of a device during production.
-  List<String> titleOfNotesFromUser = preferences.getStringList('titleOfNotesFromUser') ?? ['empty'];
-
-  return titleOfNotesFromUser;
-}
-
-_emptyAfter30Days() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  // preferences.setBool('emptyAfter30Days', false);
-  // This are used to reset the data stored within the storage of a device during production.
-  bool emptyAfter30Days = preferences.getBool('emptyAfter30Days') ?? true;
-  return emptyAfter30Days;
-}
-
-_dateOfNoteCreation() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  // preferences.setStringList('dateOfNoteCreation', []);
-  // This are used to reset the data stored within the storage of a device during production.
-  List<String> dateOfNoteCreation = preferences.getStringList('dateOfNoteCreation') ?? ['empty'];
-  return dateOfNoteCreation;
-}
-
-_hasAlarm() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  // preferences.setStringList('notesFromUser', []);
-  // This are used to reset the data stored within the storage of a device during production.
-  List<String> notesFromUser = preferences.getStringList('hasAlarm') ?? ['empty'];
-  return notesFromUser;
-}
-
-_imagePathOfEachNote() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  // preferences.setStringList('imagePathOfEachNote', []);
-  //  This are used to reset the data stored within the storage of a device during production.
-  List<String> imagePathOfEachNote = preferences.getStringList('imagePathOfEachNote') ?? ['empty'];
-  return imagePathOfEachNote;
-}
-
 //The main function that contains the runApp() used in rendering screens.
 
 // The functions above return values that are passed down to the MyApp() widget which then passes it
@@ -138,21 +58,21 @@ void main() async {
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitDown,
   ]);
-  final bool firstRun = await _firstRun();
+  final bool firstRun = await SharedPreferencesClass().firstRun();
 
   if (firstRun == true) {
-    _updateNotesFromUser(dummyList);
-    _updatedateOfNoteCreation(dummyList);
-    _updatetitleOfNotesFromUser(dummyList);
-    _updateHasAlarm(dummyList);
-    updateimagePathOfEachNote(dummyList);
+    SharedPreferencesClass().updateNotesFromUser(dummyList);
+    SharedPreferencesClass().updatedateOfNoteCreation(dummyList);
+    SharedPreferencesClass().updatetitleOfNotesFromUser(dummyList);
+    SharedPreferencesClass().updateHasAlarm(dummyList);
+    SharedPreferencesClass().updateimagePathOfEachNote(dummyList);
   }
-  final List<String> notesFromUser = await _notesFromUser();
-  final List<String> titleOfNotesFromUser = await _titleOfNotesFromUser();
-  final List<String> imagePathOfEachNote = await _imagePathOfEachNote();
-  bool emptyAfter30Days = await _emptyAfter30Days();
-  final List<String> dateOfNoteCreation = await _dateOfNoteCreation();
-  final List<String> hasAlarm = await _hasAlarm();
+  final List<String> notesFromUser = await SharedPreferencesClass().notesFromUser();
+  final List<String> titleOfNotesFromUser = await SharedPreferencesClass().titleOfNotesFromUser();
+  final List<String> imagePathOfEachNote = await SharedPreferencesClass().imagePathOfEachNote();
+  bool emptyAfter30Days = await SharedPreferencesClass().emptyAfter30Days();
+  final List<String> dateOfNoteCreation = await SharedPreferencesClass().dateOfNoteCreation();
+  final List<String> hasAlarm = await SharedPreferencesClass().hasAlarm();
   FlareCache.doesPrune = false; //This makes sure the wamr up function caches the flare asset files.
   warmUp();
   FlareCache.doesPrune = false;
@@ -188,6 +108,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Not3s',
         // theme: ThemeData(brightness: Brightness.light),
+
+        // A certain package needs a MaterialPageRoute
         onGenerateRoute: (settings) {
           return MaterialPageRoute(
             builder: (BuildContext context) {

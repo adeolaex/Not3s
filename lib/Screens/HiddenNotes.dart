@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
+// The screen for notes that have been hidden
+
 class HiddenNotes extends StatefulWidget {
   @override
   _HiddenNotesState createState() => _HiddenNotesState();

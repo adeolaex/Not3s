@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Bin extends StatefulWidget {
+class DeletedNotes extends StatefulWidget {
   @override
-  _BinState createState() => _BinState();
+  _DeletedNotesState createState() => _DeletedNotesState();
 }
 
-class _BinState extends State<Bin> {
+class _DeletedNotesState extends State<DeletedNotes> {
   @override
   Widget build(BuildContext context) {
     return Container();

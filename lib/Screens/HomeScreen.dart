@@ -3,10 +3,11 @@
 //The values are then sent to the Provider classes so that other screens can get the returned values.
 
 //
-import 'package:Not3s/Screens/AddNewNoteScreen.dart';
+import 'package:Not3s/Data/SharedPreferencesClass.dart';
+import 'package:Not3s/Screens/AddNewNotes.dart';
 import 'package:Not3s/Screens/EditAndViewNotes.dart';
-import 'package:Not3s/UnderTheHood/Colors.dart';
-import 'package:Not3s/UnderTheHood/Provider.dart';
+import 'package:Not3s/Colors/Colors.dart';
+import 'package:Not3s/Data/Provider.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flushbar/flushbar.dart';
@@ -35,9 +36,10 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, TickerPr
   final GlobalKey<ScaffoldState> key2 = GlobalKey<ScaffoldState>();
   final GlobalKey key1 = GlobalKey();
 
+  // Thats a lot of boolean values but they are all needed in order for certain functions to be called at the right time
+
   bool animationComplete = false;
   ScrollController _controller;
-
   Image myImage;
   bool dummyBool;
   bool isSwitched;
@@ -62,30 +64,6 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, TickerPr
   double height, width, defaultHeight, defaultWidth;
 //This are functions that carry out the task of updating and deleting to-do's in the system(phone's)
 //storage
-  _updateNotesFromUser(List<String> notesFromUseR) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('notesFromUser', notesFromUseR);
-  }
-
-  _updatetitleOfNotesFromUser(List<String> titleOfNotesFromUseR) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('titleOfNotesFromUser', titleOfNotesFromUseR);
-  }
-
-  _updatedateOfNoteCreation(List<String> dateOfNoteCreation) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('dateOfNoteCreation', dateOfNoteCreation);
-  }
-
-  updateimagePathOfEachNote(List<String> imagePathOfEachNote) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('imagePathOfEachNote', imagePathOfEachNote);
-  }
-
-  updateHasAlarm(List<String> hasAlarm) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setStringList('hasAlarm', hasAlarm);
-  }
 
   removeFlushbar(Flushbar flushbar) {
     flushbar.dismiss();
@@ -155,6 +133,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, TickerPr
                 splashColor: Colors.transparent,
                 highlightElevation: 0.0,
                 onPressed: () async {
+                  // debuggin reasons
                   print(Provider.of<UserData>(context, listen: false).notesFromUser);
                   print(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
                   print(Provider.of<UserData>(context, listen: false).hasAlarm);
@@ -173,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, TickerPr
                         context,
                         MaterialPageRoute(
                           builder: (_) {
-                            return AddNewNoteScreen();
+                            return AddNewNotes();
                           },
                           fullscreenDialog: true,
                         ),
@@ -213,6 +192,8 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, TickerPr
               ),
             ),
           ),
+          // Root gesture detector
+          // Plan to get user input on the seach widget
           body: GestureDetector(
             child: CustomScrollView(
               cacheExtent: 10.0,
@@ -351,10 +332,10 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, TickerPr
                                   Provider.of<UserData>(context, listen: false).titleOfNotesFromUser.removeAt(index);
                                   Provider.of<UserData>(context, listen: false).dateOfNoteCreation.removeAt(index);
                                   Provider.of<UserData>(context, listen: false).hasAlarm.removeAt(index);
-                                  await _updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
-                                  await _updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
-                                  await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
-                                  await _updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).hasAlarm);
+                                  await SharedPreferencesClass().updateNotesFromUser(Provider.of<UserData>(context, listen: false).notesFromUser);
+                                  await SharedPreferencesClass().updatetitleOfNotesFromUser(Provider.of<UserData>(context, listen: false).titleOfNotesFromUser);
+                                  await SharedPreferencesClass().updatedateOfNoteCreation(Provider.of<UserData>(context, listen: false).dateOfNoteCreation);
+                                  await SharedPreferencesClass().updateHasAlarm(Provider.of<UserData>(context, listen: false).hasAlarm);
                                 } else if (direction == DismissDirection.startToEnd) {}
                               },
                               background: Container(
