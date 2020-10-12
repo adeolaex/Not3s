@@ -55,7 +55,7 @@ It uses the [SharedPreferences](https://pub.dev/packages/shared_preferences) pac
 
 ## Upcoming Fixes
 
-* Audio storage.
+* Speech-to-text
 * Cloud Syncing and Authentication.
 * Planning on using the SKSL shader warmup on ios for a better faster perfoamce. See [this](https://github.com/flutter/flutter/issues/61450) for more info.
 

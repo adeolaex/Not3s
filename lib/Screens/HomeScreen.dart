@@ -10,7 +10,6 @@ import 'package:Not3s/Colors/Colors.dart';
 import 'package:Not3s/Data/Provider.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -64,10 +63,6 @@ class _MyHomePageState extends State<MyHomePage> with AfterLayoutMixin, TickerPr
   double height, width, defaultHeight, defaultWidth;
 //This are functions that carry out the task of updating and deleting to-do's in the system(phone's)
 //storage
-
-  removeFlushbar(Flushbar flushbar) {
-    flushbar.dismiss();
-  }
 
   @override
   void initState() {

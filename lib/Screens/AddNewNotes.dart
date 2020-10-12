@@ -6,7 +6,6 @@ import 'package:Not3s/Data/SharedPreferencesClass.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,9 +40,6 @@ class _AddNewNotesState extends State<AddNewNotes> with AfterLayoutMixin {
   var bytes;
 
   submit() async {}
-  removeFlushbar(Flushbar flushbar) {
-    flushbar.dismiss();
-  }
 
   @override
   void initState() {

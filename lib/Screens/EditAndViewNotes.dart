@@ -6,7 +6,6 @@ import 'package:Not3s/Data/SharedPreferencesClass.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,9 +38,6 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
   bool whichTextField;
 
   submit() async {}
-  removeFlushbar(Flushbar flushbar) {
-    flushbar.dismiss();
-  }
 
   @override
   void initState() {
@@ -157,56 +153,9 @@ class _EditAndViewNotesState extends State<EditAndViewNotes> with AfterLayoutMix
                           );
                           // await _updateimagePathOfEachNote(Provider.of<UserData>(context, listen: false).imagePathOfEachNote);
                         } else {
-                          Flushbar _flushBar = Flushbar(
-                            margin: EdgeInsets.all(1),
-                            borderRadius: 4,
-                            isDismissible: true,
-                            onTap: (flushbar) {
-                              removeFlushbar(flushbar);
-                            },
-                            flushbarPosition: FlushbarPosition.TOP,
-                            message: "A title and to-do is required.",
-                            maxWidth: 250.0,
-                            duration: Duration(seconds: 3),
-                          );
-                          _flushBar
-                            ..onStatusChanged = (FlushbarStatus status) {
-                              switch (status) {
-                                case FlushbarStatus.SHOWING:
-                                  {
-                                    setState(() {
-                                      showing = true;
-                                    });
-
-                                    break;
-                                  }
-                                case FlushbarStatus.IS_APPEARING:
-                                  {
-                                    setState(() {
-                                      showing = true;
-                                    });
-
-                                    break;
-                                  }
-                                case FlushbarStatus.IS_HIDING:
-                                  {
-                                    setState(() {
-                                      showing = false;
-                                    });
-                                    break;
-                                  }
-                                case FlushbarStatus.DISMISSED:
-                                  {
-                                    setState(() {
-                                      showing = false;
-                                    });
-                                    break;
-                                  }
-                              }
-                            };
-                          if (showing == false) {
-                            _flushBar..show(context);
-                          }
+                          /**
+                         * Need to use the default Snackbar
+                         */
                         }
                       },
                     ),
